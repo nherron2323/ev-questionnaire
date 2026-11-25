@@ -274,7 +274,7 @@ window.Wiz = function(P){
     return {
       path: P.title, title: title(), text: reportText(), html: reportHtml(false),
       requestTitle: `${P.title} site visit${scope ? ' — ' + scope : ''}${v.date ? ' (' + v.date + (v.prepby ? ', ' + v.prepby : '') + ')' : ''}`,
-      photos: Object.values(photos).flat(),
+      photos: Object.entries(photos).flatMap(([id, arr]) => { const f = allFields.find(x => x.id === id) || {}, lab = (f.short || f.label || 'Photo').replace(/<[^>]+>/g, ''); return (arr || []).map((p, i) => ({d: p.d, c: p.c || lab + ' ' + (i + 1)})); }),
       materials: groups.flatMap(g => g.items).filter(i => +i.qty > 0).map(i => ({name: i.name, spec: i.spec, qty: +i.qty, unit: i.unit || 'ea'})),
       visit: {customer: v.customer || '', phone: v.phone || '', email: v.email || '', address: v.address || '', date: v.date || '', prepby: v.prepby || ''}
     };

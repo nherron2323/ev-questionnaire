@@ -1467,7 +1467,7 @@
   }
   $('reportBtn').addEventListener('click', e=>{ e.preventDefault(); submitRequest('report', e.currentTarget); });
   $('sendBtn').addEventListener('click', e=>{ e.preventDefault(); submitRequest('schedule', e.currentTarget); });
-  window.EAEv = {text(){ try{ compute(); }catch(e){} try{ refreshSummary('schedule'); }catch(e){} return $('summaryBox').value; }, val};
+  window.EAEv = {text(){ try{ compute(); }catch(e){} try{ refreshSummary('schedule'); }catch(e){} return $('summaryBox').value; }, val, photos(){ return PHOTOS.map(p=>({blob:p.blob, d:p.url, c:p.name})); }};
   $('sentOk').addEventListener('click', e=>{ if(e.target.closest('.pdf-link')) downloadPdf(e); });
   document.querySelectorAll('.jump').forEach(b=>b.addEventListener('click', ()=>{
     if(EMBED) toParent({type:'ea-ev-scroll', offset: $('schedule').getBoundingClientRect().top + window.scrollY}); else $('schedule').scrollIntoView({behavior:'smooth', block:'start'});
@@ -1730,6 +1730,7 @@
     return {path: 'EV Charging Installation', title: `${v('name') || vi.customer || 'Client'} - EV Charging Installation Site Visit Details`, text: txt,
       html: '<h2>EV charging installation — site visit</h2><pre style="font:14px/1.45 Inter,Segoe UI,Arial,sans-serif;white-space:pre-wrap">' + txt.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])) + '</pre>',
       requestTitle: `EV charger installation site visit${vi.date ? ' (' + vi.date + (vi.prepby ? ', ' + vi.prepby : '') + ')' : ''}`,
+      photos: E.photos ? E.photos() : [],
       materials: [], visit: {customer: v('name') || vi.customer || '', phone: v('phone') || vi.phone || '', email: v('email') || vi.email || '', address: addr, date: vi.date || '', prepby: vi.prepby || ''}};
   }, {after: true});
 }catch(e){} }

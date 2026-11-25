@@ -2533,7 +2533,9 @@ up();})();<\/script>
   };
   const TXT = {order: orderText, details: detailsText};
   const BOX = {order:'orderBox', details:'detailsBox'};
-  window.EAGen = {details: detailsText, order: orderText, html: reportHtml, val};
+  window.EAGen = {details: detailsText, order: orderText, html: reportHtml, val,
+    photos(){ return allPhotos().filter(p=>p.url && !p.err).map(p=>({url:p.url, c:p.cap||'photo'})); },
+    async sketch(){ try{ const r = await sketchPng(); return r && r.data ? {d:r.data, c:'Site sketch', type:'image/png'} : null; }catch(e){ return null; } }};
   document.querySelectorAll('[data-copy]').forEach(b=>b.onclick = async ()=>{
     const k = b.dataset.copy, txt = TXT[k](), box = document.getElementById(BOX[k]); box.value = txt;
     try{ await navigator.clipboard.writeText(txt); const c=document.querySelector(`[data-copied="${k}"]`); c.style.display='inline'; setTimeout(()=>c.style.display='none',1800); }
@@ -2649,6 +2651,7 @@ up();})();<\/script>
     const v = G.val, txt = G.details() + '\n\nMATERIALS PICK LIST\n' + G.order();
     return {path: 'Generator Installation', title: `${v('customer') || 'Client'} - Generator Installation Site Visit Details`, text: txt, html: G.html(),
       requestTitle: `Generator installation site visit${v('idate') ? ' (' + v('idate') + (v('prepby') ? ', ' + v('prepby') : '') + ')' : ''}`,
+      photos: G.photos ? G.photos() : [], extra: G.sketch ? [G.sketch] : [],
       materials: [], visit: {customer: v('customer'), phone: v('phone') || '', email: v('email') || '', address: v('address'), date: v('idate'), prepby: v('prepby')}};
   }, {before: true});
 }catch(e){} }
