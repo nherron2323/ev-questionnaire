@@ -4,12 +4,12 @@ Self-contained questionnaires hosted on GitHub Pages and embedded on the company
 
 | Folder | Form | Live URL |
 |---|---|---|
-| `ev/` | Homeowner EV charger questionnaire | `https://nherron2323.github.io/hankisadog/ev/` |
+| `ev/` | Homeowner EV charger questionnaire | `https://nherron2323.github.io/ev-questionnaire/ev/` |
 
 ## How it works
 
 - Each folder holds one `index.html` (the whole form in one file).
-- GitHub Pages serves each folder at `https://nherron2323.github.io/hankisadog/<folder>/`.
+- GitHub Pages serves each folder at `https://nherron2323.github.io/ev-questionnaire/<folder>/`.
 - The website shows a form with the iframe code in `embed-snippet.html`. Inside an iframe, the form hides its own logo bar and footer and reports its height so the frame fits it.
 - Every page carries a `noindex` tag so search engines leave these URLs out. The root `index.html` is a blank page.
 
