@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Generator Sizing Questionnaire — ElectricAce</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0f1f33; --navy2:#17304f; --amber:#eeb500; --amber-d:#d39f00;
+    --ink:#1b2430; --muted:#5d6b7c; --line:#dde3ea; --bg:#f4f6f9; --card:#fff;
+    --ok:#1f9d6b; --warn:#c2410c; --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink);background:var(--bg);line-height:1.5}
+  header{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:28px 20px 70px}
+  .wrap{max-width:820px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.2px;font-size:20px}
+  .bolt{width:38px;height:38px;border-radius:10px;background:var(--amber);display:grid;place-items:center}
+  header h1{font-size:28px;margin:0 0 6px;line-height:1.2}
+  header p{margin:0;color:#c9d5e3;max-width:620px}
+  main{margin-top:-46px;padding:0 16px 60px}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:0 10px 30px rgba(15,31,51,.10);padding:28px}
+  .progress{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+  .bar{flex:1;height:8px;background:#e8edf3;border-radius:99px;overflow:hidden}
+  .bar>div{height:100%;background:var(--amber);width:0;transition:width .35s}
+  .stepcount{font-size:13px;color:var(--muted);white-space:nowrap;font-weight:600}
+  .step{display:none}
+  .step.active{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  h2{margin:0 0 4px;font-size:22px}
+  .lead{color:var(--muted);margin:0 0 22px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .full{grid-column:1/-1}
+  @media (max-width:620px){.grid{grid-template-columns:1fr}.card{padding:20px}header h1{font-size:23px}}
+  label.f{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+  .hint{font-weight:400;color:var(--muted);font-size:12.5px}
+  input[type=text],input[type=email],input[type=tel],input[type=number],input[type=date],select,textarea{
+    width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;font:inherit;background:#fff;color:var(--ink)}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 3px rgba(245,165,36,.2)}
+  .invalid{border-color:var(--warn)!important}
+  fieldset{border:none;padding:0;margin:0 0 22px}
+  legend{font-weight:700;font-size:15px;margin-bottom:10px;padding:0}
+  .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+  .opt{position:relative}
+  .opt input{position:absolute;opacity:0;pointer-events:none}
+  .opt span{display:block;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;height:100%;transition:.15s;font-size:14px}
+  .opt span b{display:block;font-size:14.5px;margin-bottom:2px}
+  .opt span small{color:var(--muted);font-size:12.5px;line-height:1.35;display:block}
+  .opt input:checked+span{border-color:var(--amber);background:#fff8ea;box-shadow:inset 0 0 0 1px var(--amber)}
+  .opt input:focus-visible+span{box-shadow:0 0 0 3px rgba(245,165,36,.35)}
+  .opt span:hover{border-color:#b9c4d1}
+  .opts.big{grid-template-columns:1fr}
+  .opts.big .opt span{padding:16px 18px}
+  .sub{margin:-8px 0 22px;padding:16px;background:#f8fafc;border:1px dashed var(--line);border-radius:12px;display:none}
+  .sub.show{display:block}
+  .nav{display:flex;justify-content:space-between;gap:10px;margin-top:26px;padding-top:20px;border-top:1px solid var(--line)}
+  button{font:inherit;font-weight:700;border:none;border-radius:10px;padding:12px 22px;cursor:pointer}
+  .btn-p{background:var(--amber);color:#1b1404}
+  .btn-p:hover{background:var(--amber-d)}
+  .btn-s{background:#eef2f6;color:var(--ink)}
+  .btn-s:hover{background:#e2e8ef}
+  .err{color:var(--warn);font-size:13.5px;margin-top:10px;display:none}
+  .welcome-list{display:grid;gap:10px;margin:18px 0 6px;padding:0;list-style:none}
+  .welcome-list li{display:flex;gap:12px;align-items:flex-start;background:#f8fafc;border-radius:10px;padding:12px 14px}
+  .num{flex:none;width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;font-size:13px;font-weight:700;display:grid;place-items:center}
+  /* results */
+  .result-hero{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:14px;padding:24px;display:grid;grid-template-columns:1.1fr 1fr;gap:18px;align-items:center}
+  @media (max-width:620px){.result-hero{grid-template-columns:1fr}}
+  .kw{font-size:54px;font-weight:800;line-height:1;color:var(--amber)}
+  .kw small{font-size:20px;color:#fff;font-weight:600}
+  .result-hero .label{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:#a9bbd0;font-weight:600}
+  .stats{display:grid;gap:8px}
+  .stat{display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:6px;font-size:14px}
+  .stat b{color:#fff}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+  th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+  td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
+  .tag{display:inline-block;font-size:11px;font-weight:700;border-radius:99px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+  .tag.shed{background:#fff1d6;color:#8a5a00}
+  .tag.out{background:#eef2f6;color:var(--muted)}
+  tr.excluded td{color:#9aa6b4}
+  .notes{margin:18px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+  .notes li{background:#fff8ea;border-left:4px solid var(--amber);padding:10px 14px;border-radius:6px;font-size:14px}
+  .notes li.info{background:#eef5ff;border-color:#4a7fd1}
+  .cta{margin-top:22px;background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;gap:12px}
+  .cta h3{margin:0}
+  .phone{font-size:22px;font-weight:800;color:var(--navy)}
+  .phone a{color:inherit;text-decoration:none}
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .disclaimer{font-size:12.5px;color:var(--muted);margin-top:18px}
+  .copied{color:var(--ok);font-weight:600;font-size:14px;display:none}
+  textarea.summary{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;min-height:150px;display:none}
+  .opts.days{grid-template-columns:repeat(auto-fit,minmax(78px,1fr))}
+  .opts.days .opt span{text-align:center;padding:10px 6px}
+  .send-btn{display:flex;align-items:center;justify-content:center;gap:12px;text-align:center;text-decoration:none;
+    background:linear-gradient(135deg,var(--amber),#ffbf47);color:#1b1404;font-weight:800;font-size:18px;line-height:1.3;
+    padding:18px 22px;border-radius:14px;box-shadow:0 8px 22px rgba(245,165,36,.35);margin-top:6px;transition:transform .1s, box-shadow .15s}
+  .send-btn:hover{transform:translateY(-1px);box-shadow:0 12px 28px rgba(245,165,36,.45)}
+  .send-btn:active{transform:none}
+  .sent-note{display:none;background:#e9f8f1;border:1px solid #b6e6cf;color:#145c40;border-radius:10px;padding:12px 14px;font-size:14px}
+  .logobar{background:#fff;border-bottom:4px solid var(--amber);padding:14px 20px}
+  .logos{display:flex;align-items:center;justify-content:space-between;gap:20px}
+  .logos a{display:block;line-height:0;transition:opacity .15s}
+  .logos a:hover{opacity:.8}
+  .logo-ea{height:72px;width:auto}
+  .logo-gen{height:46px;width:auto}
+  @media (max-width:520px){.logo-ea{height:54px}.logo-gen{height:30px}}
+  .hp{position:absolute!important;left:-10000px!important;top:auto;width:1px;height:1px;overflow:hidden}
+  .send-err{display:none;background:#fdecea;border:1px solid #f5c2bd;color:#9a2a1a;border-radius:10px;padding:12px 14px;font-size:14px}
+  .send-btn.loading{opacity:.7;pointer-events:none}
+  .send-btn.done{background:#1f9d6b;color:#fff;box-shadow:none;pointer-events:none}
+  .lock-wrap{position:relative}
+  .breakdown.locked table{filter:blur(5px);user-select:none;pointer-events:none}
+  .lock-overlay{display:none;position:absolute;inset:0;align-items:flex-start;justify-content:center;text-align:center;padding-top:40px}
+  .breakdown.locked .lock-overlay{display:flex}
+  .lock-overlay>div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 20px;box-shadow:0 8px 24px rgba(15,31,51,.12);font-size:14.5px;max-width:420px}
+  .report-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--navy);color:#fff;font-weight:800;font-size:16.5px;padding:15px 20px;border-radius:12px}
+  .report-btn:hover{background:var(--navy2)}
+  .report-btn.loading{opacity:.7;pointer-events:none}
+  .report-btn.done{background:#1f9d6b;pointer-events:none}
+  .or{display:flex;align-items:center;gap:12px;color:var(--muted);font-weight:700;font-size:13.5px;margin:10px 0 2px}
+  .or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+  .or span{text-align:center}
+  .pdf-row{display:none}
+  .privacy{display:flex;gap:10px;align-items:flex-start;background:#eef5ff;border:1px solid #cfe0f7;color:#1d3a5f;border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.45}
+  .privacy svg{flex:none;margin-top:1px;color:#2f6fbf}
+  .diag{margin-top:8px;font-size:11.5px;color:#4b6b5c;font-family:ui-monospace,Menlo,Consolas,monospace;word-break:break-word}
+  .sub-h{font-weight:800;font-size:15.5px;color:var(--navy);margin-top:6px}
+  .contact-bar{border-top:1px solid var(--line);padding-top:14px;text-align:center}
+  .contact-q{font-size:13.5px;color:var(--muted);font-weight:600;margin-bottom:8px}
+  .contact-num{font-size:24px;font-weight:800;color:var(--navy);white-space:nowrap;letter-spacing:.3px;margin-bottom:10px}
+  .contact-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .cb{display:flex;flex-direction:column;gap:5px}
+  .resp{font-size:12px;color:var(--muted);font-weight:600}
+  .resp.fast{color:#1f9d6b}
+  .email-panel{display:none;margin-top:14px;text-align:left;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .email-panel.show{display:block}
+  .ep-step{display:flex;gap:12px;align-items:flex-start;margin-top:10px}
+  .ep-step .num{flex:none;width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center;margin-top:6px}
+  .ep-open{display:inline-block;text-decoration:none;font-weight:700;padding:11px 18px;border-radius:10px;background:var(--amber);color:#1b1404}
+  .ep-open:hover{background:var(--amber-d)}
+  .ep-step .btn-s{padding:11px 18px}
+  .contact-btn{display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font-weight:800;font-size:15px;width:100%;font-family:inherit;cursor:pointer;
+    color:var(--navy);background:#fff;border:2px solid var(--navy);border-radius:12px;padding:11px 14px;transition:background .15s,color .15s}
+  .contact-btn:hover{background:var(--navy);color:#fff}
+  @media (max-width:480px){
+    .contact-btns{gap:8px}
+    .contact-btn{font-size:13.5px;padding:9px 4px;gap:3px;flex-direction:column}
+    .resp{font-size:11px}
+  }
+  .nec-table td{padding:7px 6px}
+  .nec-table tr.sub td{color:var(--muted);font-size:13px}
+  .nec-table tr.tot td{font-weight:800;border-top:2px solid var(--navy);font-size:15px}
+  .nec-table tr.hd td{font-weight:700;background:#f4f6f9}
+  .rec-min{color:#a9bbd0;margin-top:10px;font-size:12.5px;line-height:1.45;border-top:1px solid rgba(255,255,255,.12);padding-top:8px}
+  .rec-min b{color:#fff;font-weight:700}
+  .fine{font-size:12px;color:var(--muted);text-align:center}
+  footer{text-align:center;color:var(--muted);font-size:12.5px;padding:0 16px 30px}
+  /* embedded in electricace.com: the site already shows its own logo, nav and footer */
+  html.embedded body{background:transparent}
+  html.embedded .logobar, html.embedded footer{display:none}
+  html.embedded header{border-radius:14px 14px 0 0;padding:24px 20px 64px}
+  html.embedded main{padding-bottom:16px}
+</style>
+</head>
+<body>
+<div class="logobar">
+  <div class="wrap logos">
+    <a href="https://electricace.com" target="_blank" rel="noopener" title="Visit ElectricAce.com"><img src="data:image/png;base64,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" alt="ElectricAce" class="logo-ea"></a>
+    <a href="https://electricace.com" target="_blank" rel="noopener" title="Visit ElectricAce.com"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAo4AAACiCAIAAABAndvTAAAlRElEQVR42u2dW0xb977n/xByBQNKzig0pnKk42ZDH2JH7ZhmFLB2cbbCTAYXErql6oBDeDg9bQxSovZwCTwkTWB2FSRw9jk9DwTsSJV2SWBgZ0S0Y7qPASnFs6vYeQjZiUeqVUiJZtIhQO5c5sE7Hmp7La//f128bL6fp5Taa9nrv7y+/989bXV1lfySIfe4fyrg8fpC/+mfuv944QkRQInJmKvJMhcZrZZinTaP62WugRHn4HUiKZ3NdkOhnuoUu7V5PR1NAo9/8pzDfzcQ8UdbxaGayrK1f/FPBU6ed0j71SLOIuEpdmvzdNo8Q6HeailmPki3s3/IPcHzgqu/P5ebncV2cP9UwOO99cP0bOjiz80v3o5ahTA5mkxD4Vuhf5tNxtzsLJ770D8VcA6MBGdmzUXGelsVAQAAFZMRIaJnHL3BBw/ZjjXm9RFChkcnTp2/WF56oKejKeYz+oeZ2bHX+wCpmFtYpD3FGCGGQr3Ax7T/biD6gGaTMfpjSP7VIs4i4SnGXv9Dt2vnhRY7m2B39/Xz3zDdzv42ey3tYT1e38lzDh5hjubxwpPwlQn9g+s+HHKPdzuv2CoOWQ8W+6ful1Y3jF7uwrMAAKBa0sP/qmtsr2vqYNbpCIZHJ0qrG+bmF9X85c84elX+CZUh+ODh0U9PuwZGaN/oGhiJe8N0O/tpD3vynMNS3UCl01T3YbfzSpu9tst5xTN5yzPps1oOMHx3AABQWqq7nf0uqZ3St+8GTkntDZaWxwtP6hrbcRP8TSDPO4Izs1Rv6XJeEXKRqYSw29nvcF2R9j6M2C4YCvSEkODMT0PuCZ02z1D41g+UXxwAABIg1WccvXIc3TV4Pajuh+Dw6MSQexz3QUhTnTSa6vH6BBq+QhT9b/b9zKwct2KEVD9eWCSEWC3FudlZxkL93PwCczQdAAAUkmrXwIjAxDEG1C+Ep8454AZ/vVgTVFFq4XatR1h83SnPrfh44cnaD5CjyfJM3jKbjG32Wo/X1+28UlNRhtUHAKhaqj1SZ0L9wvaa9BHVR2plciokHcLDw8GZ2eHRCaqotoQvY7oPb4X/3dliD+1LQruNSxz5jwAAQNSTAe6bCvCXYPEfgr+EJiI3m4e9BXrmJ2auRtSj1uG6YqssW1vuJS26XTt1+W8Q1pIqJW8I/1RAyHXo4jCpczSZMc1i1+D1Nnutjve7zM0vSpXVGHNvsfY/GZLSAQAgkVLNJbQlJqPAoti5+cVuZ//Zi32xHv33BX6Uzha7Od62QD6ON7Z/P9Qj08FrKsvk1obWE8finmJufjFUoNzd189lEwvZWs3NL7oGY5u/PR1NdY3tMdXaOTDC/wn9vDXTbfZas2kfzzZibn7R4711xtEX835G4hgAIHlJ50r7ytFkCm9ekZud1Wav1e3aSWKFCVXyVUtMRh4Pwe27gZR3g+dmZ5lNRrPJePVfzsVcLCI0WzB2RHlvgd5qKeaqz45btcWzqxu93F1vq+I390M9T1AhDQBIQanmsjbMpn207mhmH69idDbbCW+ecHDd2F5iFosroazBdpRw+5bjVm1xJffVVBwSHpvIzc4qSZxvBgAAiNzdytbCELjtbLYLj0wnBEOhvvXEsZiO+pCWHG9sh1nG1vYkR5MZaoCq0+aVmIwxW6p1Oa9EtGIVuGp0ry/QC/wjAAAkt1SzCSERldB0nzAllFGdt95WxdNja8zrcw2MMMgJiZfTxJZmb1afgcjVXH1ti1ZbxaGYUh2q2uL6UlxWdbizt/CkB/ywAQCQalk4df4iYYpAU9nBudlZPf+t2VLdQLibdpVbiqWt3nENXmdrBvfqrx6FV4E/4dw/FeDqQG5bs7+pqSzjaibvGhjhkmq/FJ1EAQAAUk02/sqsfr2Ja6rWVBzi0s5Qt9Gr/3IutRc+OP1TzL/z11NxpYbVVByKeGNNZVnMQIOQqi0AAAAk5riOdcWFZnuOJpNwdxuVtS1MYvF4fUc+aYlp8vInZAVnZrn2N9EhA56RZV19/fjhAQBAUjrAibJlSz0dTUc/Pc31grp/Pv+XoUtJ1MTq7MU+rnQ5QjMbm/B2/SQcvWuifdq52VlcrgvX4EibvRYNwgAAAFZ1HKyWYh4jMvjgIcP0xqRmb4GeJ58u1OWGcNdoEd5EM/LLEMNwrM7wIlvOAQAApDoFudTRxOMGP3uxzz+1XhKd4mbnDbvHY7Y9CddokVgVAVyboZjdZuRr7AoAAGT9OMBlla4LzSdoy3JEmmI6bV6bvZYn81yqbqM1FYckLwAj0vUnv9Bi52oxxi+uhBCd9g2GLm/BBw95qraI6NK4mI19DCKazAMAgBqlOmaRq6FQz5POXVrdMCYiG8tQ+JbyZcT1tirnwHWuLui37wa6nf08GVLC9wRmtbbQCj54ePTT0+WlBzpb7FyJ2R6vj6sS/fbdwG2mIqvuvn6B1yQ0sFL4kZ0DIzHD9u7LXWY0MgMAkBRygKdwCjSJcoPzW5Prodvo8OhE6T/UczUhkaM7+vDohMALS3v9MX0cAJBqUs3lQA41lqJ6PrK1GyMq6DZqrznK9X9D3UbXw63AlUkXnJkdk2ffFlG1xRWrdg1ep4q8xMxZAwCA5CWDJ5fnyCfNnc12gUHWU+cd6hmiRUubvXbYPc7TbZQn+4yoJuQsZAJHcPonnpnQQ+6J6GEb8g0ci6jays3WEM7YSn1nsz1uF7m5+cVT5x3yDb0GAICExap1u3bGfLo9XnhS19Rx8rxjbbZXdG5OcGbWM3mL6/kofNiia2DEM3mL7WvYKsvENMCK221U5C7E4/UxC565aJ+QCKvwkdhz84tHPm3h6tEd/eIh2YzUUNVWeC/I09M0dCuSpo4cTSZX7uHc/CJ/1ByBagBAEku1ofAtHkPk8cKTtY91Wl+o8GGLbF2yw3omslel2WQsLz0wPDohx1Ue8/rE+JCl1Zjc7KxLHU36938r5MXdzn5ZnSVnHL1hqdZp83I0mfyni7gbAQBgvUi11SKXRCXX8MGejib9+x8mrxufKiNduKuDcNRhCzTiyWvHe11TR9yqLaulWMyOjfAWjuPXDgBIYqkutxTnyBZpNhcZk6jbaGezPaaiEIymJpHRfTpb32Tscl6J6aBeW7VVU1kmk1RjXjUAgCR1sVZudhaVhUSV6xS3t4aqqKksg/kVpst5hWtZGXzyXP1H11ZtmU1Gma5/w7EqLCgAILnrquttVTW8oxrYuNBiJ6lVZr1+8Hh9XFlabBu7cksxVyL92pw7/m6vbLSeOIaxmwCAVGiB0tPRdKH5hIRPyZ72xuQyqcNx3NYTx3BncEWpczSZ5UzLmpudVVNRxlEkNh7uW6LT5n0/dEkq2zpHk9l64phMTiMAACDKNxatt1XVVJQNu8c9Xt8PM7P+qfsMAWzdrp3mon1t9louO2a3Nk9yJ2dEI5eYpxAerWyz1/qnAnMLcZpeRRcX5WqyJP9qEWfhOsVuSquR/3POzS/+MDMb8zVmk5G5k3bDsSo/h6Xu8d4Kb+x02rzRy10er2/oxrj/boA25TtU0LVbm2c2GeOWYgMAgPpJW11dJVJMRMjVZGEyElCG6I0UaqYBAJBqAAAAABDMqwYAAAAApBoAAAAgKTGvGgC1sfLjndVnC7/4y6PplUfTv3jR0/nl6amYb9x28usNe4pwGQEAkGoApNHX5XuTuHoAAACpBrGJlsnlH++sPptf+5fVR9Mrj2Z+8Zen8ytRigsAAABSDThlcuned5Evg74CAACkGkiur9E+5NX/M73y8wwuIAAAQKpBDFYeTa9GGabL03dIPB8y9BUAAACkWnp9jbZoAQAAAEg1kocBAAAA2aQ6hmEKfQUAAABESjWKcwAAAACVSvWLa10vr3XjQgAAAAAqler0HfnhbotIoQIAAABUJ9Ub9x/ZuP8IQeI0AAAAkIxpZek78smO/Mj3GA8SlEsBAAAAKVasJavqI8kcAAAApFpFRKv+BlKE0m0AAACQ6hQk/c23I/4C1QcAAACphurLovoocwcAAEg1SD7VR3MbAACAVANVEy6a5/kLVB8AACDVAKoP1QcAAEg1gOpzqH4o9p+2VYMrDwBIRtJWV1dxFQAAAADVko5LAAAAAECqAQAAAACpBgAAACDVAAAAAIBUAwAAAABSDQAAAECqAQAAAACpBgAAACDVAAAAAIBUAwAAAABSDQAAAECqAQAAAACpBgAAACDVAAAAAIBUAwAAAABSDQAAAECqAQAAAACpBgAAACDVAAAAAIBUAwAAAABSDQAAAECqAQAAAACpBgAAACDVAAAAAIBUAwAAAABSDQAAAKQgGXPzi/67AflOsFubp9Pm4UIDEGL53qR8B0/bqkl/821cZABSjLR/n7xlqW6Q+zS6XTsNhW+Zi4xm0z5DoR7XHaxbFj7+e7lPkb5dm/5m4YY972XsKYJyA5AKVrUypwk+eBh88HB4dCIk2zWVZbbKMljbAMjBys8zKz/PLPndLwhJ367NMB7cWFqbviMfVwYAWNXU1FQcarPXQrABrGolduUGy6bS4xv2FGEJACBIKxOOa/C6/v3fnjznmJtfxEoAICtLfvfTzo+eOz9bfTqPqwEApJoOh+vKu9bjHq8PiwGA3Ly6OfCkpWTJdwOXAgBINaGNZFuqG1wDI1gPAORm9dnCs68+fnGtC5cCAEg1NXVNHXWN7VgSABTg5bXu587PcB0AgFQThuj1yXMOrAoARBFnONQaAEg1YQtdwxMOgGJqDU84AJBqwuYJ908FsDYAEEU84bI2UAMApGwP8OMIWgOgFM/7UMEFAKSantt3A93OfiwPAESR7mYvv+3FdQAAUk3NGUcvWqMAQJRyg688msZ1AABSTcfjhSeuQeSXAaAQr0ZhWANAUmdcx94CfWeLnf81nslb/qmAx3vr8cIT5g/X3ddfb6vCIoF1vZvOL9zyYSv/a5bufbf6aHr5r5MrP8+IyAa/ujneiQAASSPVudlZZpOR/zXhF7gGRs44eoMPHhKmLmb+qQCGZoL1TNq27LgzNsIvWPLdeHGta2V6ijB1MVvy3cgwHsQ1B2DdOcBrKssCf/6mpuIQ29udqLEGQPjW23gw8/S1TYfrCeNIjz/hGgKwfmPVPR1NbGqNMR4A0LL5cMMW2+8Y3rj8VxRYA7C+08p6OppK4rnNSayqLSwSALRs3H8kw2Ah9FVbyAMHYL1ngLfZa2FYA6CQbc2UI7b6aAaXDgCSAmllzJhNxr0FeoUN5bn5Rf/dgH/q/tz8YnBm9oeZ2Yjct93aPEPhW0heSyyhZfJM3iKE+KcCcwt/K6nP1WSFlsZQqN+tfQPLRLEN35GfYbAs+d1U71q6913cLDYVsvLjnZVHM8vTdwgha/ukpu/Qpu3IJ4Rk7HkvbYc2fUc+bgwAqY6P1XKAVqo9k7fM9J7zIfe4Z9I37B7nST4f+6W9XmIyWi0HrJZinTaP9nRr1UX4xoVZ0qjeElY7WiJ2NnExFOhzs7Nor5tzYMTj9fHcFcOjE1Itk0zfzuP1rd0Lhi54bnaW2bQvsXuLDXveo5XqaAlcfbZAc8bYMr/6dH5lemrp3nfhY27ILyTbstN35G/YU8SmoCuPppd8N5bvfbd8b5LrQy6//sdL0k0ISd+u3fCrogzDbxROdN/4K7MCZ3Ff7uJ5qgj/DK/+6pH2g5VWN4wJc46WmIyjl7sSdQHV/NmUlurd4h6vQp6/XX39rsERhnruMa9vzOs7df7i3gJ9g+1oTWWZ8Pd2O/tdg9cl/F0RzjmhI6fOX6R91//+n/+DVkQJIccb28doog+Bb/8g/CzMVXzhZSoxGW0Vh6iWifyyuODsxT4x6+Xx+lwDI0Pu8eibLbS94PptKyfVb74t8gjP+7+gGuah+ep/RZdrL/n+FL1jCB920+H6zYcb6Ex/341XN68w7EJWfp5ZuTnw6uZA2lZNhvHgpsMNsLMBQaw6Gl3+G/KJdF1ju/793zpcV8T0XSGE3L4bqGvq0P/6Q+HjOMstB6jt/hvjTAJzneFdw+5xBvOdSqd1u3YKNHNdAyP6X39Y19TBVm2/VrNpl0kqPF5faXWDpbrBNXhd5M1GUnnC5tUnzSXPnZ+LtOyjj/nsq49FHnP12cKrmwNPWsxPOz9CJh2AVEcLwAKRp2H4O9bjtHZt3AYsISUQktdmtRTnaDLlTpcLzsyyRfqH3BP0anSL6vXllmIiwN39jrVOvEhHL1NpdUOQxpsthpPnHBbBDr31yerT+aedHz13fi6me1q0K17yY4aM+yct5hffnMVsMQCp/sXDWvIDvmOtO3uxTybjJvjgoaW64eQ5hxC1prXdaeeRDLnH2b7F8OgE7bmGKdXdFs8R7RoYefeDOpmSCse8vnesxxUwr+sa2x2uK8ny806IvRjSaWlnYL8c7X1y7r/KN1f75bd9T784jLndAFLNLtU8iTlD7vHS6noFUsodrivvWOv41Y4h8Ezrl2bzfrOdK5SMLZAcTSZ//lRdY3tdUweReb5LXVPHGUevrDotredGbpbvfZcQnWbrbMp1wOfOz170f6HAJNCnnR+9unkVqgDWu1QHZ2YjsnmJoJbjGi4r7einpxWLFN6+G3jXepxnq1FOaVXT+sCZvd8MPvDgzCyVj5rfo6Ckwp292FfX2C7HkYdujCeXTq8+nV/y3aB9V8ae98QN0+ySVqefdn706uaAYhftufPz587PIAxgXUs1m8UT01p1DYzIbaXFdIaXVtdzqXVudlZ56QH5HNrM3m8GHzjtuXiy6pS3RF2D1+XwhCeR3/u1U7eXqs4qRNpWjUhPsmoNdCI0c20Aag3Wr1S7BkYYHtl7C/Qq0Wny2st6vLGdS/OslHngjxeeCI8IiPF+0/rAPZM+Ku83l1WdKI9xXVPHOm9yt3xv8uW1bgadThdd35XUOh1W6xfXuggA602qmcXVGBUB9U8FEqXT5LUnvLQ6dhmouWgfoW/VooD3m9YHThWnMJv2Sbg5k0yt//k8bSZdyrDku/HsX/+RsLRMUUufshf9ZxOl0689+d0M4QMAklWqgzOzRz5pYRbXCM/q3PzikU+aE37Vbt8NxHTm67R5Md0A4uVTpPebygdOe66YvoTgzOzJ844ErlHwwUNZU8yIWlO+nzs/e/bVxwyub0JIhvE3RB0F2UrGpwln3PozlFyDVJbquflFj9fX7ew/8kmL/v3fMqSSEQ7P6qnzDglLcom49KWYvmtb5SE5SrbEe7+F+8CpvN9c+XTHG9sT3hvE4bqiWLE1SaivePne5MvR3mf/+o9PWsxiRC7DcJCoYLfx4puzqriwzxaeOz+HSACSpD3Ax7w+Zbqe1lSURfZxVFMK7vHG9u+HeqJzoWkbfw67x/m7Y0ri/Q4b8XE7cVKVdZWYjNHNRIfc42wdQvYW6K2WA+aifaE22qF4s3/qvmfSx7bhO+Po7eloIkkedV74+O+JEnMzK9O2ZSf8+7745iybS0Cmi//q5tWN+48odsaaikPMze3lbtsMRNJ64ljS9ACnouFYlfgEciKnG9w1MBKhfDptnm7XTirT3+P18cunJN5vgUFo+jKtGN7vU+ccDCLd2WKPyPYP/afZZKy3VQVnZs84emn3aq7B6232Wh0eYQLY9H4tUYE0StiFVBJe/rFLUamuLGMb5AORW5slI/AhVmIyCr/a4ndCbGOg1S7V9pqja5+wHq9PTCvHHE2m2bTPXGQ0FL5FXrc49U8FhtwTYgzWM47eaJUttxRTFfbEbTYilfc7LPw8ZdBUnU9iVlQL/52stSTi2r46bV5PR5PZZDx53kHlWh9yj9fbqvCwi+f6tqgh91tk3nX6dm2G8eCGPe+F3QPLP95Zmb6z5LvBbKmv/DyjsGENRIqcx+sT+Agym4xi5DOVh2AKV9aIK8hsUocOVVNRFu2ntVqK2+y1bOZaOHcpWvlslWVUUh188NA/FeDq9iWh9zvcMZRHqqk6pewt0EcbrE7KKylEp9faHDnZWUc/PS38+N19/ZBqEq9Ga/OHrUQFM6eZW3tu2FO0+XBDdAb73/5iI69uXn35xy62/uEKG9YAJI1U93Q0rVXW4Mwsm0ldXnog4lBc5lpNZdmRT5oZMqFcA9cjlM9QqKf3gd/ikmoJvd/hA/aQJkmmdER7v2lXqsRkpI0lWy3F9pqjwjdDwQcPgzOz8vnAQw4bQ6HeUKgPddYLOWySqFRMgVmQoUHRaTvyw93QVh5NrzyaXn00HT71y297mfcZcaV04/4jGYaDL/rPMqTdrfw8s3xvUj2VbABSTVTi+o4QPza5ojLXzCbj6OXu0up6WrUOVUBF7AZofeBD7gkuy09a7zch5PHCEy4fuMfro/r60QehXanOZjth8oZRXl5ZfOC6XTvb7LUx8wys9F1mE8XG/ZWbSmtlda1vKj0ew94lRdHl4Aw6ve3k1wJd92nbsrfYviSEMKj1q5tXINWArJ9xHUL0tbPFLl6uGMw1Q6F+9HI3kaICylxkpE2qj2mESe795p+aRTVCW7drZ7QngGqlSkxG/iEfhLMtPF0PV8nnuRFCWk8cC/z5m7jp9Gr//ecXbq5qlc+vvvXjr7b+078JEbnle5MM4eTNH7bShti32L7cuL+S0HeVgVoASPX/f3ZfiDKz5uYXaeUqR5N5ialEx1CoZ8inj+5hyTS++pYC3m/+w1I144wup6ZdKdo+rMybIZ/UUt3T3pgs2Sj8Or3t5NcyFWiF7N0Mo9BC7SX6IWAZBgtbCHlzVSttq/PVZwsrP96BYAACBziXv5oqehqi3lbFHJust1V1O/up/MAxs6atlmKqVLWY2V7CjdTy0gP+qfsCA+QxfeC0Fny0WPrpHQDKdOqW1jNxoflEshvTIZ3bYvtSvkJq4X7psFXNYFIzbiO2ZW/+sJW2vcnSvclN8ifJuwZGaKswQi2NUeKlftiSo22VZTptXoZ68r25ookM3kubiCdpbnZWTQV1CnescPUBKqmO/n1SaafVckCnzRP+saN3BrQDqqM3FrSPGNpeMURcg1tJMstKTMYUyCffdLh+8+EGWY9P65emleqN+yvFpMJlGA6mbdVQudxXpu8oMxeO7Y2QavVz9mIfkwdxn06bl64Gp/f3Q5d4Hn+0Uh2zgkhupY82KLmGWPCXbBFW73e5pZjqY0cfnMrAjZk2peac5x8k6jCa7H7v9PzCzJY/yqrTaVs1tN1UGFptZxhEtStP25ZNmya28miGALAOY9W6XTuv/P6L0ctd/Mo6t7AofnoEoYxYE+q25wvix1dHuPqpvN+52VmhIjFCkwfOvDOIuYX3y5ABpyr2FuiT13ZJ367dYvtd5ulrcrc62bj/CK1ffZVeBcXnY294XTYmvOwbggHWl1TXVBxyX+4K/PkbITUt/qn7RPFGuCWUT+SYpj/tpmFt+xEq73c4bFxOUyO0Ng/cPxWgCs+XJ08xkoTQzmIhqglLb/34q8zzY8r08VDgLGlbNeKj7Bsotyzq6UwOCNLK5LZIzEVGs2kff0+SaPuPzljPf0MlF7fcUkxopn+ubR5CZeOGdzxUjdLW9kKhc7aXHqBaQTXgmbwl3iCmDWok1tG94c3CDXveyzAcVHIIR9pWDYPVTpv+LYljgDYJHIAkk2rdrp0CM2BD/ZtCU5LW4cXNzc4qMRmpuneFE7OFe7/XxuapGqWtzQOn6icqPsSQpCTkNk7frs34T4Ls1A35b6dty2YTS8k+rQoaiafeRwWASarz30iBolJlsFoOUEm1Z9JntRRTeb8jvLJUjdJCeeC09dDmon1k/ans3oLEbDfT/i5f1iwwadmQX4hfPQCp360s5aS6mKHxGZv3myF9PXQiqgHV4hPsE+Th0Ij3keB+jg+Tsz1ta3ZCpoNguQCkmkiYKE71+uD0T+JPKlXdkU6bR2WNhWZLsHm/1/rACU0eOFWZVpKmVgFV2+IyF2ETpIkBSLXsUk2ZJiZJF0na/lY8/lXayG5XXz+z95sw5YFTtS5JotQqkMIwlGJH6j2lVY00NEDQWJSHXE2Wwr0qGY7A41+1WoqpmtS4BkeIOAc7bR648Bz7mCM61hZbUwXm3Ze7FLuL0MtJ5fnq1EJ7bzJ9v6jBncuJSDsHIGWl2lCoHx6doDKIRXaRdA2MEOmUgHZ8tXDh5AobGwr1ewv0Ak1zCcupaaO5hgI9AsAg1DuMts3nku9PYgq4V5/OL/ndRH0ZcxeaTxgK36J91+4kTB9Zh7AZJ4YCfXJItbloH23r1DOO3h6myVqEkLn5Rdp5VnFjw7Tjq4nosLGt8pAcHbb5c9ZoHzHD7vEUmHsBpCqdoopAL/ndK4+mmduAv/y2V53FXYbCt+ABSlXErGwSxKoN9EUyrsHrzCOKzzh6aZuuxC1esh4sVji93CpDN7EcTSZ/yRPtjehknUxAXscpSqsbup39coyjBgrD0CiUdjTWWpP61Wgv6tAA0sqItI1EGEpajze2M2Rxe7w+BvM3rkSZTUba8dVEXNEUbea5VIVnVA1Zx7w+MQO5XQMjY17fqfMX3/2gTv/rD+sa210DI2oeGQJ42Gg4SOjD1S9HWaYKPnd+Rpv+nb5di1g1gFQTyQuEbt8N1FGqtX8qcOSTZsLWQFTqAmvx10TyqqpyAanstOnudUw7qtCmau24wOCDh67B63VNHf/hP/6Xd6x1Zxy9MLWTzgGevl1L+64X/V+8unmVVqdpo9SEkAzjQawRgFTLonPDoxOl1Q1BYdMPh9zjpdX1tK5vQkhNxSEhuVHlUjfjjHtNJN8cWGXYkTxeeFJa3UCr1nPzizybqtt3A2cv9r37Qd3fvfufYWonEWxy+Nz5uUDbevXp/HPnZ69uDqhzBgkASS/VOm0e7UDJ8FP7HevxM45enoe1fypw5JOWo5+eZtBpQojAxCirpVhCH7iQlmHS+sAFXn+Glbp9N/Cu9bhwIzg4M1ta3SBksR4vPAmZ2sMi3OxAMTaWMrYrftH/xdPOj/iz0l7dvPr0i8NsOp2eXwjvN0CxliDqj1VRlWytfV6fvdh39mJfeekBc5ExnKU8N7/gnwoMuSdui5iyrNu1U3guldm0j+0rEFbntoR54MI92wwrFXzw8N0P6moqDrXZa/m3IN3Ofoa8v/U5sjP57IYd+RkGC4N3mhCyfG/yaedH6du1GcaD6W++Hc4MX/7xzsr0nSXfDTG9yTaVrq+RB2JaU6ACc71LtdlkpJ1SRaL84VIpZZgLLXYqtZPqAwj0M1stxVJJtXC1Y14p1+B11+D18I4q/Jv3eH3B6Z88Xh9VtxbaCAVQA5tKj7NJdYiVn2deftsn+WQzJb3froERqu6BEbWUkvTnt1Q3iCkdRrEZ4S4vSn2pJoR0Ntvf/aBOPZ+nxGSkCs3Sjq8mogdmhHzgYtwG4TNSqV2bvZb51y75jgql2ySpSrY27q9kc1PLxOYPW5U8nUtEBaO5aJ8OvVBUDG2DkGSdrGUo1Ntrjqpq60Aoq87YIu5iUrslyQOnPYjZZJTkm0qyncIeP7nYXNWqnm7bG/YUIfcbEKSV0dJmr03U2OAIWk8cYxiBbC4yKpwPL0keOMNBejqaJC8lV2A7BYgKmoxusX2pik+yVbP146+wIgBSTRjaoVxSgQaUmIxt9lrFqs6IiHHR4vPA2QZU52ZnMfd2Tex2ChAVVG1t3F+Z8I+x9Z/+LW1bNpYDQKoJmxs8sabS3gL91d+fI4qMryZSOLRF+sCZHchWS/GF5hMJXCa27RRQA1tsXzK0GpX0A/wusR8AgOSWakJITWVZT3tjogRg9HKXmIxikcLJYJeLNOVtItKy6m1VNRWHlF+mHE3mqIITNoEsRu3HX6UnqO32xv2V6HkCINXJqtbidTpUXa2wL1qMKc8/oJoIC1orrNY5mszRy90o0CLJH7TedvJr5dV60+F6lQTLAUh6qQ6ptftyl2Jx6xKTUbxOk9fjqxW2yJnfGHdomEC1VswTrtu1c/RyN0LUKaPWmaevKRm33mL73ebDDbjyAFJNpO2L8v3QJQVywltPHJNEp4m45llWxd8oVevyeluVAvuqEpPxL0OXoNMk5eLWW2y/k7uCK327NrPlj/B7A0i1XO3Bvx/qaT1xTCYZ2Fug/8t/75E2QYkt+svm/RbjA8/RZEo488NsMga+/UY+Z7i02ymgKjbuP7Lt9DX58rw2Ha7fdvoaGn0DSDWRu95achnQ7drZ0974/VCP5FYamw9cZCsPBh+45LO5QhVc7stdJZK2JampOBT49g/I9075DuHbTn697eTXDLMy+TPIMs95Nh9uQF0WgFQTZUquezqaAt/+ofXEMeZgMHntR+1pbwz8+Rv5elIyxIBt4j4Mg+7K1OfLbDKOXu5yX+4SubXK0WSGRLqnown9FMm66TyaeX5s28mvMwwWIq69SUikt9i+DM/2AEC1pP3fxwt+yh7RuZos9YcDh9zjnkmfx+sT3gG7xGS0Wg5YLcUKPPeDM7M/CBukLaFw0g7MUWBIztz84rB7nGoUR8gtbzYZyy3FYj4e7RJIddvzz2qMKSoJdMyu/HiHaiZV2g6tYsq3+nR+yX9jyfen5XuTAj9k+nbthl8VZRh+o3C7UDGzqqT6wSbwM/inAnMLi4r9yoSfbrc2T/zTXpkLm7a6upram5G5+UX/3YB/6v7c/GLE0zkkfoZC/W7tG8hFSjih1QmNFVr7Ywv/es1F+yT5aYHUY+XHOyuPZpan70RsL9J3aNN25BNCMva8l55fCC83SFL+H/WU5xHgjy6NAAAAAElFTkSuQmCC" alt="Generac PowerPro Elite Dealer" class="logo-gen"></a>
+  </div>
+</div>
+<header>
+  <div class="wrap">
+    <h1>What size generator do you need?</h1>
+    <p>Answer a few quick questions about your property and what you want powered during an outage. You'll get a preliminary standby generator size you can share with our team.</p>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+<form class="card" id="form" novalidate>
+  <div class="hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="botcheck" tabindex="-1" autocomplete="off"></label></div>
+  <div class="progress">
+    <div class="bar"><div id="barFill"></div></div>
+    <div class="stepcount" id="stepCount">Step 1 of 8</div>
+  </div>
+
+  <!-- STEP 0: Welcome -->
+  <section class="step active" data-title="Welcome">
+    <h2>Let's size your backup power</h2>
+    <p class="lead">This takes about 5 minutes. Keep these handy if you can — but "not sure" is always an acceptable answer.</p>
+    <ul class="welcome-list">
+      <li><span class="num">1</span><div><b>Your main electrical panel</b><br><span class="hint">The main breaker size (100A, 200A, etc.) is printed on the large breaker at the top.</span></div></li>
+      <li><span class="num">2</span><div><b>Your heating & cooling equipment</b><br><span class="hint">AC/heat pump tonnage is usually on the outdoor unit's label (e.g., "36" in the model number ≈ 3 tons).</span></div></li>
+      <li><span class="num">3</span><div><b>A mental list of what matters most</b><br><span class="hint">Well pump, sump pump, medical equipment, freezer, home office — whatever you can't go without.</span></div></li>
+    </ul>
+  </section>
+
+  <!-- STEP 1: Contact & property -->
+  <section class="step" data-title="Your property">
+    <h2>About your property</h2>
+    <p class="lead">Just the basics to get started. No contact info needed until you see your results.</p>
+    <div class="grid">
+      <div><label class="f" for="zip">Property ZIP code *</label><input type="text" id="zip" name="zip" required inputmode="numeric" maxlength="5" pattern="[0-9]{5}" autocomplete="postal-code" placeholder="e.g., 12572"></div>
+    </div>
+    <fieldset style="margin-top:20px">
+      <legend>Property type</legend>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="ptype" value="Single-family home" checked><span><b>Single-family home</b></span></label>
+        <label class="opt"><input type="radio" name="ptype" value="Second / vacation home"><span><b>Second / vacation home</b></span></label>
+        <label class="opt"><input type="radio" name="ptype" value="Small business / commercial"><span><b>Small business</b><small>Office, shop, farm, etc.</small></span></label>
+      </div>
+    </fieldset>
+    <div class="grid">
+      <div><label class="f" for="sqft">Approx. finished square footage *</label><input type="number" id="sqft" name="sqft" min="300" max="30000" step="50" required placeholder="e.g., 2400"></div>
+      <div><label class="f" for="outages">How often do you lose power?</label>
+        <select id="outages" name="outages">
+          <option>A few times a year</option><option>Monthly or more</option><option>Rarely, but outages last days</option><option>Rarely — want peace of mind</option>
+        </select></div>
+    </div>
+  </section>
+
+  <!-- STEP 2: Utility & fuel -->
+  <section class="step" data-title="Service & fuel">
+    <h2>Electrical service & fuel</h2>
+    <p class="lead">These determine the transfer switch and fuel setup.</p>
+    <fieldset>
+      <legend>Main electrical service size</legend>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="service" value="100"><span><b>100 amp</b></span></label>
+        <label class="opt"><input type="radio" name="service" value="150"><span><b>150 amp</b></span></label>
+        <label class="opt"><input type="radio" name="service" value="200" checked><span><b>200 amp</b><small>Most common</small></span></label>
+        <label class="opt"><input type="radio" name="service" value="400"><span><b>320 / 400 amp</b></span></label>
+        <label class="opt"><input type="radio" name="service" value="unknown"><span><b>Not sure</b></span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>What fuel is available at the property?</legend>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="fuel" value="ng" checked><span><b>Natural gas</b><small>Utility gas line & meter</small></span></label>
+        <label class="opt"><input type="radio" name="fuel" value="lp"><span><b>Propane (existing tank)</b></span></label>
+        <label class="opt"><input type="radio" name="fuel" value="lpnew"><span><b>Propane — need a tank</b><small>No gas service today</small></span></label>
+        <label class="opt"><input type="radio" name="fuel" value="unknown"><span><b>Not sure</b></span></label>
+      </div>
+    </fieldset>
+  </section>
+
+  <!-- STEP 3: Coverage goal -->
+  <section class="step" data-title="Coverage">
+    <h2>How much of the property do you want powered?</h2>
+    <p class="lead">This is the biggest factor in generator size and cost.</p>
+    <fieldset>
+      <div class="opts big">
+        <label class="opt"><input type="radio" name="goal" value="essential"><span><b>Essentials only</b><small>Keep the critical stuff running: fridge, heat, well/sump pump, lights and outlets in key rooms, internet, medical equipment. Smallest and most affordable.</small></span></label>
+        <label class="opt"><input type="radio" name="goal" value="managed" checked><span><b>Whole home, with smart load management</b><small>Everything stays available. Big appliances (dryer, range, water heater, second AC, EV charger) are automatically paused for a moment when the generator is busy. Best value for most homes.</small></span></label>
+        <label class="opt"><input type="radio" name="goal" value="full"><span><b>Whole home, no compromises</b><small>Run everything at the same time, just like utility power. Largest generator.</small></span></label>
+      </div>
+    </fieldset>
+    <div class="sub" id="essExtras">
+      <legend style="font-weight:700;margin-bottom:8px">Also include in your essentials (optional):</legend>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" name="ess_ac" value="1"><span><b>Air conditioning</b></span></label>
+        <label class="opt"><input type="checkbox" name="ess_wh" value="1"><span><b>Electric water heater</b></span></label>
+        <label class="opt"><input type="checkbox" name="ess_cook" value="1"><span><b>Electric cooking</b></span></label>
+        <label class="opt"><input type="checkbox" name="ess_dryer" value="1"><span><b>Electric dryer</b></span></label>
+        <label class="opt"><input type="checkbox" name="ess_elheat" value="1"><span><b>Electric heat</b><small>Heat pump / baseboard</small></span></label>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 4: Heating & cooling -->
+  <section class="step" data-title="Heating & cooling">
+    <h2>Heating & cooling</h2>
+    <p class="lead">Motors and compressors drive generator size — especially at startup.</p>
+    <fieldset>
+      <legend>Primary heating system</legend>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="heat" value="furnace" checked><span><b>Gas / oil / propane furnace</b><small>Forced hot air</small></span></label>
+        <label class="opt"><input type="radio" name="heat" value="boiler"><span><b>Boiler</b><small>Baseboard, radiators, radiant</small></span></label>
+        <label class="opt"><input type="radio" name="heat" value="heatpump"><span><b>Heat pump</b><small>Ducted or ductless</small></span></label>
+        <label class="opt"><input type="radio" name="heat" value="electric"><span><b>Electric baseboard / furnace</b></span></label>
+        <label class="opt"><input type="radio" name="heat" value="other"><span><b>Wood / pellet / other</b></span></label>
+      </div>
+    </fieldset>
+    <div class="sub" id="hpSub">
+      <div class="grid">
+        <div><label class="f" for="hpTons">Heat pump total tonnage <span class="hint">(1 ton ≈ 12,000 BTU)</span></label>
+          <select id="hpTons" name="hpTons"><option value="1.5">1.5 ton</option><option value="2">2 ton</option><option value="3" selected>3 ton</option><option value="4">4 ton</option><option value="5">5 ton</option><option value="6">6+ ton / multiple</option></select></div>
+        <div><label class="f" for="hpType">Compressor type</label>
+          <select id="hpType" name="hpType"><option value="inverter">Variable-speed / inverter (most newer units)</option><option value="single">Single- or two-stage</option><option value="unknown">Not sure</option></select></div>
+        <div class="full"><label class="f" for="hpAux">Backup electric heat strips</label>
+          <select id="hpAux" name="hpAux"><option value="0">None / not sure</option><option value="5">5 kW</option><option value="10" selected>10 kW</option><option value="15">15 kW</option><option value="20">20 kW</option></select></div>
+      </div>
+    </div>
+    <div class="sub" id="elSub">
+      <label class="f" for="elKw">Approx. total electric heat <span class="hint">(baseboards are typically 250 W per foot; a 6 ft unit ≈ 1.5 kW)</span></label>
+      <select id="elKw" name="elKw"><option value="5">Under 5 kW</option><option value="10" selected>5–10 kW</option><option value="15">10–15 kW</option><option value="20">15–20 kW</option><option value="30">20 kW+</option></select>
+      <label class="f" for="elType" style="margin-top:14px">How is it controlled?</label>
+      <select id="elType" name="elType"><option value="units4" selected>4 or more thermostats / zones</option><option value="units3">1–3 thermostats / zones</option><option value="central">One central electric furnace or boiler</option></select>
+    </div>
+
+    <fieldset>
+      <legend>Central air conditioning <span class="hint">(skip if your heat pump provides cooling)</span></legend>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="ac" value="0" checked><span><b>None</b></span></label>
+        <label class="opt"><input type="radio" name="ac" value="1"><span><b>1 system</b></span></label>
+        <label class="opt"><input type="radio" name="ac" value="2"><span><b>2 systems</b></span></label>
+        <label class="opt"><input type="radio" name="ac" value="3"><span><b>3+ systems</b></span></label>
+      </div>
+    </fieldset>
+    <div class="sub" id="acSub">
+      <div class="grid">
+        <div><label class="f" for="acTons">Size of the <u>largest</u> AC unit</label>
+          <select id="acTons" name="acTons"><option value="1.5">1.5 ton</option><option value="2">2 ton</option><option value="2.5">2.5 ton</option><option value="3" selected>3 ton</option><option value="3.5">3.5 ton</option><option value="4">4 ton</option><option value="5">5 ton</option></select></div>
+        <div><label class="f" for="acSoft">Soft-start kit installed?</label>
+          <select id="acSoft" name="acSoft"><option value="no">No / not sure</option><option value="yes">Yes</option><option value="inverter">Unit is variable-speed / inverter</option></select></div>
+        <div class="full" id="acOtherWrap"><label class="f" for="acTons2">Size of the other AC unit(s), combined</label>
+          <select id="acTons2" name="acTons2"><option value="1.5">1.5 ton</option><option value="2" selected>2 ton</option><option value="3">3 ton</option><option value="4">4 ton</option><option value="6">5+ ton</option></select></div>
+      </div>
+    </div>
+    <div class="grid">
+      <div><label class="f" for="splits">Ductless mini-split heads <span class="hint">(not part of a heat pump above)</span></label>
+        <select id="splits" name="splits"><option value="0">None</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4+</option></select></div>
+      <div><label class="f" for="windowAc">Window / portable AC units</label>
+        <select id="windowAc" name="windowAc"><option value="0">None</option><option value="1">1</option><option value="2">2</option><option value="3">3+</option></select></div>
+    </div>
+  </section>
+
+  <!-- STEP 5: Water -->
+  <section class="step" data-title="Water">
+    <h2>Water & plumbing</h2>
+    <p class="lead">Pumps are often the #1 reason clients want a generator.</p>
+    <fieldset>
+      <legend>Well pump</legend>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="well" value="0" checked><span><b>No well</b><small>Municipal water</small></span></label>
+        <label class="opt"><input type="radio" name="well" value="0.5"><span><b>½ HP</b></span></label>
+        <label class="opt"><input type="radio" name="well" value="0.75"><span><b>¾ HP</b></span></label>
+        <label class="opt"><input type="radio" name="well" value="1"><span><b>1 HP</b></span></label>
+        <label class="opt"><input type="radio" name="well" value="1.5"><span><b>1½ HP</b></span></label>
+        <label class="opt"><input type="radio" name="well" value="2"><span><b>2 HP+</b></span></label>
+        <label class="opt"><input type="radio" name="well" value="unk"><span><b>Have a well, size unknown</b></span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Sump pump(s)</legend>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="sump" value="0" checked><span><b>None</b></span></label>
+        <label class="opt"><input type="radio" name="sump" value="1"><span><b>1 pump</b></span></label>
+        <label class="opt"><input type="radio" name="sump" value="2"><span><b>2+ pumps</b></span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Water heater</legend>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="wh" value="fuel" checked><span><b>Gas / oil / propane</b><small>Or heated by boiler</small></span></label>
+        <label class="opt"><input type="radio" name="wh" value="tank"><span><b>Electric tank</b></span></label>
+        <label class="opt"><input type="radio" name="wh" value="hpwh"><span><b>Heat pump water heater</b></span></label>
+        <label class="opt"><input type="radio" name="wh" value="tankless"><span><b>Electric tankless</b><small>Whole-house, on-demand</small></span></label>
+      </div>
+    </fieldset>
+    <div class="grid">
+      <div><label class="f" for="septic">Septic / grinder / ejector pump?</label>
+        <select id="septic" name="septic"><option value="0">No</option><option value="1">Yes</option></select></div>
+      <div><label class="f" for="treat">Water treatment (softener, UV, filter)?</label>
+        <select id="treat" name="treat"><option value="0">No</option><option value="1">Yes</option></select></div>
+    </div>
+  </section>
+
+  <!-- STEP 6: Appliances -->
+  <section class="step" data-title="Appliances">
+    <h2>Kitchen, laundry & everything else</h2>
+    <p class="lead">Check what's at the property.</p>
+    <div class="grid">
+      <div><label class="f" for="range">Cooking</label>
+        <select id="range" name="range"><option value="gas">Gas / propane range</option><option value="elec">Electric range / cooktop</option><option value="induction">Induction cooktop</option></select></div>
+      <div><label class="f" for="dryer">Clothes dryer</label>
+        <select id="dryer" name="dryer"><option value="gas">Gas / propane</option><option value="elec" selected>Electric</option><option value="none">None</option></select></div>
+      <div><label class="f" for="fridges">Refrigerators</label>
+        <select id="fridges" name="fridges"><option value="1">1</option><option value="2">2</option><option value="3">3+</option></select></div>
+      <div><label class="f" for="freezers">Standalone freezers</label>
+        <select id="freezers" name="freezers"><option value="0">None</option><option value="1">1</option><option value="2">2+</option></select></div>
+    </div>
+    <fieldset style="margin-top:20px">
+      <legend>Other loads <span class="hint">(select all that apply)</span></legend>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" name="micro" value="1" checked><span><b>Microwave</b></span></label>
+        <label class="opt"><input type="checkbox" name="dish" value="1" checked><span><b>Dishwasher</b></span></label>
+        <label class="opt"><input type="checkbox" name="office" value="1"><span><b>Home office / network</b><small>Computers, Wi-Fi, servers</small></span></label>
+        <label class="opt"><input type="checkbox" name="medical" value="1"><span><b>Medical equipment</b><small>Oxygen, CPAP, lift chair</small></span></label>
+        <label class="opt"><input type="checkbox" name="pool" value="1"><span><b>Pool pump</b></span></label>
+        <label class="opt"><input type="checkbox" name="spa" value="1"><span><b>Hot tub / spa</b></span></label>
+        <label class="opt"><input type="checkbox" name="shop" value="1"><span><b>Workshop / air compressor</b></span></label>
+        <label class="opt"><input type="checkbox" name="smart" value="1"><span><b>Security / smart home</b><small>Cameras, alarm, hubs</small></span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Electric vehicle charging</legend>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="ev" value="0" checked><span><b>None</b></span></label>
+        <label class="opt"><input type="radio" name="ev" value="16"><span><b>Level 1 / small</b><small>Up to 16A</small></span></label>
+        <label class="opt"><input type="radio" name="ev" value="32"><span><b>Level 2 — 32–40A</b></span></label>
+        <label class="opt"><input type="radio" name="ev" value="48"><span><b>Level 2 — 48A+</b></span></label>
+      </div>
+    </fieldset>
+    <div id="commWrap" style="display:none">
+      <label class="f" for="extraKw">Other critical business loads <span class="hint">(kW, if known — refrigeration, POS, machinery)</span></label>
+      <input type="number" id="extraKw" name="extraKw" min="0" step="0.5" placeholder="e.g., 5">
+    </div>
+    <div style="margin-top:18px"><label class="f" for="comments">Anything else we should know?</label>
+      <textarea id="comments" name="comments" rows="3" placeholder="Preferred generator location, existing generator, timeline, questions…"></textarea></div>
+  </section>
+
+  <!-- STEP 7: Results -->
+  <section class="step" data-title="Results" id="resultsStep">
+    <h2>Your preliminary sizing</h2>
+    <p class="lead" id="resultLead"></p>
+    <div class="result-hero">
+      <div>
+        <div class="label">Recommended standby generator</div>
+        <div class="kw" id="recKw">—</div>
+        <div id="recClass" style="color:#c9d5e3;margin-top:6px;font-size:14px"></div>
+        <div id="recMin" class="rec-min"></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><span>NEC 220.82 calculated load</span><b id="sRun">—</b></div>
+        <div class="stat"><span>Motor-starting check</span><b id="sSurge">—</b></div>
+        <div class="stat"><span>Required capacity</span><b id="sReq">—</b></div>
+        <div class="stat"><span>Transfer switch</span><b id="sAts">—</b></div>
+      </div>
+    </div>
+    <ul class="notes" id="notes"></ul>
+
+    <div class="breakdown locked" id="breakdown">
+      <h3 style="margin:26px 0 0">NEC load calculation</h3>
+      <div class="lock-wrap">
+        <div class="hint" style="margin:4px 0 0">2023 NEC Article 220, Part IV: 220.82 Optional Calculation, applied to the loads the generator must carry per 702.4(A)(2)</div>
+        <table class="nec-table">
+          <tbody id="necTable"></tbody>
+        </table>
+        <h3 style="margin:22px 0 0">Load breakdown</h3>
+        <table>
+          <thead><tr><th>Load</th><th class="r">NEC VA</th><th class="r">Startup W</th></tr></thead>
+          <tbody id="loadTable"></tbody>
+        </table>
+        <div class="lock-overlay"><div><b>🔒 Your full load breakdown &amp; PDF report are ready</b><br><span class="hint">Enter your name and email below to unlock them. It's free.</span><br><button type="button" class="btn-s jump" style="margin-top:10px;padding:8px 16px">Unlock my report ↓</button></div></div>
+      </div>
+    </div>
+
+    <div class="cta" id="schedule">
+      <h3>Book a free consultation, or get your full report</h3>
+      <div>Want us to confirm the size in person? Add your address and a preferred time and we'll reach out. Not ready yet? Your detailed load breakdown and PDF report are free.</div>
+      <div class="grid">
+        <div><label class="f" for="name">Full name *</label><input type="text" id="name" name="name" autocomplete="name"></div>
+        <div><label class="f" for="email">Email *</label><input type="email" id="email" name="email" autocomplete="email" inputmode="email"></div>
+        <div class="full"><label class="f" for="phone">Mobile phone <span class="hint">(needed to schedule, so we can confirm your appointment)</span></label><input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="(845) 555-1234"></div>
+      </div>
+
+      <div class="privacy"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5zm-1.5 14.5-4-4 1.4-1.4 2.6 2.6 5.6-5.6 1.4 1.4z" fill="currentColor"/></svg><div><b>We take your privacy seriously.</b> Your information will not be shared with any other parties for any purpose outside of this project request without your consent.</div></div>
+
+      <div class="sub-h">📅 Schedule a free on-site consultation</div>
+
+
+
+      <div class="grid">
+        <div class="full"><label class="f" for="address">Service address <span class="hint">(needed to schedule, so we can check gas service &amp; placement)</span></label><input type="text" id="address" name="address" autocomplete="address-line1" placeholder="Street address"></div>
+        <div><label class="f" for="town">Town</label><input type="text" id="town" name="town" autocomplete="address-level2" placeholder="e.g., Rhinebeck"></div>
+        <div><label class="f" for="schedDate">Requested date <span class="hint" id="dateHint">(at least 6 business days out)</span></label><input type="date" id="schedDate" name="schedDate"></div>
+      </div>
+      <fieldset style="margin:0">
+        <legend style="font-size:14px">Preferred days</legend>
+        <div class="opts days">
+          <label class="opt"><input type="checkbox" name="d_Mon"><span><b>Mon</b></span></label>
+          <label class="opt"><input type="checkbox" name="d_Tue"><span><b>Tue</b></span></label>
+          <label class="opt"><input type="checkbox" name="d_Wed"><span><b>Wed</b></span></label>
+          <label class="opt"><input type="checkbox" name="d_Thu"><span><b>Thu</b></span></label>
+          <label class="opt"><input type="checkbox" name="d_Fri"><span><b>Fri</b></span></label>
+          <label class="opt"><input type="checkbox" name="d_Sat"><span><b>Sat*</b></span></label>
+        </div>
+        <div class="hint" style="margin-top:6px">*Saturday appointments are limited and subject to availability.</div>
+      </fieldset>
+      <div class="grid">
+        <fieldset style="margin:0">
+          <legend style="font-size:14px">Preferred time</legend>
+          <div class="opts days">
+            <label class="opt"><input type="checkbox" name="t_Morning"><span><b>Morning</b><small>8–11</small></span></label>
+            <label class="opt"><input type="checkbox" name="t_Midday"><span><b>Midday</b><small>11–2</small></span></label>
+            <label class="opt"><input type="checkbox" name="t_Afternoon"><span><b>Afternoon</b><small>2–5</small></span></label>
+          </div>
+        </fieldset>
+        <div><label class="f" for="contactPref">Best way to reach you</label>
+          <select id="contactPref" name="contactPref"><option>Phone call</option><option>Email</option></select></div>
+      </div>
+
+      <a class="send-btn" id="sendBtn" href="#" target="_blank" rel="noopener">
+        <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2zM5 9h14v11H5zm2 2v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2z" fill="currentColor"/></svg>
+        Send my load calc to ElectricAce &amp; schedule a consultation!
+      </a>
+
+      <div class="or"><span>Not ready to schedule? Just get your free report</span></div>
+      <button type="button" class="report-btn" id="reportBtn"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v15H6zM14 3.5V8h4.5M9 13h8M9 17h8M9 9h3" fill="none" stroke="currentColor" stroke-width="2"/></svg> Get my full report (free)</button>
+
+      <div class="send-err" id="sendErr"></div>
+      <div class="sent-note sent-ok" id="sentOk">
+        <div style="font-size:17px"><b id="okTitle">✅ Request sent!</b></div>
+        <div id="okBody"></div>
+        <div id="okNext" style="margin-top:10px;padding-top:10px;border-top:1px solid #b6e6cf">
+          <b>📞 What happens next:</b> Thanks! We've got your preferred date and time. Your appointment isn't final yet: a member of our office team will give you a call to make sure that time slot is open and lock in your consultation.
+        </div>
+      </div>
+      <div class="sent-note" id="sentNote">
+        <b>Almost done!</b> We couldn't send your request automatically, so your email app should open with everything filled in. Just hit <b>Send</b>.
+        Didn't open? <a id="mailLink" href="#" target="_blank" rel="noopener">Click here to email it</a>, or email <b id="emailShow"></b>.
+        <div class="diag" id="sendDiag"></div>
+      </div>
+
+
+      <div class="fine">By submitting, you agree that ElectricAce may contact you by phone or email about your request.</div>
+      <div class="contact-bar">
+        <div class="contact-q">Questions? We're happy to help.</div>
+        <div class="contact-num">845.299.9635</div>
+        <div class="contact-btns">
+          <div class="cb">
+            <a class="contact-btn" href="tel:+18452999635" aria-label="Call ElectricAce at 845-299-9635"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="currentColor"/></svg> Call us</a>
+            <div class="resp">~1 business day response</div>
+          </div>
+          <div class="cb">
+            <a class="contact-btn" id="smsBtn" href="sms:+18452999635?body=I%27m%20on%20your%20generator%20sizing%20page%20and%20%28insert%20your%20question%20here%29" aria-label="Text ElectricAce at 845-299-9635"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 1-2zm3 6v2h2V9zm4 0v2h2V9zm4 0v2h2V9z" fill="currentColor"/></svg> Text us</a>
+            <div class="resp fast">~5 minute response</div>
+          </div>
+          <div class="cb">
+            <button type="button" class="contact-btn" id="emailUsBtn" aria-expanded="false"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm1 2.2V17h16V7.2l-8 5.3-8-5.3zM5.4 7l6.6 4.4L18.6 7H5.4z" fill="currentColor"/></svg> Email us</button>
+            <div class="resp">Includes your load calc</div>
+          </div>
+        </div>
+        <div class="email-panel" id="emailPanel">
+          <div style="font-weight:800;margin-bottom:8px">📧 Email us your question, with your load calc</div>
+          <div class="ep-step"><span class="num">1</span><div><button type="button" class="btn-s" id="emailPdfBtn">⬇ Save my load calc (PDF)</button><div class="hint" id="emailPdfHint">Saves to your Downloads (or Files on a phone).</div></div></div>
+          <div class="ep-step"><span class="num">2</span><div><a class="btn-p ep-open" id="emailOpenLink" href="#" target="_blank" rel="noopener">Open email to ElectricAce</a><div class="hint">Your results are already in the message. Just attach the PDF you saved and add your question.</div></div></div>
+        </div>
+      </div>
+      <textarea class="summary" id="summaryBox" readonly></textarea>
+    </div>
+    <p class="disclaimer">This is a preliminary estimate using the 2023 NEC Article 220, Part IV (220.82 Optional Calculation) and NEC 702.4, with typical nameplate ratings. Final generator and transfer switch sizing requires an on-site load calculation and inspection of your equipment by a licensed electrician, in accordance with the NEC and manufacturer requirements. Natural gas output is typically lower than propane output for the same generator.</p>
+  </section>
+
+  <div class="err" id="err">Please fill in the required fields.</div>
+  <div class="nav">
+    <button type="button" class="btn-s" id="backBtn" style="visibility:hidden">← Back</button>
+    <button type="button" class="btn-p" id="nextBtn">Get started →</button>
+  </div>
+</form>
+</div>
+</main>
+<footer>ElectricAce · Hudson Valley residential & commercial electrical · Generac PowerPro Elite Dealer</footer>
+
+<script>
+/* Embedded mode: when shown in an iframe on electricace.com, hide our own chrome
+   and tell the host page our height and where to scroll. */
+var EA_EMBED = false; try{ EA_EMBED = window.self !== window.top; }catch(e){ EA_EMBED = true; }
+function eaToParent(msg){ try{ window.parent.postMessage(msg, '*'); }catch(e){} }
+if(EA_EMBED){
+  document.documentElement.classList.add('embedded');
+  var eaSendH = function(){ eaToParent({type:'ea-form-height', height: Math.ceil(document.body.getBoundingClientRect().height)}); };
+  try{ new ResizeObserver(eaSendH).observe(document.body); }catch(e){ setInterval(eaSendH, 800); }
+  window.addEventListener('load', eaSendH); setTimeout(eaSendH, 300);
+}
+</script>
+<script>
+(function(){
+  const form = document.getElementById('form');
+  const steps = [...document.querySelectorAll('.step')];
+  const nextBtn = document.getElementById('nextBtn');
+  const backBtn = document.getElementById('backBtn');
+  const err = document.getElementById('err');
+  let cur = 0, first = true;
+  const STORE = 'ea-gen-sizing-v1';
+  const startedAt = Date.now();
+
+  // ---------- helpers ----------
+  const val = n => { const el = form.elements[n]; if(!el) return ''; if(el instanceof RadioNodeList) return el.value; if(el.type==='checkbox') return el.checked; return el.value; };
+  const chk = n => !!(form.elements[n] && form.elements[n].checked);
+  const fmt = w => Math.round(w).toLocaleString() + ' W';
+  const kw = w => (w/1000).toFixed(1) + ' kW';
+
+  // ---------- conditional sections ----------
+  function updateConditional(){
+    const heat = val('heat');
+    document.getElementById('hpSub').classList.toggle('show', heat==='heatpump');
+    document.getElementById('elSub').classList.toggle('show', heat==='electric');
+    const ac = +val('ac');
+    document.getElementById('acSub').classList.toggle('show', ac>0);
+    document.getElementById('acOtherWrap').style.display = ac>1 ? '' : 'none';
+    document.getElementById('essExtras').classList.toggle('show', val('goal')==='essential');
+    document.getElementById('commWrap').style.display = val('ptype').startsWith('Small business') ? '' : 'none';
+  }
+  form.addEventListener('change', ()=>{ updateConditional(); save(); });
+  form.addEventListener('input', save);
+
+  // ---------- persistence (best effort) ----------
+  function save(){
+    try{
+      const d = {};
+      [...form.elements].forEach(el=>{
+        if(!el.name) return;
+        if(el.type==='radio'){ if(el.checked) d[el.name]=el.value; }
+        else if(el.type==='checkbox'){ d[el.name]=el.checked; }
+        else d[el.name]=el.value;
+      });
+      localStorage.setItem(STORE, JSON.stringify(d));
+    }catch(e){}
+  }
+  function load(){
+    try{
+      const d = JSON.parse(localStorage.getItem(STORE)||'null'); if(!d) return;
+      [...form.elements].forEach(el=>{
+        if(!el.name || !(el.name in d)) return;
+        if(el.type==='radio') el.checked = (el.value===d[el.name]);
+        else if(el.type==='checkbox') el.checked = !!d[el.name];
+        else el.value = d[el.name];
+      });
+    }catch(e){}
+  }
+
+  // ---------- navigation ----------
+  function show(i){
+    steps.forEach((s,k)=>s.classList.toggle('active',k===i));
+    cur = i;
+    document.getElementById('barFill').style.width = (i/(steps.length-1)*100)+'%';
+    document.getElementById('stepCount').textContent = `Step ${i+1} of ${steps.length} · ${steps[i].dataset.title}`;
+    backBtn.style.visibility = i===0 ? 'hidden' : 'visible';
+    nextBtn.style.display = i===steps.length-1 ? 'none' : '';
+    nextBtn.textContent = i===0 ? 'Get started →' : (i===steps.length-2 ? 'See my results →' : 'Next →');
+    err.style.display='none';
+    if(i===steps.length-1) compute();
+    if(!first){ if(EA_EMBED) eaToParent({type:'ea-form-top'}); else window.scrollTo({top:0,behavior:'smooth'}); } first=false;
+  }
+  function validate(i){
+    let ok = true;
+    steps[i].querySelectorAll('[required]').forEach(el=>{
+      const bad = !el.value.trim() || (el.type==='number' && (+el.value<300)) || (el.name==='zip' && !/^\d{5}$/.test(el.value.trim()));
+      el.classList.toggle('invalid', bad);
+      if(bad) ok=false;
+    });
+    err.style.display = ok?'none':'block';
+    return ok;
+  }
+  nextBtn.onclick = ()=>{ if(validate(cur)) show(cur+1); };
+  backBtn.onclick = ()=> show(cur-1);
+  form.addEventListener('submit', e=>e.preventDefault());
+
+  // ---------- sizing engine ----------
+  // Each load carries two sets of numbers:
+  //   va  = nameplate VA used in the 2023 NEC 220.82 Optional Calculation
+  //   nec = 'general' | 'appl' (220.82(B)(3)/(4)) | 'ac' | 'hp' | 'supp' | 'eheat' (220.82(C)) | 'gen' (served by general-load circuits)
+  //   run / start = typical running watts and extra inrush watts, used for the motor-starting check
+  // Motor VA values use NEC Table 430.248 full-load currents.
+  const WELL = {0.5:[1000,2400,1127],0.75:[1500,3400,1587],1:[2000,4300,1840],1.5:[2600,5500,2300],2:[3300,7000,2760],unk:[2000,4300,1840]};
+
+  function generalLoad(goal, sqft){
+    if(goal==='essential'){
+      const area = Math.round(sqft/3);
+      return {va: area*3 + 1500, label:`Key-room lighting & receptacles: 3 VA/sq ft × ${area.toLocaleString()} sq ft (⅓ of home) + 1 small-appliance circuit (1,500 VA)`};
+    }
+    return {va: sqft*3 + 2*1500 + 1500, label:`General lighting & receptacles: 3 VA/sq ft × ${sqft.toLocaleString()} sq ft + 2 small-appliance circuits + 1 laundry circuit (1,500 VA each) [220.82(B)(1)–(2)]`};
+  }
+
+  function buildLoads(){
+    const L = [];
+    const goal = val('goal');
+    const sqft = Math.max(300, +val('sqft')||2000);
+    const add = (name, run, start, cat, ess, va, nec) => L.push({name, run, start:start||0, cat:cat||'core', ess:!!ess, va:va||0, nec:nec||'appl'});
+
+    const g = generalLoad(goal, sqft);
+    add(g.label, goal==='essential' ? 2000 : Math.min(1500 + sqft*0.6, 9000), 0, 'core', true, g.va, 'general');
+
+    // Heating
+    const heat = val('heat');
+    if(heat==='furnace') add('Furnace blower motor (½ HP)', 800, 1200, 'core', true, 1176, 'appl');
+    if(heat==='boiler') add('Boiler burner & circulators', 450, 400, 'core', true, 600, 'appl');
+    if(heat==='heatpump'){
+      const t = +val('hpTons'); const run = t*1100; const type = val('hpType');
+      const start = type==='inverter' ? 0 : run*2.2;
+      add(`Heat pump compressor (${t} ton, ${type==='inverter'?'inverter':'standard compressor'})`, run, start, 'core', chk('ess_elheat'), t*1400, 'hp');
+      const aux = +val('hpAux');
+      if(aux>0) add(`Heat pump supplemental heat strips (${aux} kW)`, aux*1000, 0, 'shed', false, aux*1000, 'supp');
+    }
+    if(heat==='electric'){
+      const k=+val('elKw'); const et = val('elType');
+      const how = et==='central' ? 'central furnace/boiler' : et==='units3' ? '1–3 separately controlled units' : '4+ separately controlled units';
+      add(`Electric space heat (~${k} kW, ${how})`, k*1000, 0, 'core', chk('ess_elheat'), k*1000, 'eheat');
+    }
+
+    // Cooling
+    const ac = +val('ac');
+    if(ac>0){
+      const t = +val('acTons'); const run = t*1100; const soft = val('acSoft');
+      const mult = soft==='yes' ? 0.9 : soft==='inverter' ? 0 : 2.6;
+      add(`Central AC #1 (${t} ton${soft==='yes'?', soft-start':soft==='inverter'?', inverter':''})`, run, run*mult, 'core', chk('ess_ac'), t*1400, 'ac');
+      if(ac>1){ const t2=+val('acTons2'); add(`Additional central AC (${t2} ton combined)`, t2*1100, t2*1100*1.8, 'shed', false, t2*1400, 'ac'); }
+    }
+    const splits = +val('splits'); if(splits) add(`Ductless mini-split heat pumps (${splits})`, splits*900, 0, 'core', chk('ess_ac'), splits*1000, 'hp');
+    const wac = +val('windowAc'); if(wac) add(`Window / portable AC (${wac})`, wac*1000, wac*1000, 'core', chk('ess_ac'), wac*1000, 'ac');
+
+    // Water
+    const well = val('well'); if(well!=='0'){ const w = WELL[well]; add(`Well pump (${well==='unk'?'size unknown, assumed 1 HP':well+' HP'})`, w[0], w[1], 'core', true, w[2], 'appl'); }
+    const sump = +val('sump'); if(sump) add(`Sump pump${sump>1?'s (2)':''} (½ HP)`, sump*800, 1300, 'core', true, sump*1176, 'appl');
+    if(val('septic')==='1') add('Septic / ejector pump (½ HP)', 1000, 1800, 'core', true, 1176, 'appl');
+    if(val('treat')==='1') add('Water treatment', 150, 0, 'core', true, 150, 'appl');
+    const wh = val('wh');
+    if(wh==='tank') add('Electric water heater', 4500, 0, 'shed', chk('ess_wh'), 4500, 'appl');
+    if(wh==='hpwh') add('Heat pump water heater (with backup element)', 4500, 0, 'shed', chk('ess_wh'), 4500, 'appl');
+    if(wh==='tankless') add('Electric tankless water heater', 24000, 0, 'shed', chk('ess_wh'), 24000, 'appl');
+
+    // Kitchen & laundry
+    const fr = +val('fridges'); add(`Refrigerator${fr>1?'s ('+fr+')':''}`, fr*700, 1200, 'core', true, 0, 'gen');
+    const fz = +val('freezers'); if(fz) add(`Freezer${fz>1?'s (2)':''}`, fz*500, 900, 'core', true, fz*600, 'appl');
+    const rg = val('range');
+    if(rg==='elec') add('Electric range / oven', 5000, 0, 'shed', chk('ess_cook'), 12000, 'appl');
+    if(rg==='induction') add('Induction cooktop / range', 6000, 0, 'shed', chk('ess_cook'), 12000, 'appl');
+    if(val('dryer')==='elec') add('Electric dryer', 5000, 0, 'shed', chk('ess_dryer'), 5000, 'appl');
+    if(chk('micro')) add('Microwave (built-in, dedicated circuit)', 1200, 0, 'core', true, 1500, 'appl');
+    if(chk('dish')) add('Dishwasher', 1500, 0, 'core', false, 1200, 'appl');
+
+    // Other
+    if(chk('office')) add('Home office / network', 500, 0, 'core', true, 0, 'gen');
+    if(chk('medical')) add('Medical equipment', 600, 0, 'core', true, 0, 'gen');
+    if(chk('smart')) add('Security / smart home', 200, 0, 'core', true, 0, 'gen');
+    if(chk('pool')) add('Pool pump (1½ HP)', 2000, 2500, 'shed', false, 2300, 'appl');
+    if(chk('spa')) add('Hot tub / spa', 5500, 0, 'shed', false, 7500, 'appl');
+    if(chk('shop')) add('Workshop / air compressor (2 HP)', 2000, 3500, 'shed', false, 2760, 'appl');
+    const ev = +val('ev'); if(ev) add(`EV charger (${ev}A)`, ev*240, 0, 'shed', false, ev*240, 'appl');
+    const xk = +val('extraKw'); if(val('ptype').startsWith('Small business') && xk>0) add('Other critical business loads', xk*1000, xk*1000*0.5, 'core', true, xk*1000, 'appl');
+    return L;
+  }
+
+  // 2023 NEC 220.82 Optional Calculation on a set of loads
+  function necCalc(set){
+    const sum = f => set.filter(f).reduce((a,l)=>a+l.va,0);
+    const general = sum(l=>l.nec==='general');
+    const appl = sum(l=>l.nec==='appl');
+    const B = general + appl;
+    const demandB = Math.min(B,10000) + 0.4*Math.max(0,B-10000);
+    const acVA = sum(l=>l.nec==='ac'||l.nec==='hp');
+    const hpVA = sum(l=>l.nec==='hp');
+    const suppVA = sum(l=>l.nec==='supp');
+    const eheatVA = sum(l=>l.nec==='eheat');
+    const et = val('elType');
+    const opts = [['220.82(C)(1): 100% of A/C & cooling equipment', acVA]];
+    if(hpVA || suppVA){
+      opts.push(suppVA ? ['220.82(C)(3): 100% heat pump compressor + 65% supplemental heat', hpVA + 0.65*suppVA]
+                       : ['220.82(C)(2): 100% heat pump compressors, no supplemental heat', hpVA]);
+    }
+    if(eheatVA){
+      opts.push(et==='units4' ? ['220.82(C)(5): 40% of electric space heat, 4+ separately controlled units', 0.4*eheatVA]
+                              : ['220.82(C)(4): 65% of electric space heat, fewer than 4 separately controlled units', 0.65*eheatVA]);
+    }
+    const hv = opts.reduce((m,o)=> o[1]>m[1] ? o : m, opts[0]);
+    const hvac = hv[1] > 0 ? hv : ['220.82(C): no electric heating or A/C on backup', 0];
+    const total = demandB + hvac[1];
+    return {general, appl, B, demandB, hvacLabel:hvac[0], hvac:hvac[1], total, amps: total/240};
+  }
+
+  // Generator sizes: [nameplate LP kW, approx NG kW, class]
+  const SIZES = [
+    [10, 9, 'air'],[14, 13, 'air'],[18, 17, 'air'],[22, 19.5, 'air'],[24, 21, 'air'],[26, 22.5, 'air'],[28, 26, 'air'],
+    [32, 30, 'liquid'],[38, 36, 'liquid'],[48, 45, 'liquid'],[60, 56, 'liquid']
+  ];
+
+  function compute(){
+    const goal = val('goal');
+    const fuel = val('fuel');
+    const service = val('service');
+    const L = buildLoads();
+
+    // decide which loads count
+    let counted = [], shedPool = [], excluded = [];
+    L.forEach(l=>{
+      if(goal==='essential'){ (l.ess ? counted : excluded).push(l); }
+      else if(goal==='managed'){ (l.cat==='shed' ? shedPool : counted).push(l); }
+      else counted.push(l);
+    });
+
+    // NEC load set per 702.4(A)(2): full automatic load, or the maximum the load-management system will connect
+    let necSet, mgdCounted = null;
+    if(goal==='managed'){
+      mgdCounted = shedPool.reduce((m,l)=> (!m || l.va>m.va) ? l : m, null);
+      necSet = mgdCounted ? [...counted, mgdCounted] : [...counted];
+    } else necSet = [...counted];
+    const nec = necCalc(necSet);
+
+    let runCore = counted.reduce((s,l)=>s+l.run,0);
+    let runTotal;
+    if(goal==='full'){
+      // demand factor: first 10 kW at 100%, remainder at 65%
+      runTotal = runCore<=10000 ? runCore : 10000 + (runCore-10000)*0.65;
+    } else if(goal==='managed'){
+      const biggestShed = shedPool.reduce((m,l)=>Math.max(m,l.run),0);
+      // core loads at 90% diversity + allowance for one managed load at a time
+      runTotal = runCore*0.9 + Math.min(biggestShed, 5500);
+    } else {
+      runTotal = runCore;
+    }
+    const surgeLoad = counted.reduce((m,l)=> l.start>m.start ? l : m, {start:0,name:'—'});
+    const startCheck = runTotal + surgeLoad.start;            // running load + largest motor inrush
+    const required = Math.max(nec.total, startCheck);
+    const governs = nec.total >= startCheck ? 'nec' : 'start';
+    const target = required;                                  // sizing rules below handle headroom
+
+    const useNG = (fuel==='ng');
+    // Minimum = smallest unit whose output (on this fuel) covers the calculation.
+    // Recommended = minimum, unless the calc is within 1 kW of that unit's output; then one size up.
+    const capOf = s => (useNG ? s[1] : s[0]) * 1000;
+    const minPick = SIZES.find(s => capOf(s) >= target) || null;
+    let pick = minPick, bumped = false, noRoom = false;
+    if(minPick && capOf(minPick) - target < 1000){
+      const up = SIZES[SIZES.indexOf(minPick)+1];
+      if(up){ pick = up; bumped = true; } else noRoom = true;
+    }
+
+    // table
+    const tb = document.getElementById('loadTable'); tb.innerHTML='';
+    const row = (l, tag, cls) => {
+      const tr = document.createElement('tr'); if(cls) tr.className=cls;
+      const vaTxt = l.nec==='gen' ? '<span class="hint">in general load</span>' : Math.round(l.va).toLocaleString();
+      tr.innerHTML = `<td>${l.name}${tag||''}</td><td class="r">${vaTxt}</td><td class="r">${l.start?Math.round(l.run+l.start).toLocaleString():'—'}</td>`;
+      tb.appendChild(tr);
+    };
+    counted.forEach(l=>row(l));
+    shedPool.forEach(l=>row(l, l===mgdCounted ? '<span class="tag shed">managed · largest, counted in NEC calc</span>' : '<span class="tag shed">managed</span>'));
+    // NEC worksheet
+    const nt = document.getElementById('necTable'); nt.innerHTML = '';
+    const nrow = (a,b,cls) => { const tr=document.createElement('tr'); if(cls) tr.className=cls; tr.innerHTML=`<td>${a}</td><td class="r">${b}</td>`; nt.appendChild(tr); };
+    const va = n => Math.round(n).toLocaleString() + ' VA';
+    nrow('General loads [220.82(B)]', '', 'hd');
+    nrow('General lighting, receptacle, small-appliance & laundry circuits', va(nec.general), 'sub');
+    nrow('Appliances & motors at nameplate [220.82(B)(3)–(4)]', va(nec.appl), 'sub');
+    nrow('Total general load', va(nec.B));
+    nrow('First 10,000 VA at 100% + remainder at 40%', va(nec.demandB));
+    nrow('Heating & A/C [220.82(C)], largest option', '', 'hd');
+    nrow(nec.hvacLabel, va(nec.hvac), 'sub');
+    nrow(`Calculated load: ${(nec.total/1000).toFixed(1)} kVA ≈ ${Math.round(nec.amps)} A at 240 V`, va(nec.total), 'tot');
+    excluded.forEach(l=>row(l,'<span class="tag out">not backed up</span>','excluded'));
+
+    // headline
+    const goalTxt = {essential:'essentials-only backup', managed:'whole-home coverage with smart load management', full:'full whole-home coverage'}[goal];
+    document.getElementById('resultLead').textContent = `Based on ${goalTxt}${useNG?' on natural gas':fuel.startsWith('lp')?' on propane':''}. Calculated per the 2023 NEC Article 220, Part IV (220.82) and NEC 702.4.`;
+    document.getElementById('sRun').textContent = (nec.total/1000).toFixed(1) + ' kVA';
+    document.getElementById('sSurge').textContent = kw(startCheck);
+    document.getElementById('sReq').textContent = kw(required) + (governs==='nec' ? ' (NEC)' : ' (starting)');
+
+    let recText, classText;
+    if(pick){
+      recText = `${pick[0]}<small> kW</small>`;
+      classText = (pick[2]==='air' ? 'Air-cooled home standby' : 'Liquid-cooled standby') +
+        (useNG ? ` · ≈${pick[1]} kW on natural gas` : ' · rated on propane');
+
+    } else {
+      recText = `60+<small> kW</small>`;
+      classText = 'Custom / commercial sizing required';
+    }
+    document.getElementById('recKw').innerHTML = recText;
+    document.getElementById('recClass').textContent = classText;
+    const calcKw = (target/1000).toFixed(1);
+    let minTxt = '';
+    if(minPick){
+      const minOut = useNG ? ` (≈${minPick[1]} kW on natural gas)` : '';
+      minTxt = `Minimum size that covers the ${calcKw} kW calculation: ${minPick[0]} kW${minOut}`;
+      if(bumped) minTxt += `. We recommend ${pick[0]} kW because the calculated load is within 1 kW of the ${minPick[0]} kW unit's output.`;
+      else if(noRoom) minTxt += '. The load is within 1 kW of this unit\'s output, so we\'ll review sizing on site.';
+      else minTxt += ' (same as recommended).';
+    } else minTxt = `Calculated load of ${calcKw} kW is above our standard sizes; we'll design a custom solution.`;
+    document.getElementById('recMin').textContent = minTxt;
+
+    // transfer switch
+    let ats = goal==='essential' ? 'Essential-circuit ATS' : 'Whole-home service-rated ATS';
+    if(service==='400') ats = goal==='essential' ? 'Essential-circuit ATS' : '400A service-rated ATS';
+    if(goal==='managed') ats += ' + load managers';
+    document.getElementById('sAts').textContent = service==='unknown' && goal!=='essential' ? 'TBD on site' : ats.replace(' service-rated','') + (service!=='unknown' && goal!=='essential' ? ` (${service==='400'?'400':service}A)`:'');
+
+    // notes
+    const notes = [];
+    if(goal==='full') notes.push(['info',`Code basis: with an automatic transfer switch, NEC 702.4(A)(2)(a) requires the generator to carry the full load it automatically connects, calculated here with the 2023 NEC 220.82 Optional Calculation (${(nec.total/1000).toFixed(1)} kVA).`]);
+    if(goal==='managed') notes.push(['info',`Code basis: with an energy management system per NEC 750.30, 702.4(A)(2)(b) requires the generator to carry the maximum load the system will connect. The 220.82 calculation includes all unmanaged loads plus the largest managed load${mgdCounted?' ('+mgdCounted.name.toLowerCase()+')':''}.`]);
+    if(goal==='essential') notes.push(['info',`Code basis: only the circuits moved to the essential-loads panel are calculated (NEC 702.4(A)(2)(a), 2023 NEC 220.82 method). We'll confirm the exact circuit list on site.`]);
+    if(val('ptype').startsWith('Small business')) notes.push(['info','NEC 220.82 applies to dwelling units. For a business, final sizing will use measured demand data (NEC 220.87) or the standard calculation, confirmed on site.']);
+    if(wh_tankless()) notes.push(['warn','An electric tankless water heater can draw 18–27 kW by itself. We usually recommend keeping it off backup power or adding a load manager — otherwise it can double the generator size.']);
+    if(+val('ev')) notes.push(['warn','EV chargers are best placed on a load manager so the car charges only when the generator has spare capacity.']);
+    if(surgeLoad.start > 6000 && !(val('acSoft')==='yes')) notes.push(['warn',`Your ${surgeLoad.name.toLowerCase().replace(/\bac\b/g,'AC')} has a large startup surge. A soft-start kit (about $300–$500 installed) can often drop your generator one or two sizes.`]);
+    if(goal==='full' && pick && pick[0]>=26) notes.push(['info','Switching to whole-home with smart load management would likely let you choose a smaller, less expensive generator with nearly the same experience. Ask us to compare both.']);
+    if(service==='400' && goal!=='essential') notes.push(['info','320/400A services require a larger transfer switch or two transfer switches. We will confirm the configuration on site.']);
+    if(service==='100' && pick && pick[0]>14) notes.push(['info','With a 100A service, the generator may be limited by your service size. A service upgrade could be worth considering at the same time.']);
+    if(fuel==='lpnew') notes.push(['info','Without natural gas, you will need a propane tank. Standby generators typically use a 500–1,000 gallon tank (buried or above ground) for multi-day outages. We coordinate this with your propane supplier.']);
+    if(fuel==='lp') notes.push(['info','Make sure your existing propane tank is large enough to run the generator plus your other gas appliances. Small 100-lb cylinders are not sufficient for standby use.']);
+    if(fuel==='ng') notes.push(['info','We will check that your gas meter and piping can supply the generator plus your other gas appliances at the same time. Sometimes the utility needs to upgrade the meter.']);
+    if(fuel==='unknown') notes.push(['info','Not sure about fuel? We will check for natural gas availability during the site visit.']);
+    if(chk('medical')) notes.push(['info','Medical equipment noted. Ask us about a generator with remote monitoring so you are alerted immediately if anything needs attention.']);
+    if(val('well')==='unk') notes.push(['info','Well pump size unknown — we assumed 1 HP. The size is usually on the pressure-switch control box or the well installer\'s records.']);
+    const ul = document.getElementById('notes'); ul.innerHTML='';
+    notes.forEach(([t,txt])=>{ const li=document.createElement('li'); if(t==='info') li.className='info'; li.textContent=txt; ul.appendChild(li); });
+
+    // summary text
+    const lines = [
+      'GENERATOR SIZING QUESTIONNAIRE — ElectricAce',
+      `Name: ${val('name')}`, `Phone: ${val('phone')}`, val('email')?`Email: ${val('email')}`:null,
+      `Service address: ${[val('address'), val('town'), val('zip') ? 'NY '+val('zip') : ''].filter(Boolean).join(', ') || '—'}`,
+      `Property: ${val('ptype')}, ~${(+val('sqft')).toLocaleString()} sq ft`,
+      `Outages: ${val('outages')}`,
+      `Service: ${service==='unknown'?'Not sure':service==='400'?'320/400A':service+'A'} | Fuel: ${({ng:'Natural gas',lp:'Propane (existing tank)',lpnew:'Propane (needs tank)',unknown:'Not sure'})[fuel]}`,
+      `Coverage goal: ${goalTxt}`,
+      '',
+      `RECOMMENDED: ${pick?pick[0]+' kW ('+classText+')':'60+ kW — custom sizing'}`,
+      `MINIMUM: ${minPick?minPick[0]+' kW':'n/a'}${bumped?' (recommended one size up: calc within 1 kW of minimum unit output)':''}`,
+      `NEC 2023 220.82 calculated load: ${(nec.total/1000).toFixed(1)} kVA (~${Math.round(nec.amps)} A @ 240 V) | general ${Math.round(nec.B)} VA → ${Math.round(nec.demandB)} VA after demand factors | HVAC ${Math.round(nec.hvac)} VA [${nec.hvacLabel}]`,
+      `Motor-starting check: ${kw(startCheck)} (running ${kw(runTotal)} + ${surgeLoad.start?kw(surgeLoad.start)+' inrush, '+surgeLoad.name:'no large motor inrush'}) | Required: ${kw(required)} (${governs==='nec'?'NEC calc governs':'motor starting governs'})`,
+      '', 'LOADS:',
+      ...counted.map(l=>`- ${l.name}: ${l.nec==='gen'?'in general load':Math.round(l.va)+' VA'}`),
+      ...shedPool.map(l=>`- ${l.name}: ${Math.round(l.va)} VA [managed${l===mgdCounted?', counted as largest':''}]`),
+      ...excluded.map(l=>`- ${l.name}: ${l.nec==='gen'?'in general load':Math.round(l.va)+' VA'} [not backed up]`),
+      val('comments')?`\nNotes: ${val('comments')}`:null
+    ].filter(x=>x!==null);
+    lastCalc = {
+      counted, shedPool, excluded, runTotal, required, goalTxt, nec, startCheck, governs, mgdCounted,
+      surge: surgeLoad.start, surgeName: surgeLoad.name,
+      rec: pick ? pick[0]+' kW' : '60+ kW', classText, minTxt, minRec: minPick ? minPick[0]+' kW' : null,
+      ats: document.getElementById('sAts').textContent,
+      notes: notes.map(n=>n[1]),
+      serviceTxt: service==='unknown'?'Not sure':service==='400'?'320/400A':service+'A',
+      fuelTxt: ({ng:'Natural gas',lp:'Propane (existing tank)',lpnew:'Propane (needs tank)',unknown:'Not sure'})[fuel]
+    };
+    baseSummary = lines;
+    lastRec = pick ? pick[0]+' kW' : '60+ kW';
+    refreshSummary();
+  }
+  const SUBMIT_EMAIL = 'websizing@electricace.com';
+  const WEB3FORMS_KEY = '1c84c9a4-7d4a-4b53-951d-da0dab6c6be7';
+  let lastCalc = null;
+  let baseSummary = [], lastSubject = '', lastRec = '', sending = false, lastKind = 'report', unlocked = false;
+  const sent = {report:false, schedule:false};
+  document.getElementById('emailShow').textContent = SUBMIT_EMAIL;
+  const esc = t => String(t).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function scheduleText(){
+    const days = ['Mon','Tue','Wed','Thu','Fri','Sat'].filter(d=>chk('d_'+d));
+    const times = ['Morning','Midday','Afternoon'].filter(t=>chk('t_'+t));
+    const date = val('schedDate');
+    const dateTxt = date ? new Date(date+'T12:00').toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}) : 'first available';
+    return `Consultation request (pending office confirmation): ${dateTxt} | Days: ${days.join('/')||'any'} | Time: ${times.join('/')||'any'} | Contact by: ${val('contactPref')}`;
+  }
+  function refreshSummary(kind){
+    kind = kind || lastKind;
+    const parts = [...baseSummary];
+    if(kind==='schedule'){
+      const at = parts.findIndex(l=>l.startsWith('Coverage goal')); parts.splice(at+1, 0, scheduleText());
+    }
+    document.getElementById('summaryBox').value = [`REQUEST TYPE: ${kind==='schedule'?'Consultation request':'Full report request'}`, ...parts].join('\n');
+    const where = [val('town'), val('zip')].filter(Boolean).join(' ');
+    const subject = `${kind==='schedule'?'Generator Consultation Request':'Generator Report Request'} – ${val('name')||'New client'}${where?' ('+where+')':''} – ${lastRec}`;
+    const intro = kind==='schedule' ? "I'd like to schedule a generator consultation. My load calculation and scheduling request are below." : "I'd like my full generator load calculation report. My results are below.";
+    const emailBody = 'Hi ElectricAce,\n\n' + intro + '\n\n' + document.getElementById('summaryBox').value + '\n\nThank you!';
+    const mailHref = `mailto:${SUBMIT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+    document.getElementById('sendBtn').href = mailHref;
+    document.getElementById('mailLink').href = mailHref;
+    lastSubject = subject;
+    return mailHref;
+  }
+  document.getElementById('schedule').addEventListener('change', ()=>refreshSummary());
+  // ---------- spam protection & validation ----------
+  const SPAM_WORDS = /\b(viagra|cialis|casino|crypto|bitcoin|forex|backlinks?|seo services|guest post|loan offer|escort|porn|betting|web design services)\b/i;
+  function spamCheck(kind){
+    const name = String(val('name')).trim(), phone = String(val('phone')), email = String(val('email')).trim();
+    const notes = String(val('comments')) + ' ' + String(val('address')) + ' ' + String(val('town'));
+    const links = (notes.match(/https?:\/\/|www\./gi) || []).length;
+    // Silent blocks: clear bot signals (bot thinks it succeeded)
+    if(String(val('botcheck')).trim()) return {bot:true};
+    if(Date.now() - startedAt < 25000) return {bot:true};              // whole form in under 25 s = not human
+    if(/https?:\/\/|www\.|<|>/i.test(name) || name.length > 60) return {bot:true};
+    if(links > 1 || SPAM_WORDS.test(notes + ' ' + name)) return {bot:true};
+    if(/[Ѐ-ӿ一-鿿]{6,}/.test(notes + name)) return {bot:true}; // long runs of Cyrillic/CJK
+    // Visible checks: real people who missed something
+    if(name.split(/\s+/).filter(Boolean).length < 2) return {msg:'Please enter your first and last name.', field:'name'};
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return {msg:'Please enter a valid email address so we can follow up with your report.', field:'email'};
+    const digits = phone.replace(/\D/g,'').replace(/^1/,'');
+    if(kind==='schedule' && digits.length !== 10) return {msg:'Please enter a 10-digit phone number so our office can confirm your appointment.', field:'phone'};
+    if(kind==='report' && phone.trim() && digits.length !== 10) return {msg:"That phone number doesn't look complete. Fix it or leave it blank.", field:'phone'};
+    if(kind==='schedule' && String(val('address')).trim().length < 5) return {msg:'Please enter the service address so we can check gas service and generator placement.', field:'address'};
+    if(kind==='schedule' && !String(val('town')).trim()) return {msg:'Please enter the town for the service address.', field:'town'};
+    return {};
+  }
+  function markField(n){
+    const el = form.elements[n]; if(!el) return;
+    el.classList.add('invalid'); try{ el.focus({preventScroll:false}); }catch(e){}
+    el.addEventListener('input', ()=>el.classList.remove('invalid'), {once:true});
+  }
+  function unlock(){
+    if(unlocked) return; unlocked = true;
+    document.getElementById('breakdown').classList.remove('locked');
+  }
+  function showPanel(which, kind){
+    document.getElementById('sentOk').style.display = which==='ok' ? 'block' : 'none';
+    document.getElementById('sentNote').style.display = which==='fallback' ? 'block' : 'none';
+    if(which!=='ok') return;
+    const first = esc(String(val('name')).trim().split(/\s+/)[0] || '');
+    const hi = first ? `Thanks, ${first}` : 'Thanks';
+    if(kind==='schedule'){
+      document.getElementById('okTitle').textContent = '✅ Consultation request sent!';
+      document.getElementById('okBody').innerHTML = `${hi}! Your load calculation and appointment request are on their way to the ElectricAce team. <a href="#" class="pdf-link">Download your report (PDF)</a> for your records.`;
+      document.getElementById('okNext').style.display = '';
+    } else {
+      document.getElementById('okTitle').textContent = '✅ Your report is unlocked!';
+      document.getElementById('okBody').innerHTML = `${hi}! Your PDF report is downloading, and your full load breakdown is now showing above. <a href="#" class="pdf-link">Download it again</a>. Our team received a copy and may reach out with any questions.<br><br><b>Ready for the next step?</b> Add your address and a preferred time above, then tap the gold button to request a free on-site consultation.`;
+      document.getElementById('okNext').style.display = 'none';
+    }
+  }
+  function setBtn(btn, state, kind){
+    btn.classList.remove('loading','done'); if(state) btn.classList.add(state);
+    const labels = {
+      report:   {idle:' Get my full report (free)', loading:' Unlocking your report…', done:' Report unlocked'},
+      schedule: {idle:' Send my load calc to ElectricAce & schedule a consultation!', loading:' Sending your request…', done:' Consultation requested. Thank you!'}
+    };
+    btn.lastChild.textContent = labels[kind][state||'idle'] + (kind==='schedule' ? '\n      ' : '');
+  }
+  async function submitRequest(kind, btn){
+    if(sending || sent[kind]) return;
+    lastKind = kind;
+    clampDate(); compute();
+    const mailHref = refreshSummary(kind);
+    const errBox = document.getElementById('sendErr');
+    const r = spamCheck(kind);
+    if(r.msg){ errBox.textContent = r.msg; errBox.style.display='block'; showPanel(null); markField(r.field); return; }
+    errBox.style.display='none';
+    if(r.bot){ sent[kind] = true; setBtn(btn,'done',kind); showPanel('ok',kind); unlock(); return; } // pretend success
+    sending = true; setBtn(btn,'loading',kind);
+    const sched = kind==='schedule' ? {
+      'Requested date': val('schedDate') || 'First available',
+      'Preferred days': pickedList('d_', ['Mon','Tue','Wed','Thu','Fri','Sat']),
+      'Preferred time': pickedList('t_', ['Morning','Midday','Afternoon']),
+      'Best way to reach': val('contactPref')
+    } : {};
+    const payload = Object.assign({
+      access_key: WEB3FORMS_KEY,
+      subject: lastSubject,
+      from_name: 'ElectricAce Generator Sizing Form',
+      'Request type': kind==='schedule' ? 'Consultation request' : 'Full report request',
+      name: val('name'), email: val('email'), replyto: val('email'), phone: val('phone') || '—',
+      'Service address': [val('address'), val('town'), val('zip') ? 'NY '+val('zip') : ''].filter(Boolean).join(', ') || '—',
+      'Recommended size': lastRec
+    }, sched, { message: document.getElementById('summaryBox').value, botcheck: '' });
+    try{
+      const ctrl = new AbortController(); const timer = setTimeout(()=>ctrl.abort(), 15000);
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method:'POST', headers:{'Content-Type':'application/json', Accept:'application/json'},
+        body: JSON.stringify(payload), signal: ctrl.signal
+      });
+      clearTimeout(timer);
+      const data = await res.json().catch(()=>({}));
+      if(!res.ok || data.success === false) throw new Error(data.message || ('HTTP '+res.status));
+      sent[kind] = true; setBtn(btn,'done',kind);
+      showPanel('ok', kind); unlock();
+      if(kind==='report') downloadPdf();
+      if(kind==='schedule'){ try{ localStorage.removeItem(STORE); }catch(err){} }
+    }catch(err){
+      let why = err && err.name==='AbortError' ? 'timed out after 15 s' : (err && err.message) || 'unknown error';
+      if(/failed to fetch|load failed|networkerror/i.test(why)) why = 'connection blocked (' + why + '). The page could not reach Web3Forms from ' + location.hostname;
+      document.getElementById('sendDiag').textContent = 'Technical details: ' + why + ' · ' + location.hostname;
+      try{ console.warn('[ElectricAce form] Web3Forms send failed:', why); }catch(e3){}
+      setBtn(btn, null, kind);
+      showPanel('fallback', kind); unlock();
+      if(kind==='report') downloadPdf();
+      try{ window.location.href = mailHref; }catch(e2){}
+    }finally{ sending = false; }
+  }
+  function pickedList(prefix, items){ return items.filter(x=>chk(prefix+x)).join(', ') || 'Any'; }
+  document.getElementById('reportBtn').addEventListener('click', e=>{ e.preventDefault(); submitRequest('report', e.currentTarget); });
+  document.getElementById('sendBtn').addEventListener('click', e=>{ e.preventDefault(); submitRequest('schedule', e.currentTarget); });
+  document.getElementById('sentOk').addEventListener('click', e=>{ if(e.target.closest('.pdf-link')) downloadPdf(e); });
+  (document.getElementById('ea-sizer')||document).querySelectorAll('.jump').forEach(b=>b.addEventListener('click', ()=>{
+    if(EA_EMBED) eaToParent({type:'ea-form-scroll', offset: document.getElementById('schedule').getBoundingClientRect().top + window.scrollY}); else document.getElementById('schedule').scrollIntoView({behavior:'smooth', block:'start'});
+    setTimeout(()=>{ try{ document.getElementById('name').focus({preventScroll:true}); }catch(e){} }, 500);
+  }));
+
+  // ---------- PDF report ----------
+  const JSPDF_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+  function loadJsPDF(){
+    if(window.jspdf && window.jspdf.jsPDF) return Promise.resolve(window.jspdf.jsPDF);
+    return new Promise((res, rej)=>{
+      const sc = document.createElement('script'); sc.src = JSPDF_URL; sc.async = true;
+      sc.onload = ()=> window.jspdf ? res(window.jspdf.jsPDF) : rej(new Error('jsPDF missing'));
+      sc.onerror = ()=> rej(new Error('jsPDF failed to load'));
+      document.head.appendChild(sc);
+    });
+  }
+  function imgData(cls){
+    try{
+      const root = document.getElementById('ea-sizer') || document;
+      const im = root.querySelector('.'+cls); if(!im || !im.naturalWidth) return null;
+      const c = document.createElement('canvas'); c.width = im.naturalWidth; c.height = im.naturalHeight;
+      const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0,0,c.width,c.height); g.drawImage(im,0,0);
+      return {data:c.toDataURL('image/png'), w:im.naturalWidth, h:im.naturalHeight};
+    }catch(e){ return null; }
+  }
+  async function buildPdf(){
+    const jsPDF = await loadJsPDF();
+    const C = lastCalc;
+    const doc = new jsPDF({unit:'pt', format:'letter'});
+    const clean = t => Array.isArray(t) ? t.map(clean) : String(t).replace(/≈/g,'approx. ').replace(/[^\x00-\xFF\u2013\u2014\u2018\u2019\u201C\u201D\u2022\u2026]/g,'');
+    const _text = doc.text.bind(doc), _split = doc.splitTextToSize.bind(doc);
+    doc.text = (t, ...a) => _text(clean(t), ...a);
+    doc.splitTextToSize = (t, ...a) => _split(clean(t), ...a);
+    const W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight(), M = 44;
+    const NAVY=[15,31,51], GOLD=[238,181,0], INK=[27,36,48], MUTED=[93,107,124], LINE=[221,227,234];
+    let y = M;
+    const now = new Date();
+    const ref = 'EA-' + now.toISOString().slice(2,10).replace(/-/g,'') + '-' + String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
+
+    function header(){
+      const ea = imgData('logo-ea'), gen = imgData('logo-gen');
+      if(ea) doc.addImage(ea.data,'PNG',M,M-6,56*ea.w/ea.h,56);
+      else { doc.setFont('helvetica','bold'); doc.setFontSize(20); doc.setTextColor(...INK); doc.text('ElectricAce',M,M+28); }
+      if(gen) { const gw = 34*gen.w/gen.h; doc.addImage(gen.data,'PNG',W-M-gw,M+6,gw,34); }
+      doc.setDrawColor(...GOLD); doc.setLineWidth(3); doc.line(M,M+62,W-M,M+62);
+      y = M + 86;
+    }
+    function footer(){
+      const n = doc.internal.getNumberOfPages();
+      for(let i=1;i<=n;i++){
+        doc.setPage(i);
+        doc.setDrawColor(...LINE); doc.setLineWidth(0.8); doc.line(M,H-46,W-M,H-46);
+        doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(...MUTED);
+        doc.text('ElectricAce  ·  845.299.9635  ·  websizing@electricace.com  ·  electricace.com', M, H-32);
+        doc.text('Generac PowerPro Elite Dealer  ·  Hudson Valley, NY', M, H-21);
+        doc.text(`Ref ${ref}`, W-M, H-32, {align:'right'});
+        doc.text(`Page ${i} of ${n}`, W-M, H-21, {align:'right'});
+      }
+    }
+    function need(h){ if(y + h > H - 60){ doc.addPage(); y = M; } }
+    function heading(t){
+      need(34); doc.setFont('helvetica','bold'); doc.setFontSize(12.5); doc.setTextColor(...NAVY);
+      doc.text(t.toUpperCase(), M, y); y += 6; doc.setDrawColor(...LINE); doc.setLineWidth(0.8); doc.line(M,y,W-M,y); y += 14;
+    }
+    function para(t, size=10, color=INK, gap=4){
+      doc.setFont('helvetica','normal'); doc.setFontSize(size); doc.setTextColor(...color);
+      const lines = doc.splitTextToSize(t, W-2*M);
+      lines.forEach(l=>{ need(size+4); doc.text(l, M, y); y += size+3; }); y += gap;
+    }
+    function kv(rows){
+      const colW = (W-2*M)/2;
+      for(let i=0;i<rows.length;i+=2){
+        need(30);
+        [rows[i], rows[i+1]].forEach((r,k)=>{
+          if(!r) return; const x = M + k*colW;
+          doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...MUTED); doc.text(r[0].toUpperCase(), x, y);
+          doc.setFont('helvetica','bold'); doc.setFontSize(10.5); doc.setTextColor(...INK);
+          doc.text(doc.splitTextToSize(String(r[1]||'—'), colW-12)[0], x, y+13);
+        });
+        y += 30;
+      }
+    }
+
+    header();
+    doc.setFont('helvetica','bold'); doc.setFontSize(20); doc.setTextColor(...INK);
+    doc.text('Preliminary Generator Load Calculation', M, y); y += 18;
+    doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(...MUTED);
+    doc.text(`Prepared ${now.toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'})} for ${val('name')||'you'}  ·  Reference ${ref}`, M, y); y += 22;
+
+    // result box
+    const boxH = 126; need(boxH+10);
+    doc.setFillColor(...NAVY); doc.roundedRect(M, y, W-2*M, boxH, 8, 8, 'F');
+    doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(169,187,208);
+    doc.text('RECOMMENDED STANDBY GENERATOR', M+18, y+22);
+    doc.setFont('helvetica','bold'); doc.setFontSize(36); doc.setTextColor(...GOLD);
+    doc.text(C.rec, M+18, y+60);
+    doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(201,213,227);
+    doc.text(doc.splitTextToSize(C.classText, 230), M+18, y+78);
+    doc.setFontSize(7.8); doc.setTextColor(169,187,208);
+    doc.text(doc.splitTextToSize(C.minTxt, 250).slice(0,3), M+18, y+93);
+    const sx = M + (W-2*M)*0.55, sw = (W-2*M)*0.45 - 18;
+    [['NEC 220.82 calculated load', (C.nec.total/1000).toFixed(1)+' kVA'],
+     ['Motor-starting check', (C.startCheck/1000).toFixed(1)+' kW'],
+     ['Required capacity', (C.required/1000).toFixed(1)+' kW ('+(C.governs==='nec'?'NEC':'starting')+')'],
+     ['Transfer switch', C.ats]].forEach((r,i)=>{
+      const ry = y + 22 + i*19;
+      doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(201,213,227); doc.text(r[0], sx, ry);
+      doc.setFont('helvetica','bold'); doc.setTextColor(255,255,255);
+      const lw = doc.getTextWidth(r[0]) + 10;
+      doc.setFont('helvetica','bold');
+      if(doc.getTextWidth(String(r[1])) > sw - lw){ doc.setFontSize(8.5); doc.text(String(r[1]), sx+sw, ry+12, {align:'right'}); }
+      else doc.text(String(r[1]), sx+sw, ry, {align:'right'});
+    });
+    y += boxH + 24;
+
+    heading('Client & property');
+    kv([
+      ['Name', val('name')], ['Phone', val('phone')],
+      ['Email', val('email')||'—'], ['Service address', [val('address'), val('town'), val('zip') ? 'NY '+val('zip') : ''].filter(Boolean).join(', ')],
+      ['Property type', val('ptype')], ['Finished area', (+val('sqft')).toLocaleString()+' sq ft'],
+      ['Electrical service', C.serviceTxt], ['Fuel', C.fuelTxt],
+      ['Coverage goal', ({essential:'Essentials only', managed:'Whole home + smart load management', full:'Whole home, no compromises'})[val('goal')]], ['Outage history', val('outages')]
+    ]);
+    y += 4;
+
+    heading('NEC load calculation (2023 NEC Art. 220, Part IV, 220.82)');
+    const nv = n => Math.round(n).toLocaleString() + ' VA';
+    [['General lighting, receptacle, small-appliance & laundry circuits [220.82(B)(1)-(2)]', nv(C.nec.general), false],
+     ['Appliances & motors at nameplate [220.82(B)(3)-(4)]', nv(C.nec.appl), false],
+     ['Total general load', nv(C.nec.B), false],
+     ['First 10,000 VA at 100% + remainder at 40% [220.82(B)]', nv(C.nec.demandB), false],
+     ['Heating & A/C, largest option: ' + C.nec.hvacLabel, nv(C.nec.hvac), false],
+     [`Calculated load: ${(C.nec.total/1000).toFixed(1)} kVA, approx. ${Math.round(C.nec.amps)} A at 240 V`, nv(C.nec.total), true]
+    ].forEach(([a,b,bold])=>{
+      doc.setFont('helvetica', bold?'bold':'normal'); doc.setFontSize(9.5);
+      const ls = doc.splitTextToSize(a, W-2*M-110); need(ls.length*12+8);
+      if(bold){ doc.setDrawColor(...NAVY); doc.setLineWidth(1.2); doc.line(M, y-10, W-M, y-10); }
+      doc.setTextColor(...INK); doc.text(ls, M+6, y); doc.text(b, W-M-6, y, {align:'right'});
+      y += ls.length*12 + 6;
+    });
+    para(C.goalTxt.startsWith('whole-home coverage with') ? 'Per NEC 702.4(A)(2)(b), the calculation includes all unmanaged loads plus the largest load the energy management system (750.30) will connect.' : 'Per NEC 702.4(A)(2)(a), the generator must supply the full load connected by the automatic transfer switch.', 8.5, MUTED, 8);
+
+    heading('Load breakdown');
+    const cx = [M, M+300, W-M-90, W-M];
+    function tableHead(){
+      doc.setFillColor(244,246,249); doc.rect(M, y-11, W-2*M, 18, 'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(...MUTED);
+      doc.text('LOAD', cx[0]+6, y+1); doc.text('STATUS', cx[1], y+1);
+      doc.text('NEC VA', cx[2], y+1, {align:'right'}); doc.text('STARTUP W', cx[3]-6, y+1, {align:'right'});
+      y += 18;
+    }
+    tableHead();
+    const rows = [
+      ...C.counted.map(l=>[l,'Backed up']),
+      ...C.shedPool.map(l=>[l,'Load-managed']),
+      ...C.excluded.map(l=>[l,'Not backed up'])
+    ];
+    rows.forEach(([l,st],i)=>{
+      doc.setFont('helvetica','normal'); doc.setFontSize(9.5);
+      const nameLines = doc.splitTextToSize(l.name, cx[1]-cx[0]-16);
+      const rh = 6 + nameLines.length*12;
+      if(y + rh > H-60){ doc.addPage(); y = M; tableHead(); doc.setFont('helvetica','normal'); doc.setFontSize(9.5); }
+      const dim = st==='Not backed up';
+      doc.setTextColor(...(dim?[154,166,180]:INK));
+      doc.text(nameLines, cx[0]+6, y);
+      doc.setTextColor(...(st==='Load-managed'?[138,90,0]:dim?[154,166,180]:MUTED)); doc.text(st, cx[1], y);
+      doc.setTextColor(...(dim?[154,166,180]:INK));
+      doc.text(l.nec==='gen' ? 'in general' : Math.round(l.va).toLocaleString(), cx[2], y, {align:'right'});
+      doc.text(l.start ? Math.round(l.run+l.start).toLocaleString() : '—', cx[3]-6, y, {align:'right'});
+      y += rh - 6;
+      doc.setDrawColor(...LINE); doc.setLineWidth(0.5); doc.line(M, y-3, W-M, y-3); y += 9;
+    });
+    y += 8;
+
+    if(C.notes.length){
+      heading('Notes for your project');
+      C.notes.forEach(n=>{
+        doc.setFont('helvetica','normal'); doc.setFontSize(9.5);
+        const lines = doc.splitTextToSize(n, W-2*M-20);
+        need(lines.length*12+8);
+        doc.setFillColor(...GOLD); doc.rect(M, y-8, 3, lines.length*12, 'F');
+        doc.setTextColor(...INK); doc.text(lines, M+12, y); y += lines.length*12 + 8;
+      });
+      y += 4;
+    }
+
+    if(lastKind==='schedule'){
+    heading('Consultation request');
+    const days = ['Mon','Tue','Wed','Thu','Fri','Sat'].filter(d=>chk('d_'+d)).join(', ') || 'Any';
+    const times = ['Morning','Midday','Afternoon'].filter(t=>chk('t_'+t)).join(', ') || 'Any';
+    const dv = val('schedDate');
+    kv([
+      ['Requested date', dv ? new Date(dv+'T12:00').toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'}) : 'First available'],
+      ['Best way to reach', val('contactPref')],
+      ['Preferred days', days], ['Preferred time', times]
+    ]);
+    para("What happens next: Your appointment isn't final yet. A member of our office team will call you to make sure your requested time slot is open and lock in your consultation.", 9.5, INK, 6);
+    }
+    if(val('comments')){ heading('Your notes'); para(val('comments'), 9.5); }
+
+    need(60);
+    para('This is a preliminary estimate using the 2023 NEC Article 220, Part IV (220.82 Optional Calculation) and NEC 702.4, with typical nameplate ratings and the information provided. Final generator and transfer switch sizing requires an on-site load calculation and inspection of your equipment by a licensed electrician, in accordance with the NEC and manufacturer requirements. Natural gas output is typically lower than propane output for the same generator.', 8, MUTED, 0);
+
+    footer();
+    const last = String(val('name')).trim().split(/\s+/).pop().replace(/[^A-Za-z0-9-]/g,'') || 'Client';
+    return {doc, filename:`ElectricAce-Load-Calc-${last}.pdf`};
+  }
+  async function downloadPdf(e){
+    if(e) e.preventDefault();
+    try{
+      if(!lastCalc) compute();
+      const {doc, filename} = await buildPdf();
+      let handled = false;
+      if(window.claude && typeof window.claude.use === 'function'){
+        try{
+          const dl = await window.claude.use('downloads');
+          if(dl){ handled = true; try{ await dl.save({filename, data: doc.output('blob')}); }catch(err){} }
+        }catch(err){}
+      }
+      if(!handled) doc.save(filename);
+    }catch(err){ try{ console.warn('[ElectricAce form] PDF failed', err); }catch(e2){} }
+  }
+  function wh_tankless(){ return val('wh')==='tankless' && (val('goal')!=='essential' || chk('ess_wh')); }
+
+
+  // Earliest bookable date: 6 business days (Mon–Fri) after today
+  function minBookDate(){
+    const d = new Date(); d.setHours(12,0,0,0);
+    let added = 0;
+    while(added < 6){ d.setDate(d.getDate()+1); const w=d.getDay(); if(w!==0 && w!==6) added++; }
+    return d;
+  }
+  const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const minISO = iso(minBookDate());
+  const dateEl = document.getElementById('schedDate');
+  dateEl.min = minISO;
+  document.getElementById('dateHint').textContent = `(${minBookDate().toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'})} or later)`;
+  function clampDate(){
+    if(dateEl.value && dateEl.value < minISO){
+      dateEl.value = minISO;
+      dateEl.classList.add('invalid'); setTimeout(()=>dateEl.classList.remove('invalid'),1500);
+    }
+  }
+  dateEl.addEventListener('change', ()=>{ clampDate(); refreshSummary(); });
+  dateEl.addEventListener('blur', clampDate);
+  // Text button: prefilled message. iPhone/iPad/Mac use "&body=", Android uses "?body="
+  try{
+    const smsMsg = encodeURIComponent("I'm on your generator sizing page and (insert your question here)");
+    const sep = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent) ? '&' : '?';
+    document.getElementById('smsBtn').href = `sms:+18452999635${sep}body=${smsMsg}`;
+  }catch(e){}
+  // Email us: save the PDF, then open a prefilled email (mail links can't attach files)
+  function questionMailto(){
+    compute();
+    const C = lastCalc || {};
+    const where = [val('town'), val('zip')].filter(Boolean).join(' ');
+    const subject = `Generator Sizing Question${val('name')?' – '+val('name'):''}${where?' ('+where+')':''} – ${C.rec||''}`;
+    const body = [
+      "I'm on your generator sizing page and (insert your question here)",
+      '',
+      '(My load calc PDF is attached.)',
+      '',
+      '--- My results ---',
+      `Recommended: ${C.rec||'—'}${C.minRec?' | Minimum: '+C.minRec:''}`,
+      C.nec ? `NEC 220.82 calculated load: ${(C.nec.total/1000).toFixed(1)} kVA | Required: ${((C.required||0)/1000).toFixed(1)} kW` : null,
+      `Coverage: ${C.goalTxt||'—'} | Fuel: ${C.fuelTxt||'—'} | Service: ${C.serviceTxt||'—'}`,
+      `Property: ${val('ptype')}, ~${(+val('sqft')||0).toLocaleString()} sq ft, ZIP ${val('zip')||'—'}`,
+      val('name') ? `Name: ${val('name')}${val('phone')?' | Phone: '+val('phone'):''}` : null
+    ].filter(x=>x!==null).join('\n');
+    return `mailto:${SUBMIT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }
+  document.getElementById('emailUsBtn').addEventListener('click', e=>{
+    const panel = document.getElementById('emailPanel');
+    const open = !panel.classList.contains('show');
+    panel.classList.toggle('show', open);
+    e.currentTarget.setAttribute('aria-expanded', String(open));
+    if(open) document.getElementById('emailOpenLink').href = questionMailto();
+  });
+  document.getElementById('emailPdfBtn').addEventListener('click', async e=>{
+    const b = e.currentTarget; b.textContent = 'Preparing PDF…'; b.disabled = true;
+    await downloadPdf();
+    b.textContent = '✓ Load calc saved'; b.disabled = false;
+    document.getElementById('emailPdfHint').textContent = 'Saved. Now open the email and attach this PDF.';
+  });
+  document.getElementById('emailOpenLink').addEventListener('click', e=>{ e.currentTarget.href = questionMailto(); });
+
+  load(); clampDate(); updateConditional(); show(0);
+})();
+</script>
+</body>
+</html>
