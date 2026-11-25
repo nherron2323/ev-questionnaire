@@ -546,7 +546,7 @@
       </div>
       <textarea class="summary" id="summaryBox" readonly></textarea>
     </div>
-    <p class="disclaimer">This is a preliminary estimate using the 2023 NEC Article 220, Part IV (220.82 Optional Calculation) and NEC 702.4, with typical nameplate ratings. Final generator and transfer switch sizing requires an on-site load calculation and inspection of your equipment by a licensed electrician, in accordance with the NEC and manufacturer requirements. Natural gas output is typically lower than propane output for the same generator.</p>
+    <p class="disclaimer">This is a preliminary estimate using the 2023 NEC Article 220, Part IV (220.82 Optional Calculation) and NEC 702.4, with typical nameplate ratings. The motor-starting check allows the generator 125% of its rated output for up to 5 seconds while a motor starts. Final generator and transfer switch sizing requires an on-site load calculation and inspection of your equipment by a licensed electrician, in accordance with the NEC and manufacturer requirements. Natural gas output is typically lower than propane output for the same generator.</p>
   </section>
 
   <div class="err" id="err">Please fill in the required fields.</div>
@@ -718,8 +718,8 @@ if(EA_EMBED){
     if(wh==='tankless') add('Electric tankless water heater', 24000, 0, 'shed', chk('ess_wh'), 24000, 'appl');
 
     // Kitchen & laundry
-    const fr = +val('fridges'); add(`Refrigerator${fr>1?'s ('+fr+')':''}`, fr*700, 1200, 'core', true, 0, 'gen');
-    const fz = +val('freezers'); if(fz) add(`Freezer${fz>1?'s (2)':''}`, fz*500, 900, 'core', true, fz*600, 'appl');
+    const fr = +val('fridges'); add(`Refrigerator${fr>1?'s ('+fr+')':''}`, fr*300, 1200, 'core', true, 0, 'gen');
+    const fz = +val('freezers'); if(fz) add(`Freezer${fz>1?'s (2)':''}`, fz*250, 900, 'core', true, fz*600, 'appl');
     const rg = val('range');
     if(rg==='elec') add('Electric range / oven', 5000, 0, 'shed', chk('ess_cook'), 12000, 'appl');
     if(rg==='induction') add('Induction cooktop / range', 6000, 0, 'shed', chk('ess_cook'), 12000, 'appl');
@@ -800,28 +800,26 @@ if(EA_EMBED){
       // demand factor: first 10 kW at 100%, remainder at 65%
       runTotal = runCore<=10000 ? runCore : 10000 + (runCore-10000)*0.65;
     } else if(goal==='managed'){
-      const biggestShed = shedPool.reduce((m,l)=>Math.max(m,l.run),0);
-      // core loads at 90% diversity + allowance for one managed load at a time
-      runTotal = runCore*0.9 + Math.min(biggestShed, 5500);
+      // core loads at 90% diversity; load managers hold managed loads off while a motor starts
+      runTotal = runCore*0.9;
     } else {
       runTotal = runCore;
     }
     const surgeLoad = counted.reduce((m,l)=> l.start>m.start ? l : m, {start:0,name:'—'});
+    const SURGE = 1.25;                                       // generator delivers 125% of rated output for up to 5 s
     const startCheck = runTotal + surgeLoad.start;            // running load + largest motor inrush
-    const required = Math.max(nec.total, startCheck);
-    const governs = nec.total >= startCheck ? 'nec' : 'start';
-    const target = required;                                  // sizing rules below handle headroom
+    const startNeed = startCheck / SURGE;                     // rated output needed to carry that surge
+    const required = Math.max(nec.total, runTotal, startNeed);
+    const governs = nec.total >= startNeed ? 'nec' : 'start';
+    const target = required;
 
     const useNG = (fuel==='ng');
     // Minimum = smallest unit whose output (on this fuel) covers the calculation.
     // Recommended = minimum, unless the calc is within 1 kW of that unit's output; then one size up.
     const capOf = s => (useNG ? s[1] : s[0]) * 1000;
     const minPick = SIZES.find(s => capOf(s) >= target) || null;
-    let pick = minPick, bumped = false, noRoom = false;
-    if(minPick && capOf(minPick) - target < 1000){
-      const up = SIZES[SIZES.indexOf(minPick)+1];
-      if(up){ pick = up; bumped = true; } else noRoom = true;
-    }
+    const pick = minPick, bumped = false;
+    const tight = !!minPick && capOf(minPick) - target < 1000;   // within 1 kW: confirm on site
 
     // table
     const tb = document.getElementById('loadTable'); tb.innerHTML='';
@@ -851,7 +849,7 @@ if(EA_EMBED){
     const goalTxt = {essential:'essentials-only backup', managed:'whole-home coverage with smart load management', full:'full whole-home coverage'}[goal];
     document.getElementById('resultLead').textContent = `Based on ${goalTxt}${useNG?' on natural gas':fuel.startsWith('lp')?' on propane':''}. Calculated per the 2023 NEC Article 220, Part IV (220.82) and NEC 702.4.`;
     document.getElementById('sRun').textContent = (nec.total/1000).toFixed(1) + ' kVA';
-    document.getElementById('sSurge').textContent = kw(startCheck);
+    document.getElementById('sSurge').textContent = kw(startCheck) + (surgeLoad.start ? ` → ${kw(startNeed)} at 125% surge` : '');
     document.getElementById('sReq').textContent = kw(required) + (governs==='nec' ? ' (NEC)' : ' (starting)');
 
     let recText, classText;
@@ -871,8 +869,7 @@ if(EA_EMBED){
     if(minPick){
       const minOut = useNG ? ` (≈${minPick[1]} kW on natural gas)` : '';
       minTxt = `Minimum size that covers the ${calcKw} kW calculation: ${minPick[0]} kW${minOut}`;
-      if(bumped) minTxt += `. We recommend ${pick[0]} kW because the calculated load is within 1 kW of the ${minPick[0]} kW unit's output.`;
-      else if(noRoom) minTxt += '. The load is within 1 kW of this unit\'s output, so we\'ll review sizing on site.';
+      if(tight) minTxt += `. The load is within 1 kW of this unit's output, so we'll confirm sizing on site.`;
       else minTxt += ' (same as recommended).';
     } else minTxt = `Calculated load of ${calcKw} kW is above our standard sizes; we'll design a custom solution.`;
     document.getElementById('recMin').textContent = minTxt;
@@ -915,9 +912,9 @@ if(EA_EMBED){
       `Coverage goal: ${goalTxt}`,
       '',
       `RECOMMENDED: ${pick?pick[0]+' kW ('+classText+')':'60+ kW — custom sizing'}`,
-      `MINIMUM: ${minPick?minPick[0]+' kW':'n/a'}${bumped?' (recommended one size up: calc within 1 kW of minimum unit output)':''}`,
+      `MINIMUM: ${minPick?minPick[0]+' kW':'n/a'}${tight?' (calc within 1 kW of unit output: confirm on site)':''}`,
       `NEC 2023 220.82 calculated load: ${(nec.total/1000).toFixed(1)} kVA (~${Math.round(nec.amps)} A @ 240 V) | general ${Math.round(nec.B)} VA → ${Math.round(nec.demandB)} VA after demand factors | HVAC ${Math.round(nec.hvac)} VA [${nec.hvacLabel}]`,
-      `Motor-starting check: ${kw(startCheck)} (running ${kw(runTotal)} + ${surgeLoad.start?kw(surgeLoad.start)+' inrush, '+surgeLoad.name:'no large motor inrush'}) | Required: ${kw(required)} (${governs==='nec'?'NEC calc governs':'motor starting governs'})`,
+      `Motor-starting check: ${kw(startCheck)} (running ${kw(runTotal)} + ${surgeLoad.start?kw(surgeLoad.start)+' inrush, '+surgeLoad.name:'no large motor inrush'}) ÷ 1.25 surge = ${kw(startNeed)} | Required: ${kw(required)} (${governs==='nec'?'NEC calc governs':'motor starting governs'})`,
       '', 'LOADS:',
       ...counted.map(l=>`- ${l.name}: ${l.nec==='gen'?'in general load':Math.round(l.va)+' VA'}`),
       ...shedPool.map(l=>`- ${l.name}: ${Math.round(l.va)} VA [managed${l===mgdCounted?', counted as largest':''}]`),
