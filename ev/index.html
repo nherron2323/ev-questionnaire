@@ -220,8 +220,12 @@
   .pfcard ul{margin:6px 0 4px;padding-left:18px}
   /* embedded in electricace.com: the site already shows its own logo, nav and footer */
   html.embedded body{background:transparent}
-  html.embedded .logobar, html.embedded footer{display:none}
-  html.embedded header{border-radius:14px 14px 0 0;padding:24px 20px 64px}
+  html.embedded footer{display:none}
+  /* keep the green EV Charging badge + call/text number at top right; the site shows its own logo */
+  html.embedded .logobar{border-radius:14px 14px 0 0;padding:12px 20px}
+  html.embedded .logos{justify-content:flex-end}
+  html.embedded .logos>a{display:none}
+  html.embedded header{padding:24px 20px 64px}
   html.embedded main{padding-bottom:16px}
   .sub-h{font-weight:800;font-size:15.5px;color:var(--navy);margin-top:6px}
   .contact-bar{border-top:1px solid var(--line);padding-top:14px;text-align:center}
