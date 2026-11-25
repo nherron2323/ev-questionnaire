@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EV Charger Questionnaire — ElectricAce</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0f1f33; --navy2:#17304f; --amber:#eeb500; --amber-d:#d39f00;
+    --ink:#1b2430; --muted:#5d6b7c; --line:#dde3ea; --bg:#f4f6f9; --card:#fff;
+    --ok:#1f9d6b; --warn:#c2410c; --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink);background:var(--bg);line-height:1.5}
+  header{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:28px 20px 70px}
+  .wrap{max-width:820px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.2px;font-size:20px}
+  .bolt{width:38px;height:38px;border-radius:10px;background:var(--amber);display:grid;place-items:center}
+  header h1{font-size:28px;margin:0 0 6px;line-height:1.2}
+  header p{margin:0;color:#c9d5e3;max-width:620px}
+  main{margin-top:-46px;padding:0 16px 60px}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:0 10px 30px rgba(15,31,51,.10);padding:28px}
+  .progress{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+  .bar{flex:1;height:8px;background:#e8edf3;border-radius:99px;overflow:hidden}
+  .bar>div{height:100%;background:var(--amber);width:0;transition:width .35s}
+  .stepcount{font-size:13px;color:var(--muted);white-space:nowrap;font-weight:600}
+  .step{display:none}
+  .step.active{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  h2{margin:0 0 4px;font-size:22px}
+  .lead{color:var(--muted);margin:0 0 22px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .full{grid-column:1/-1}
+  @media (max-width:620px){.grid{grid-template-columns:1fr}.card{padding:20px}header h1{font-size:23px}}
+  label.f{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+  .hint{font-weight:400;color:var(--muted);font-size:12.5px}
+  input[type=text],input[type=email],input[type=tel],input[type=number],input[type=date],select,textarea{
+    width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;font:inherit;background:#fff;color:var(--ink)}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 3px rgba(245,165,36,.2)}
+  .invalid{border-color:var(--warn)!important}
+  fieldset{border:none;padding:0;margin:0 0 22px}
+  legend{font-weight:700;font-size:15px;margin-bottom:10px;padding:0}
+  .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+  .opt{position:relative}
+  .opt input{position:absolute;opacity:0;pointer-events:none}
+  .opt span{display:block;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;height:100%;transition:.15s;font-size:14px}
+  .opt span b{display:block;font-size:14.5px;margin-bottom:2px}
+  .opt span small{color:var(--muted);font-size:12.5px;line-height:1.35;display:block}
+  .opt input:checked+span{border-color:var(--amber);background:#fff8ea;box-shadow:inset 0 0 0 1px var(--amber)}
+  .opt input:focus-visible+span{box-shadow:0 0 0 3px rgba(245,165,36,.35)}
+  .opt span:hover{border-color:#b9c4d1}
+  .opts.big{grid-template-columns:1fr}
+  .opts.big .opt span{padding:16px 18px}
+  .sub{margin:-8px 0 22px;padding:16px;background:#f8fafc;border:1px dashed var(--line);border-radius:12px;display:none}
+  .sub.show{display:block}
+  .nav{display:flex;justify-content:space-between;gap:10px;margin-top:26px;padding-top:20px;border-top:1px solid var(--line)}
+  button{font:inherit;font-weight:700;border:none;border-radius:10px;padding:12px 22px;cursor:pointer}
+  .btn-p{background:var(--amber);color:#1b1404}
+  .btn-p:hover{background:var(--amber-d)}
+  .btn-s{background:#eef2f6;color:var(--ink)}
+  .btn-s:hover{background:#e2e8ef}
+  .err{color:var(--warn);font-size:13.5px;margin-top:10px;display:none}
+  .welcome-list{display:grid;gap:10px;margin:18px 0 6px;padding:0;list-style:none}
+  .welcome-list li{display:flex;gap:12px;align-items:flex-start;background:#f8fafc;border-radius:10px;padding:12px 14px}
+  .num{flex:none;width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;font-size:13px;font-weight:700;display:grid;place-items:center}
+  /* results */
+  .result-hero{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:14px;padding:24px;display:grid;grid-template-columns:1.1fr 1fr;gap:18px;align-items:center}
+  @media (max-width:620px){.result-hero{grid-template-columns:1fr}}
+  .kw{font-size:54px;font-weight:800;line-height:1;color:var(--amber)}
+  .kw small{font-size:20px;color:#fff;font-weight:600}
+  .result-hero .label{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:#a9bbd0;font-weight:600}
+  .stats{display:grid;gap:8px}
+  .stat{display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:6px;font-size:14px}
+  .stat b{color:#fff}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+  th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+  td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
+  .tag{display:inline-block;font-size:11px;font-weight:700;border-radius:99px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+  .tag.shed{background:#fff1d6;color:#8a5a00}
+  .tag.out{background:#eef2f6;color:var(--muted)}
+  tr.excluded td{color:#9aa6b4}
+  .notes{margin:18px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+  .notes li{background:#fff8ea;border-left:4px solid var(--amber);padding:10px 14px;border-radius:6px;font-size:14px}
+  .notes li.info{background:#eef5ff;border-color:#4a7fd1}
+  .cta{margin-top:22px;background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;gap:12px}
+  .cta h3{margin:0}
+  .phone{font-size:22px;font-weight:800;color:var(--navy)}
+  .phone a{color:inherit;text-decoration:none}
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .disclaimer{font-size:12.5px;color:var(--muted);margin-top:18px}
+  .copied{color:var(--ok);font-weight:600;font-size:14px;display:none}
+  textarea.summary{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;min-height:150px;display:none}
+  .opts.days{grid-template-columns:repeat(auto-fit,minmax(78px,1fr))}
+  .opts.days .opt span{text-align:center;padding:10px 6px}
+  .send-btn{display:flex;align-items:center;justify-content:center;gap:12px;text-align:center;text-decoration:none;
+    background:linear-gradient(135deg,var(--amber),#ffbf47);color:#1b1404;font-weight:800;font-size:18px;line-height:1.3;
+    padding:18px 22px;border-radius:14px;box-shadow:0 8px 22px rgba(245,165,36,.35);margin-top:6px;transition:transform .1s, box-shadow .15s}
+  .send-btn:hover{transform:translateY(-1px);box-shadow:0 12px 28px rgba(245,165,36,.45)}
+  .send-btn:active{transform:none}
+  .sent-note{display:none;background:#e9f8f1;border:1px solid #b6e6cf;color:#145c40;border-radius:10px;padding:12px 14px;font-size:14px}
+  .logobar{background:#fff;border-bottom:4px solid var(--amber);padding:14px 20px}
+  .logos{display:flex;align-items:center;justify-content:space-between;gap:20px}
+  .logos a{display:block;line-height:0;transition:opacity .15s}
+  .logos a:hover{opacity:.8}
+  .logo-ea{height:72px;width:auto}
+  .logo-gen{height:46px;width:auto}
+  @media (max-width:520px){.logo-ea{height:54px}.logo-gen{height:30px}}
+  .hp{position:absolute!important;left:-10000px!important;top:auto;width:1px;height:1px;overflow:hidden}
+  .send-err{display:none;background:#fdecea;border:1px solid #f5c2bd;color:#9a2a1a;border-radius:10px;padding:12px 14px;font-size:14px}
+  .send-btn.loading{opacity:.7;pointer-events:none}
+  .send-btn.done{background:#1f9d6b;color:#fff;box-shadow:none;pointer-events:none}
+  .lock-wrap{position:relative}
+  .breakdown.locked table{filter:blur(5px);user-select:none;pointer-events:none}
+  .lock-overlay{display:none;position:absolute;inset:0;align-items:flex-start;justify-content:center;text-align:center;padding-top:40px}
+  .breakdown.locked .lock-overlay{display:flex}
+  .lock-overlay>div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 20px;box-shadow:0 8px 24px rgba(15,31,51,.12);font-size:14.5px;max-width:420px}
+  .report-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--navy);color:#fff;font-weight:800;font-size:16.5px;padding:15px 20px;border-radius:12px}
+  .report-btn:hover{background:var(--navy2)}
+  .report-btn.loading{opacity:.7;pointer-events:none}
+  .report-btn.done{background:#1f9d6b;pointer-events:none}
+  .or{display:flex;align-items:center;gap:12px;color:var(--muted);font-weight:700;font-size:13.5px;margin:10px 0 2px}
+  .or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+  .or span{text-align:center}
+  .pdf-row{display:none}
+  .privacy{display:flex;gap:10px;align-items:flex-start;background:#eef5ff;border:1px solid #cfe0f7;color:#1d3a5f;border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.45}
+  .privacy svg{flex:none;margin-top:1px;color:#2f6fbf}
+  .fine{font-size:12px;color:var(--muted)}
+  footer{text-align:center;color:var(--muted);font-size:12.5px;padding:0 16px 30px}
+  /* ---- EV additions ---- */
+  .logo-side{text-align:right;line-height:1.25}
+  .logo-side .tag1{font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+  .logo-side .tag2{font-size:20px;font-weight:800;color:var(--navy)}
+  .logo-side .tag2 a{color:inherit;text-decoration:none}
+  .logo-side .evbadge{display:inline-flex;align-items:center;gap:6px;background:var(--navy);color:#fff;border-radius:99px;padding:4px 12px 4px 8px;font-size:12.5px;font-weight:700;margin-bottom:6px}
+  .logo-side .evbadge svg{color:var(--amber)}
+  @media (max-width:520px){.logo-side .tag2{font-size:15px}.logo-side .tag1{display:none}}
+  .tipbtn{display:inline-flex;align-items:center;gap:6px;background:#eef5ff;color:#1d3a5f;border:1px solid #cfe0f7;border-radius:99px;padding:5px 12px;font-size:13px;font-weight:700;cursor:pointer;margin:0 0 12px}
+  .tipbtn:hover{background:#e2eefc}
+  .tipbtn .q{width:18px;height:18px;border-radius:50%;background:#2f6fbf;color:#fff;display:grid;place-items:center;font-size:12px}
+  .tipbox{display:none;background:#f5f9ff;border:1px solid #cfe0f7;border-radius:12px;padding:16px;margin:-2px 0 18px;font-size:14px}
+  .tipbox.show{display:block;animation:fade .2s ease}
+  .tipbox ol{margin:6px 0 0;padding-left:20px}
+  .tipbox li{margin-bottom:6px}
+  .tipbox .tipgrid{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:start}
+  @media (max-width:560px){.tipbox .tipgrid{grid-template-columns:1fr}}
+  .safety{background:#fff4ec;border-left:4px solid var(--warn);padding:8px 12px;border-radius:6px;font-size:13px;margin-top:10px}
+  .vcard{display:none;margin:-6px 0 20px;background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .vcard.show{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+  .vcard div{font-size:12.5px;color:var(--muted)}
+  .vcard b{display:block;font-size:17px;color:var(--ink)}
+  .rangewrap{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:18px}
+  .rangehead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .rangeval{font-size:30px;font-weight:800;color:var(--navy)}
+  .rangeval small{font-size:15px;color:var(--muted);font-weight:600}
+  input[type=range]{width:100%;accent-color:var(--amber);height:28px;margin:8px 0 2px;cursor:pointer}
+  .ticks{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted)}
+  .costgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:16px}
+  .costbox{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .costbox span{display:block;font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+  .costbox b{display:block;font-size:22px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums}
+  .costbox.hl{background:var(--navy);border-color:var(--navy)}
+  .costbox.hl span{color:#a9bbd0}.costbox.hl b{color:var(--amber)}
+  .costbox.save b{color:var(--ok)}
+  .inline-in{display:flex;align-items:center;gap:6px}
+  .inline-in input{max-width:110px}
+  .ratesum{margin-top:8px;font-size:14px;font-weight:700;color:var(--navy)}
+  .meter{margin-top:16px}
+  .meter .track{position:relative;height:16px;background:#e8edf3;border-radius:99px;overflow:hidden;display:flex}
+  .meter .seg-a{background:#7a8ca3;height:100%}
+  .meter .seg-b{background:var(--amber);height:100%}
+  .meter .cap{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--navy)}
+  .meter .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--muted);margin-top:8px}
+  .meter .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+  .result-hero .meter .track{background:rgba(255,255,255,.14)}
+  .result-hero .meter .legend{color:#c9d5e3}
+  .result-hero .meter .seg-a{background:#9fb3cb}
+  .verdict{display:inline-block;font-weight:800;font-size:13px;border-radius:99px;padding:4px 12px;margin-top:10px}
+  .verdict.ok{background:#d9f5e8;color:#145c40}
+  .verdict.tight{background:#fff1d6;color:#8a5a00}
+  .verdict.over{background:#fde2dc;color:#9a2a1a}
+  .photo-add{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:2px dashed #c3ccd6;border-radius:12px;padding:16px;cursor:pointer;font-weight:700;font-size:15px;background:#f8fafc;text-align:center}
+  .photo-add:hover{border-color:var(--amber)}
+  .photo-add small{font-weight:400;color:var(--muted);font-size:12.5px}
+  .photo-add input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+  .photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:10px}
+  .ph{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+  .ph img{width:100%;height:100px;object-fit:cover;display:block}
+  .ph .cap{font-size:11.5px;padding:4px 6px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ph .rm{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;padding:0;background:rgba(15,31,51,.75);color:#fff;font-size:14px;line-height:24px}
+  .photoblock{border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+  .photoblock h3{margin:0 0 4px;font-size:16px}
+  .photoblock .hint{display:block;margin-bottom:10px}
+  .sumgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;font-size:14px;margin-top:8px}
+  .sumgrid div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);padding:6px 0}
+  .sumgrid div span{color:var(--muted)}
+  .sumgrid div b{text-align:right}
+  @media (max-width:620px){.sumgrid{grid-template-columns:1fr}}
+  h3.sec{margin:26px 0 4px}
+  .distout{font-weight:800;color:var(--navy);font-size:18px}
+  .logo-side a{display:inline;line-height:inherit}
+  .result-hero .meter .cap{background:#fff}
+  .breakdown.locked .sumgrid{filter:blur(5px);user-select:none;pointer-events:none}
+  .logo-side .evbadge{background:#1f9d6b}
+  .logo-side .evbadge svg{color:#fff}
+  .addrwrap{position:relative}
+  .addrlist{display:none;position:absolute;left:0;right:0;top:72px;z-index:20;margin:0;padding:6px;list-style:none;background:#fff;border:1.5px solid var(--line);border-radius:12px;box-shadow:0 12px 30px rgba(15,31,51,.15);max-height:280px;overflow:auto}
+  .addrlist.show{display:block}
+  .addrlist li{padding:10px 12px;border-radius:8px;cursor:pointer;font-size:14.5px}
+  .addrlist li small{display:block;color:var(--muted);font-size:12px}
+  .addrlist li:hover,.addrlist li.act{background:#fff8ea}
+  .pf{display:none;font-size:11px;font-weight:700;background:#e9f8f1;color:#145c40;border-radius:99px;padding:2px 8px;margin-left:6px;vertical-align:middle;white-space:nowrap}
+  .pf.show{display:inline-block}
+  .pfcard{display:none;margin-top:14px;background:#e9f8f1;border:1px solid #b6e6cf;color:#145c40;border-radius:12px;padding:12px 14px;font-size:14px}
+  .pfcard.show{display:block}
+  .pfcard.miss{background:#f8fafc;border-color:var(--line);color:var(--ink)}
+  .pfcard ul{margin:6px 0 4px;padding-left:18px}
+  /* embedded in electricace.com: the site already shows its own logo, nav and footer */
+  html.embedded body{background:transparent}
+  html.embedded .logobar, html.embedded footer{display:none}
+  html.embedded header{border-radius:14px 14px 0 0;padding:24px 20px 64px}
+  html.embedded main{padding-bottom:16px}
+</style>
+</head>
+<body>
+<div class="logobar">
+  <div class="wrap logos">
+    <a href="https://electricace.com" target="_blank" rel="noopener" title="Visit ElectricAce.com"><img src="data:image/png;base64,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" alt="ElectricAce" class="logo-ea"></a>
+    <div class="logo-side">
+      <div class="evbadge"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6z" fill="currentColor"/></svg>EV Charging Installation</div>
+      <div class="tag1">Call or text</div>
+      <div class="tag2"><a href="tel:+18452322135">845.232.2135</a></div>
+    </div>
+  </div>
+</div>
+<header>
+  <div class="wrap">
+    <h1>Get ready to charge at home</h1>
+    <p>Tell us about your home's electrical service, the EV you're getting, and where you'd like to charge. You'll get a preliminary load calculation, a recommended charger circuit, and an estimate of what it will cost to charge each month.</p>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+<form class="card" id="form" novalidate>
+  <div class="hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="botcheck" tabindex="-1" autocomplete="off"></label></div>
+  <div class="progress">
+    <div class="bar"><div id="barFill"></div></div>
+    <div class="stepcount" id="stepCount">Step 1 of 9</div>
+  </div>
+
+  <!-- STEP 0: Welcome -->
+  <section class="step active" data-title="Welcome">
+    <h2>Let's plan your home EV charger</h2>
+    <p class="lead">This takes about 5–7 minutes. "Not sure" is always an acceptable answer. We'll confirm everything on site.</p>
+    <ul class="welcome-list">
+      <li><span class="num">1</span><div><b>Your main electrical panel</b><br><span class="hint">We'll show you how to find your service size, and ask for a couple of photos.</span></div></li>
+      <li><span class="num">2</span><div><b>Your electric meter</b><br><span class="hint">The meter number is printed on the meter face (and on your electric bill).</span></div></li>
+      <li><span class="num">3</span><div><b>A recent electric bill (optional)</b><br><span class="hint">Your supply and delivery rates let us estimate your real charging cost.</span></div></li>
+      <li><span class="num">4</span><div><b>Where you'd like to charge</b><br><span class="hint">Garage, outside wall, or a pedestal by the driveway. A photo of the spot helps a lot.</span></div></li>
+    </ul>
+    <div class="privacy" style="margin-top:16px"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5zm-1.5 14.5-4-4 1.4-1.4 2.6 2.6 5.6-5.6 1.4 1.4z" fill="currentColor"/></svg><div><b>Your privacy is protected.</b> The information and photos you share here are used only to plan and quote your EV charging project. We will never sell your information, and we don't share it with any other party for any purpose outside of your EV charging project.</div></div>
+  </section>
+
+  <!-- STEP 1: Property -->
+  <section class="step" data-title="Your property">
+    <h2>About your property</h2>
+    <p class="lead">Start with the address and we'll fill in what we can from public property records. You'll confirm everything as you go.</p>
+    <div class="addrwrap">
+      <label class="f" for="addrSearch">Property address</label>
+      <input type="text" id="addrSearch" name="addrSearch" autocomplete="off" placeholder="Start typing, e.g. 12 Main St, Rhinebeck" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="addrList">
+      <ul class="addrlist" id="addrList" role="listbox"></ul>
+      <div class="hint" id="addrStatus" style="margin-top:6px">Looks up New York State public tax records. Nothing you type here is sent to ElectricAce until you submit.</div>
+    </div>
+    <div class="pfcard" id="pfCard"></div>
+    <div class="grid" style="margin-top:18px">
+      <div><label class="f" for="zip">Property ZIP code * <span class="pf" data-pf="zip">from address</span></label><input type="text" id="zip" name="zip" required inputmode="numeric" maxlength="5" pattern="[0-9]{5}" autocomplete="postal-code" placeholder="e.g., 12572"></div>
+      <div><label class="f" for="sqft">Approx. finished square footage * <span class="pf" data-pf="sqft">from public records</span></label><input type="number" id="sqft" name="sqft" min="300" max="30000" step="50" required placeholder="e.g., 2400"></div>
+    </div>
+    <fieldset style="margin-top:20px">
+      <legend>Property type <span class="pf" data-pf="ptype">from public records</span></legend>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="ptype" value="Single-family home" checked><span><b>Single-family home</b></span></label>
+        <label class="opt"><input type="radio" name="ptype" value="Townhouse / condo"><span><b>Townhouse / condo</b><small>Shared walls or HOA</small></span></label>
+        <label class="opt"><input type="radio" name="ptype" value="Multi-family / rental"><span><b>Multi-family / rental</b></span></label>
+        <label class="opt"><input type="radio" name="ptype" value="Small business / commercial"><span><b>Small business</b><small>Workplace or customer charging</small></span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Do you own the property?</legend>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="own" value="Own" checked><span><b>Yes, I own it</b></span></label>
+        <label class="opt"><input type="radio" name="own" value="Own — HOA approval needed"><span><b>Own, but HOA approval needed</b></span></label>
+        <label class="opt"><input type="radio" name="own" value="Rent — landlord approval needed"><span><b>I rent</b><small>Landlord approval needed</small></span></label>
+      </div>
+    </fieldset>
+  </section>
+
+  <!-- STEP 2: Electrical service -->
+  <section class="step" data-title="Electrical service">
+    <h2>Your electrical service</h2>
+    <p class="lead">Your service size tells us how much power your home can safely use at once, and how much is left for an EV charger.</p>
+    <fieldset style="margin-bottom:8px">
+      <legend>Main electrical service size</legend>
+      <button type="button" class="tipbtn" data-tip="svcTip"><span class="q">?</span>How do I find this?</button>
+      <div class="tipbox" id="svcTip">
+        <div class="tipgrid">
+          <svg viewBox="0 0 150 210" width="150" aria-label="Diagram of an electrical panel with the main breaker at the top">
+            <rect x="8" y="6" width="134" height="198" rx="8" fill="#e9eef4" stroke="#7a8ca3" stroke-width="2"/>
+            <rect x="20" y="16" width="110" height="178" rx="4" fill="#fff" stroke="#c3ccd6"/>
+            <rect x="45" y="24" width="60" height="34" rx="4" fill="#0f1f33"/>
+            <rect x="66" y="30" width="18" height="12" rx="2" fill="#eeb500"/>
+            <text x="75" y="54" text-anchor="middle" font-family="Inter,Arial" font-size="10" font-weight="800" fill="#fff">200</text>
+            <circle cx="115" cy="41" r="13" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+            <g fill="#5d6b7c">
+              <rect x="30" y="70" width="40" height="10" rx="2"/><rect x="80" y="70" width="40" height="10" rx="2"/>
+              <rect x="30" y="86" width="40" height="10" rx="2"/><rect x="80" y="86" width="40" height="10" rx="2"/>
+              <rect x="30" y="102" width="40" height="10" rx="2"/><rect x="80" y="102" width="40" height="10" rx="2"/>
+              <rect x="30" y="118" width="40" height="10" rx="2"/><rect x="80" y="118" width="40" height="10" rx="2"/>
+              <rect x="30" y="134" width="40" height="10" rx="2"/><rect x="80" y="134" width="40" height="10" rx="2"/>
+            </g>
+            <g fill="none" stroke="#9aa6b4" stroke-dasharray="3 3">
+              <rect x="30" y="150" width="40" height="10" rx="2"/><rect x="80" y="150" width="40" height="10" rx="2"/>
+              <rect x="30" y="166" width="40" height="10" rx="2"/><rect x="80" y="166" width="40" height="10" rx="2"/>
+            </g>
+            <text x="75" y="189" text-anchor="middle" font-family="Inter,Arial" font-size="9" fill="#5d6b7c">empty spaces</text>
+          </svg>
+          <div>
+            <b>Find the main breaker</b>
+            <ol>
+              <li>Open the metal <b>door</b> on your main panel (usually in the basement, garage, or utility room). <u>Don't remove the cover screws</u>, just open the door.</li>
+              <li>Look for the <b>largest breaker</b>, usually at the very top, often labeled <b>"MAIN."</b></li>
+              <li>The number stamped on its handle is your service size, like <b>100</b>, <b>150</b>, or <b>200</b>.</li>
+              <li>No main breaker in the panel? Check for a breaker or disconnect <b>outside next to your meter</b>. The number on it is your service size.</li>
+              <li>Still unsure? Pick "Not sure" and add a panel photo in a later step. We'll figure it out.</li>
+            </ol>
+            <div class="safety">⚠️ Never remove the panel cover or touch wiring. Opening the panel door is all you need.</div>
+          </div>
+        </div>
+      </div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="service" value="60"><span><b>60 amp</b><small>Older homes</small></span></label>
+        <label class="opt"><input type="radio" name="service" value="100"><span><b>100 amp</b></span></label>
+        <label class="opt"><input type="radio" name="service" value="125"><span><b>125 amp</b></span></label>
+        <label class="opt"><input type="radio" name="service" value="150"><span><b>150 amp</b></span></label>
+        <label class="opt"><input type="radio" name="service" value="200" checked><span><b>200 amp</b><small>Most common</small></span></label>
+        <label class="opt"><input type="radio" name="service" value="400"><span><b>320 / 400 amp</b></span></label>
+        <label class="opt"><input type="radio" name="service" value="unknown"><span><b>Not sure</b></span></label>
+      </div>
+    </fieldset>
+    <div class="grid" style="margin-top:14px">
+      <div><label class="f" for="panelLoc">Where is your main panel?</label>
+        <select id="panelLoc" name="panelLoc"><option>Unfinished basement</option><option>Finished basement</option><option>Attached garage</option><option>Utility room / closet</option><option>Outside (exterior wall)</option><option>Detached garage / outbuilding</option><option>Not sure</option></select></div>
+      <div><label class="f" for="spaces">Empty breaker spaces? <span class="hint">(see diagram above)</span></label>
+        <select id="spaces" name="spaces"><option value="2+">Yes, 2 or more</option><option value="1">Only 1</option><option value="0">None, it's full</option><option value="unknown" selected>Not sure</option></select></div>
+      <div><label class="f" for="panelBrand">Panel brand <span class="hint">(on the label inside the door)</span></label>
+        <select id="panelBrand" name="panelBrand"><option>Not sure</option><option>Square D</option><option>Eaton / Cutler-Hammer</option><option>Siemens</option><option>GE</option><option>Murray</option><option>Leviton</option><option>Federal Pacific (FPE)</option><option>Zinsco / Sylvania</option><option>Challenger</option><option>Pushmatic / Bulldog</option><option>Other</option></select></div>
+      <div class="full"><label class="f">Do you believe the panel has been upgraded since the home was built?</label>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="panelUpg" value="Yes"><span><b>Yes, it's been upgraded</b><small>Newer than the house</small></span></label>
+          <label class="opt"><input type="radio" name="panelUpg" value="No"><span><b>No, it's original</b><small>Same age as the house</small></span></label>
+          <label class="opt"><input type="radio" name="panelUpg" value="Not sure" checked><span><b>Not sure</b></span></label>
+        </div>
+        <div class="hint" id="upgHint" style="margin-top:6px"></div></div>
+      <div><label class="f" for="panelAge">Approx. age of the panel <span class="pf" data-pf="panelAge">based on year built</span></label>
+        <select id="panelAge" name="panelAge"><option>Not sure</option><option>Under 10 years</option><option>10–25 years</option><option>25–40 years</option><option>Over 40 years</option></select></div>
+    </div>
+  </section>
+
+  <!-- STEP 3: Home loads -->
+  <section class="step" data-title="Home load calc">
+    <h2>What's already using power in your home?</h2>
+    <p class="lead">We use these to run a load calculation (NEC 220.82 method) and see how much room is left for an EV charger.</p>
+    <fieldset>
+      <legend>Primary heating <span class="pf" data-pf="heat">from public records, please confirm</span></legend>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="heat" value="fuel" checked><span><b>Gas / oil / propane</b><small>Furnace or boiler</small></span></label>
+        <label class="opt"><input type="radio" name="heat" value="heatpump"><span><b>Heat pump</b><small>Ducted (central)</small></span></label>
+        <label class="opt"><input type="radio" name="heat" value="elfurnace"><span><b>Electric furnace / boiler</b></span></label>
+        <label class="opt"><input type="radio" name="heat" value="baseboard"><span><b>Electric baseboard</b></span></label>
+        <label class="opt"><input type="radio" name="heat" value="other"><span><b>Wood / pellet / other</b></span></label>
+      </div>
+    </fieldset>
+    <div class="sub" id="hpSub">
+      <div class="grid">
+        <div><label class="f" for="hpTons">Heat pump size <span class="hint">(1 ton ≈ 12,000 BTU)</span></label>
+          <select id="hpTons" name="hpTons"><option value="2">2 ton</option><option value="3" selected>3 ton</option><option value="4">4 ton</option><option value="5">5 ton</option><option value="7">6+ ton / multiple</option></select></div>
+        <div><label class="f" for="hpAux">Backup electric heat strips</label>
+          <select id="hpAux" name="hpAux"><option value="0">None / not sure</option><option value="5">5 kW</option><option value="10" selected>10 kW</option><option value="15">15 kW</option><option value="20">20 kW</option></select></div>
+      </div>
+    </div>
+    <div class="sub" id="elSub">
+      <label class="f" for="elKw">Approx. total electric heat <span class="hint">(baseboards are about 250 W per foot; a 6 ft heater ≈ 1.5 kW)</span></label>
+      <select id="elKw" name="elKw"><option value="5">Under 5 kW</option><option value="10" selected>5–10 kW</option><option value="15">10–15 kW</option><option value="20">15–20 kW</option><option value="30">20 kW+</option></select>
+    </div>
+    <div class="grid">
+      <div><label class="f" for="ac">Central air conditioning <span class="hint">(skip if heat pump)</span></label>
+        <select id="ac" name="ac"><option value="0">None</option><option value="2">Yes, about 2 ton</option><option value="3">Yes, about 3 ton</option><option value="4">Yes, about 4 ton</option><option value="5">Yes, 5 ton</option><option value="7">Yes, 2 systems</option></select></div>
+      <div><label class="f" for="splits">Ductless mini-split heads</label>
+        <select id="splits" name="splits"><option value="0">None</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="6">5+</option></select></div>
+      <div><label class="f" for="wh">Water heater</label>
+        <select id="wh" name="wh"><option value="fuel">Gas / oil / propane / boiler</option><option value="tank">Electric tank</option><option value="hpwh">Heat pump water heater</option><option value="tankless">Electric tankless (whole-house)</option></select></div>
+      <div><label class="f" for="range">Cooking</label>
+        <select id="range" name="range"><option value="gas">Gas / propane</option><option value="elec">Electric range</option><option value="induction">Induction</option><option value="split">Electric cooktop + wall oven</option></select></div>
+      <div><label class="f" for="dryer">Clothes dryer</label>
+        <select id="dryer" name="dryer"><option value="gas">Gas / propane</option><option value="elec" selected>Electric</option><option value="none">None</option></select></div>
+      <div><label class="f" for="well">Well pump <span class="pf" data-pf="well">from public records</span></label>
+        <select id="well" name="well"><option value="0">No well (municipal water)</option><option value="0.75">¾ HP</option><option value="1">1 HP</option><option value="1.5">1½ HP</option><option value="2">2 HP+</option><option value="unk">Have a well, size unknown</option></select></div>
+    </div>
+    <fieldset style="margin-top:20px">
+      <legend>Other loads <span class="hint">(select all that apply)</span></legend>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" name="dish" value="1" checked><span><b>Dishwasher</b></span></label>
+        <label class="opt"><input type="checkbox" name="disp" value="1"><span><b>Garbage disposal</b></span></label>
+        <label class="opt"><input type="checkbox" name="micro" value="1"><span><b>Built-in microwave</b></span></label>
+        <label class="opt"><input type="checkbox" name="sump" value="1"><span><b>Sump pump</b></span></label>
+        <label class="opt"><input type="checkbox" name="spa" value="1"><span><b>Hot tub / spa</b></span></label>
+        <label class="opt"><input type="checkbox" name="pool" value="1"><span><b>Pool pump / heater</b></span></label>
+        <label class="opt"><input type="checkbox" name="shop" value="1"><span><b>Workshop / welder</b></span></label>
+        <label class="opt"><input type="checkbox" name="exEv" value="1"><span><b>Existing EV charger</b><small>Already installed</small></span></label>
+      </div>
+    </fieldset>
+    <div class="grid">
+      <div><label class="f" for="extraKw">Other large loads <span class="hint">(kW, if known)</span></label>
+        <input type="number" id="extraKw" name="extraKw" min="0" step="0.5" placeholder="e.g., 3"></div>
+      <div><label class="f" for="solar">Solar panels or battery?</label>
+        <select id="solar" name="solar"><option>No</option><option>Solar</option><option>Solar + battery</option><option>Battery only</option><option>Planning to add</option></select></div>
+    </div>
+  </section>
+
+  <!-- STEP 4: Vehicle & charger -->
+  <section class="step" data-title="Your EV & charger">
+    <h2>Your EV and charger</h2>
+    <p class="lead">Each vehicle has a maximum charging speed. We match the circuit to your car so you don't pay for capacity it can't use.</p>
+    <div class="grid">
+      <div class="full"><label class="f" for="vehicle">Which EV are you buying (or driving)?</label>
+        <select id="vehicle" name="vehicle"></select></div>
+      <div id="otherVehWrap" class="full" style="display:none"><label class="f" for="otherVeh">Make & model</label><input type="text" id="otherVeh" name="otherVeh" placeholder="e.g., 2027 Subaru Trailseeker"></div>
+      <div><label class="f" for="evTiming">When will it arrive?</label>
+        <select id="evTiming" name="evTiming"><option>Already have it</option><option>Within 30 days</option><option>1–3 months</option><option>3+ months / researching</option></select></div>
+      <div><label class="f" for="evCount">How many EVs will charge here?</label>
+        <select id="evCount" name="evCount"><option value="1">1 EV</option><option value="2share">2 EVs, take turns on one charger</option><option value="2pshare">2 EVs, two chargers with power-sharing</option><option value="2full">2 EVs, two full-power chargers</option></select></div>
+    </div>
+    <div class="vcard" id="vcard" style="margin-top:16px">
+      <div>Max home charging<b id="vcKw">—</b></div>
+      <div>Battery (approx.)<b id="vcBat">—</b></div>
+      <div>Efficiency (approx.)<b id="vcEff">—</b></div>
+    </div>
+
+    <fieldset style="margin-top:18px">
+      <legend>How do you want to charge?</legend>
+      <div class="opts big">
+        <label class="opt"><input type="radio" name="charger" value="dealer" checked><span><b>Hardwired charger from the dealer / manufacturer</b><small>Example: Tesla Wall Connector, Ford Charge Station Pro, GM Energy, or the charger that comes with your purchase. Hardwired units charge fastest and are weather-rated for outdoor use.</small></span></label>
+        <label class="opt"><input type="radio" name="charger" value="1450"><span><b>NEMA 14-50R EV-grade receptacle</b><small>A heavy-duty 50 amp outlet for a plug-in charger (like the mobile cord that comes with many EVs). Flexible and portable, limited to 40 amps of charging.</small></span></label>
+        <label class="opt"><input type="radio" name="charger" value="own"><span><b>I'm buying my own hardwired charger</b><small>ChargePoint, Emporia, Wallbox, JuiceBox, Grizzl-E, etc.</small></span></label>
+        <label class="opt"><input type="radio" name="charger" value="recommend"><span><b>Not sure, recommend one for me</b></span></label>
+      </div>
+    </fieldset>
+    <div class="sub" id="hwSub">
+      <div class="grid">
+        <div><label class="f" for="chgAmps">Charger output setting</label>
+          <select id="chgAmps" name="chgAmps"><option value="auto" selected>Not sure, match my car</option><option value="16">16 A (3.8 kW)</option><option value="24">24 A (5.8 kW)</option><option value="32">32 A (7.7 kW)</option><option value="40">40 A (9.6 kW)</option><option value="48">48 A (11.5 kW)</option><option value="64">64 A (15.4 kW)</option><option value="80">80 A (19.2 kW)</option></select></div>
+        <div><label class="f" for="chgHave">Do you already have the charger?</label>
+          <select id="chgHave" name="chgHave"><option>Not yet</option><option>Yes, it's here</option><option>Coming with the vehicle</option></select></div>
+      </div>
+    </div>
+    <div class="sub" id="plugSub">
+      <label class="f" for="cord">Which plug-in charger will you use?</label>
+      <select id="cord" name="cord"><option value="32">Mobile cord that came with the car (≈32 A)</option><option value="40">A 40 A plug-in charger</option><option value="unk">Not sure yet</option></select>
+      <div class="hint" style="margin-top:8px">We install an industrial-grade EV receptacle (not a standard hardware-store outlet) on a GFCI-protected 50 A circuit, as the NEC requires. Standard 14-50 outlets can overheat under hours of continuous charging.</div>
+    </div>
+    <ul class="notes" style="margin-top:4px"><li class="info" id="chargeInfo"></li></ul>
+  </section>
+
+  <!-- STEP 5: Charging cost -->
+  <section class="step" data-title="Charging cost">
+    <h2>What will it cost to charge?</h2>
+    <p class="lead">Enter your electric rate if you know it, then slide to your typical monthly miles.</p>
+    <div class="grid">
+      <div><label class="f" for="utility">Electric utility</label>
+        <select id="utility" name="utility"><option>Central Hudson</option><option>NYSEG</option><option>National Grid</option><option>Orange &amp; Rockland</option><option>Con Edison</option><option>Other / municipal</option></select></div>
+      <div><label class="f" for="rateKnown">Do you know your rate?</label>
+        <select id="rateKnown" name="rateKnown"><option value="no">No, use a typical estimate</option><option value="yes">Yes, I'll enter it</option></select></div>
+    </div>
+    <button type="button" class="tipbtn" data-tip="rateTip" style="margin-top:14px"><span class="q">?</span>Where do I find this on my bill?</button>
+    <div class="tipbox" id="rateTip">
+      Your bill has two sections: <b>Supply</b> (the energy itself) and <b>Delivery</b> (the utility's wires and service). For the most accurate number:
+      <ol>
+        <li>Find <b>total supply charges</b> and divide by the <b>kWh used</b> that month. That's your supply rate.</li>
+        <li>Find <b>total delivery charges</b>, subtract the fixed monthly <b>customer / basic service charge</b>, and divide by kWh used. That's your delivery rate.</li>
+        <li>Enter both in cents per kWh. Example: $54.00 supply ÷ 450 kWh = 12.0¢.</li>
+      </ol>
+      If you're on a time-of-use or EV plan, enter your off-peak rate, since most charging happens overnight.
+    </div>
+    <div class="grid" id="rateInputs">
+      <div><label class="f" for="supplyRate">Supply (usage) rate</label>
+        <div class="inline-in"><input type="number" id="supplyRate" name="supplyRate" min="0" max="100" step="0.1" value="12.0"><span>¢ / kWh</span></div></div>
+      <div><label class="f" for="deliveryRate">Delivery rate</label>
+        <div class="inline-in"><input type="number" id="deliveryRate" name="deliveryRate" min="0" max="100" step="0.1" value="16.0"><span>¢ / kWh</span></div></div>
+    </div>
+    <div class="ratesum" id="rateSum"></div>
+    <div class="hint" id="rateNote" style="margin-bottom:18px"></div>
+
+    <div class="rangewrap">
+      <div class="rangehead">
+        <label class="f" for="miles" style="margin:0">Miles driven per month</label>
+        <div class="rangeval"><span id="milesOut">1,000</span> <small>mi / month</small></div>
+      </div>
+      <input type="range" id="miles" name="miles" min="100" max="4000" step="50" value="1000">
+      <div class="ticks"><span>100</span><span>1,000</span><span>2,000</span><span>3,000</span><span>4,000</span></div>
+      <div class="hint" style="margin-top:6px">The U.S. average is about 1,100 miles per month (13,500 per year).</div>
+      <div class="costgrid">
+        <div class="costbox hl"><span>Est. cost / month</span><b id="cMonth">—</b></div>
+        <div class="costbox"><span>Energy / month</span><b id="cKwh">—</b></div>
+        <div class="costbox"><span>Cost per mile</span><b id="cMile">—</b></div>
+        <div class="costbox save"><span>Vs. gas / month</span><b id="cSave">—</b></div>
+      </div>
+      <details style="margin-top:14px;font-size:14px">
+        <summary style="cursor:pointer;font-weight:700">Compare with a gas vehicle</summary>
+        <div class="grid" style="margin-top:10px">
+          <div><label class="f" for="mpg">Gas vehicle fuel economy</label><div class="inline-in"><input type="number" id="mpg" name="mpg" min="5" max="80" step="1" value="25"><span>mpg</span></div></div>
+          <div><label class="f" for="gasPrice">Gas price</label><div class="inline-in"><span>$</span><input type="number" id="gasPrice" name="gasPrice" min="1" max="10" step="0.01" value="4.10"><span>/ gal</span></div></div>
+        </div>
+        <div class="hint" style="margin-top:6px">Default gas price is near the New York State average in mid-November 2026. Adjust it to what you pay.</div>
+      </details>
+    </div>
+  </section>
+
+  <!-- STEP 6: Installation & wire route -->
+  <section class="step" data-title="Installation">
+    <h2>Where do you want the charger?</h2>
+    <p class="lead">Location and wire route are the biggest factors in installation cost.</p>
+    <fieldset>
+      <legend>Preferred charger location</legend>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="loc" value="Inside attached garage" checked><span><b>Inside attached garage</b></span></label>
+        <label class="opt"><input type="radio" name="loc" value="Exterior wall of garage"><span><b>Outside wall of garage</b></span></label>
+        <label class="opt"><input type="radio" name="loc" value="Exterior wall of house"><span><b>Outside wall of house</b></span></label>
+        <label class="opt"><input type="radio" name="loc" value="Pedestal / post mount"><span><b>Pedestal / post</b><small>By the driveway or parking spot</small></span></label>
+        <label class="opt"><input type="radio" name="loc" value="Detached garage / outbuilding"><span><b>Detached garage / outbuilding</b></span></label>
+        <label class="opt"><input type="radio" name="loc" value="Parking lot (commercial)"><span><b>Parking lot</b><small>Commercial</small></span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>How would the wire get there? <span class="hint">(select all that apply)</span></legend>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" name="r_unfin" value="1"><span><b>Unfinished basement</b><small>Open ceiling joists</small></span></label>
+        <label class="opt"><input type="checkbox" name="r_fin" value="1"><span><b>Finished basement</b><small>Drywall / drop ceiling</small></span></label>
+        <label class="opt"><input type="checkbox" name="r_crawl" value="1"><span><b>Crawlspace</b></span></label>
+        <label class="opt"><input type="checkbox" name="r_attic" value="1"><span><b>Through the attic</b></span></label>
+        <label class="opt"><input type="checkbox" name="r_garage" value="1"><span><b>Panel is in the garage</b><small>Same wall or nearby</small></span></label>
+        <label class="opt"><input type="checkbox" name="r_ext" value="1"><span><b>Along the outside wall</b><small>Surface conduit on siding</small></span></label>
+        <label class="opt"><input type="checkbox" name="r_trench" value="1"><span><b>Underground</b><small>Trench to pedestal / outbuilding</small></span></label>
+        <label class="opt"><input type="checkbox" name="r_unk" value="1"><span><b>Not sure</b></span></label>
+      </div>
+    </fieldset>
+    <div class="sub" id="trenchSub">
+      <div class="grid">
+        <div><label class="f" for="trenchFt">Approx. trench length (ft)</label><input type="number" id="trenchFt" name="trenchFt" min="0" step="5" placeholder="e.g., 40"></div>
+        <div><label class="f" for="surface">What would we dig through?</label>
+          <select id="surface" name="surface"><option>Lawn / soil</option><option>Gravel</option><option>Asphalt driveway</option><option>Concrete / pavers</option><option>Mix / not sure</option></select></div>
+      </div>
+    </div>
+    <div class="rangewrap" style="margin-bottom:20px">
+      <div class="rangehead">
+        <label class="f" for="dist" style="margin:0">Distance from panel to charger <span class="hint">(following the wire route, not a straight line)</span></label>
+        <div class="distout"><span id="distOut">25</span> ft</div>
+      </div>
+      <input type="range" id="dist" name="dist" min="5" max="250" step="5" value="25">
+      <div class="ticks"><span>5 ft</span><span>60</span><span>125</span><span>190</span><span>250 ft</span></div>
+      <label class="hint" style="display:flex;gap:6px;align-items:center;margin-top:8px"><input type="checkbox" name="distUnk" value="1"> I'm not sure, measure it on site</label>
+      <div class="hint" style="margin-top:6px">Tip: pace it off. One normal step is about 2½ feet. Remember to count up/down walls and across ceilings.</div>
+    </div>
+    <div class="grid">
+      <div><label class="f" for="wall">Wall the wire passes through</label>
+        <select id="wall" name="wall"><option>Wood frame / siding</option><option>Brick or stone</option><option>Concrete / block foundation</option><option>Not sure</option></select></div>
+      <div><label class="f" for="wifi">Wi-Fi signal at the charger spot?</label>
+        <select id="wifi" name="wifi"><option>Strong</option><option>Weak</option><option>None</option><option>Not sure</option></select></div>
+      <div class="full"><label class="f" for="comments">Anything else we should know?</label>
+        <textarea id="comments" name="comments" rows="3" placeholder="Obstacles, preferred side of the garage, timeline, questions…"></textarea></div>
+    </div>
+  </section>
+
+  <!-- STEP 7: Photos & meter -->
+  <section class="step" data-title="Photos & meter">
+    <h2>Photos &amp; meter number</h2>
+    <p class="lead">Photos let us quote accurately, often without an extra visit. Snap them with your phone. All are optional.</p>
+    <div class="photoblock">
+      <h3>📷 Electrical panel</h3>
+      <span class="hint">1) Panel door open, showing all breakers. 2) The label inside the door. 3) A close-up of the main breaker.</span>
+      <label class="photo-add"><input type="file" accept="image/*" multiple data-cat="Panel">＋ Add panel photos<small>Take new or choose from your camera roll</small></label>
+      <div class="photos" data-grid="Panel"></div>
+    </div>
+    <div class="photoblock">
+      <h3>🔢 Electric meter</h3>
+      <span class="hint">The meter number is on the meter face, usually under a barcode. It's also on your electric bill.</span>
+      <div class="grid" style="margin-bottom:10px">
+        <div><label class="f" for="meterNo">Meter number</label><input type="text" id="meterNo" name="meterNo" placeholder="e.g., 12345678"></div>
+        <div><label class="f">&nbsp;</label><label class="photo-add" style="padding:10px"><input type="file" accept="image/*" data-cat="Meter">📷 Photo of the meter</label></div>
+      </div>
+      <div class="photos" data-grid="Meter"></div>
+    </div>
+    <div class="photoblock">
+      <h3>📍 Charger location</h3>
+      <span class="hint">Stand back so we can see the wall or spot where you'd like the charger, and where the car parks.</span>
+      <label class="photo-add"><input type="file" accept="image/*" multiple data-cat="Location">＋ Add location photos</label>
+      <div class="photos" data-grid="Location"></div>
+    </div>
+    <div class="photoblock" style="margin-bottom:0">
+      <h3>🧭 Wire route (optional)</h3>
+      <span class="hint">Basement ceiling, garage wall, or the path to a pedestal or detached garage.</span>
+      <label class="photo-add"><input type="file" accept="image/*" multiple data-cat="Wire route">＋ Add route photos</label>
+      <div class="photos" data-grid="Wire route"></div>
+    </div>
+    <div class="hint" id="photoStatus" style="margin-top:10px"></div>
+  </section>
+
+  <!-- STEP 8: Results -->
+  <section class="step" data-title="Results" id="resultsStep">
+    <h2>Your preliminary EV charger plan</h2>
+    <p class="lead" id="resultLead"></p>
+    <div class="result-hero">
+      <div>
+        <div class="label">Recommended charger circuit</div>
+        <div class="kw" id="recCkt">—</div>
+        <div id="recSub" style="color:#c9d5e3;margin-top:6px;font-size:14px"></div>
+        <div id="verdict"></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><span>Existing home load</span><b id="sExist">—</b></div>
+        <div class="stat"><span>Load with EV charger</span><b id="sWith">—</b></div>
+        <div class="stat"><span>Service capacity</span><b id="sCap">—</b></div>
+        <div class="stat"><span>Est. charging cost</span><b id="sCost">—</b></div>
+      </div>
+      <div class="meter" style="grid-column:1/-1">
+        <div class="track"><div class="seg-a" id="mA"></div><div class="seg-b" id="mB"></div><div class="cap" id="mCap"></div></div>
+        <div class="legend"><span><i style="background:#9fb3cb"></i>Existing load</span><span><i style="background:var(--amber)"></i>EV charger</span><span><i style="background:#fff"></i>Service limit</span></div>
+      </div>
+    </div>
+    <ul class="notes" id="notes"></ul>
+
+    <div class="breakdown locked" id="breakdown">
+      <h3 class="sec">Load calculation &amp; project details</h3>
+      <div class="lock-wrap">
+        <table>
+          <thead><tr><th>Item</th><th class="r">Nameplate VA</th><th class="r">Demand VA</th></tr></thead>
+          <tbody id="loadTable"></tbody>
+        </table>
+        <div class="sumgrid" id="sumGrid" style="margin-top:16px"></div>
+        <div class="lock-overlay"><div><b>🔒 Your full load calculation &amp; PDF report are ready</b><br><span class="hint">Enter your name and email below to unlock them. It's free.</span><br><button type="button" class="btn-s jump" style="margin-top:10px;padding:8px 16px">Unlock my report ↓</button></div></div>
+      </div>
+    </div>
+
+    <div class="cta" id="schedule">
+      <h3>Get your full report and book a free consultation</h3>
+      <div>Your detailed load calculation and printable PDF report are free. Want a firm quote? Add your address and a preferred time, and we'll reach out.</div>
+      <div class="grid">
+        <div><label class="f" for="name">Full name *</label><input type="text" id="name" name="name" autocomplete="name"></div>
+        <div><label class="f" for="email">Email *</label><input type="email" id="email" name="email" autocomplete="email" inputmode="email"></div>
+        <div class="full"><label class="f" for="phone">Mobile phone <span class="hint">(needed to schedule, so we can confirm your appointment)</span></label><input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="(845) 555-1234"></div>
+      </div>
+
+      <div class="privacy"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5zm-1.5 14.5-4-4 1.4-1.4 2.6 2.6 5.6-5.6 1.4 1.4z" fill="currentColor"/></svg><div><b>We take your privacy seriously.</b> Your information and photos will not be shared with any other parties for any purpose outside of this project request without your consent.</div></div>
+
+      <button type="button" class="report-btn" id="reportBtn"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v15H6zM14 3.5V8h4.5M9 13h8M9 17h8M9 9h3" fill="none" stroke="currentColor" stroke-width="2"/></svg> Get my full report (free)</button>
+
+      <div class="or"><span>Ready to talk? Request a free consultation &amp; quote</span></div>
+
+      <div class="grid">
+        <div class="full"><label class="f" for="address">Service address <span class="hint">(needed to schedule)</span></label><input type="text" id="address" name="address" autocomplete="address-line1" placeholder="Street address"></div>
+        <div><label class="f" for="town">Town</label><input type="text" id="town" name="town" autocomplete="address-level2" placeholder="e.g., Rhinebeck"></div>
+        <div><label class="f" for="schedDate">Requested date <span class="hint" id="dateHint">(at least 6 business days out)</span></label><input type="date" id="schedDate" name="schedDate"></div>
+      </div>
+      <fieldset style="margin:0">
+        <legend style="font-size:14px">Preferred days</legend>
+        <div class="opts days">
+          <label class="opt"><input type="checkbox" name="d_Mon"><span><b>Mon</b></span></label>
+          <label class="opt"><input type="checkbox" name="d_Tue"><span><b>Tue</b></span></label>
+          <label class="opt"><input type="checkbox" name="d_Wed"><span><b>Wed</b></span></label>
+          <label class="opt"><input type="checkbox" name="d_Thu"><span><b>Thu</b></span></label>
+          <label class="opt"><input type="checkbox" name="d_Fri"><span><b>Fri</b></span></label>
+          <label class="opt"><input type="checkbox" name="d_Sat"><span><b>Sat*</b></span></label>
+        </div>
+        <div class="hint" style="margin-top:6px">*Saturday appointments are limited and subject to availability.</div>
+      </fieldset>
+      <div class="grid">
+        <fieldset style="margin:0">
+          <legend style="font-size:14px">Preferred time</legend>
+          <div class="opts days">
+            <label class="opt"><input type="checkbox" name="t_Morning"><span><b>Morning</b><small>8–11</small></span></label>
+            <label class="opt"><input type="checkbox" name="t_Midday"><span><b>Midday</b><small>11–2</small></span></label>
+            <label class="opt"><input type="checkbox" name="t_Afternoon"><span><b>Afternoon</b><small>2–5</small></span></label>
+          </div>
+        </fieldset>
+        <div><label class="f" for="contactPref">Best way to reach you</label>
+          <select id="contactPref" name="contactPref"><option>Phone call</option><option>Text message</option><option>Email</option></select></div>
+      </div>
+
+      <a class="send-btn" id="sendBtn" href="#" target="_blank" rel="noopener">
+        <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2zM5 9h14v11H5zm2 2v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2z" fill="currentColor"/></svg>
+        Send my EV plan to ElectricAce &amp; schedule a consultation!
+      </a>
+
+      <div class="send-err" id="sendErr"></div>
+      <div class="sent-note sent-ok" id="sentOk">
+        <div style="font-size:17px"><b id="okTitle">✅ Request sent!</b></div>
+        <div id="okBody"></div>
+        <div id="okPhotos" style="margin-top:10px;display:none"></div>
+        <div id="okNext" style="margin-top:10px;padding-top:10px;border-top:1px solid #b6e6cf">
+          <b>📞 What happens next:</b> We've got your preferred date and time. Your appointment isn't final yet: a member of our office team will contact you to make sure that time slot is open and lock in your consultation.
+        </div>
+      </div>
+      <div class="sent-note" id="sentNote">
+        <b>Almost done!</b> We couldn't send your request automatically, so your email app should open with everything filled in. Just hit <b>Send</b>, and attach your photos if you took any.
+        Didn't open? <a id="mailLink" href="#" target="_blank" rel="noopener">Click here to email it</a>, or email <b id="emailShow"></b>. You can also text photos to <b>845.299.9635</b>.
+      </div>
+
+      <div class="row pdf-row" id="pdfRow">
+        <button type="button" class="btn-s" id="pdfBtn">⬇ Download my EV charger report (PDF)</button>
+      </div>
+
+      <div class="fine">By submitting, you agree that ElectricAce may contact you by phone, text, or email about your request.</div>
+      <div class="phone" style="font-size:16px;border-top:1px solid var(--line);padding-top:12px">Questions? Call or text <a href="tel:+18452999635">845.299.9635</a></div>
+      <textarea class="summary" id="summaryBox" readonly></textarea>
+    </div>
+    <p class="disclaimer" id="discl">This is a preliminary estimate based on typical equipment ratings and the information provided, using the NEC 220.82 optional method for dwelling units. Final circuit sizing, load calculation, and any load-management or service-upgrade requirements are confirmed on site by a licensed electrician in accordance with the NEC, local code, and the utility. Charging cost estimates assume about 10% charging losses and do not include fixed monthly utility charges; actual costs vary with rates, weather, and driving.</p>
+  </section>
+
+  <div class="err" id="err">Please fill in the required fields.</div>
+  <div class="nav">
+    <button type="button" class="btn-s" id="backBtn" style="visibility:hidden">← Back</button>
+    <button type="button" class="btn-p" id="nextBtn">Get started →</button>
+  </div>
+</form>
+</div>
+</main>
+<footer>ElectricAce · EV Charging Load Calc Tool · EV charger installation · electricace.com</footer>
+
+<script>
+(function(){
+  const form = document.getElementById('form');
+  const steps = [...document.querySelectorAll('.step')];
+  const nextBtn = document.getElementById('nextBtn');
+  const backBtn = document.getElementById('backBtn');
+  const err = document.getElementById('err');
+  let cur = 0, first = true;
+  const STORE = 'ea-ev-plan-v1';
+  const startedAt = Date.now();
+
+  // ---------- helpers ----------
+  const $ = id => document.getElementById(id);
+  const val = n => { const el = form.elements[n]; if(!el) return ''; if(el instanceof RadioNodeList) return el.value; if(el.type==='checkbox') return el.checked; return el.value; };
+  const chk = n => !!(form.elements[n] && form.elements[n].checked);
+  const kva = va => (va/1000).toFixed(1) + ' kVA';
+  const amps = va => Math.round(va/240) + ' A';
+  const money = (x, d) => '$' + (d===undefined ? (x>=100 ? Math.round(x).toLocaleString() : x.toFixed(2)) : x.toFixed(d));
+  const esc = t => String(t).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  // ---------- embedded mode (inside an iframe on electricace.com) ----------
+  let EMBED = false; try{ EMBED = window.self !== window.top; }catch(e){ EMBED = true; }
+  function toParent(msg){ try{ window.parent.postMessage(msg, '*'); }catch(e){} }
+  if(EMBED){
+    document.documentElement.classList.add('embedded');
+    const sendH = ()=> toParent({type:'ea-ev-height', height: Math.ceil(document.documentElement.scrollHeight)});
+    try{ new ResizeObserver(sendH).observe(document.body); }catch(e){ setInterval(sendH, 800); }
+    window.addEventListener('load', sendH); setTimeout(sendH, 300);
+  }
+
+  // ---------- vehicle data: [key, label, onboard AC kW, mi/kWh, usable battery kWh] ----------
+  const VEH = {
+    'Tesla': [['t3','Tesla Model 3',11.5,4.0,75],['ty','Tesla Model Y',11.5,3.6,75],['ts','Tesla Model S',11.5,3.3,100],['tx','Tesla Model X',11.5,2.9,100],['tc','Tesla Cybertruck',11.5,2.4,123]],
+    'Chevrolet / GMC / Cadillac': [['ceq','Chevrolet Equinox EV',11.5,3.4,85],['cbl','Chevrolet Blazer EV',11.5,3.0,85],['cbo','Chevrolet Bolt',11.5,3.6,65],['csi','Chevrolet Silverado EV',19.2,2.2,200],['gsi','GMC Sierra EV',19.2,2.1,200],['ghu','GMC Hummer EV',19.2,1.6,212],['cly','Cadillac Lyriq',11.5,2.9,102],['cop','Cadillac Optiq',11.5,3.0,85],['cesc','Cadillac Escalade IQ',19.2,1.9,200]],
+    'Ford': [['fme','Ford Mustang Mach-E',10.5,3.1,91],['flx','Ford F-150 Lightning (Extended Range)',19.2,2.1,131],['fls','Ford F-150 Lightning (Standard Range)',11.3,2.2,98]],
+    'Hyundai / Kia': [['hi5','Hyundai Ioniq 5',10.9,3.3,84],['hi6','Hyundai Ioniq 6',10.9,4.0,77],['hi9','Hyundai Ioniq 9',10.9,2.9,110],['hko','Hyundai Kona Electric',10.9,3.8,65],['kev6','Kia EV6',10.9,3.3,84],['kev9','Kia EV9',10.9,2.7,100],['kni','Kia Niro EV',11,3.6,65]],
+    'Rivian / Lucid': [['rr1','Rivian R1T / R1S',11.5,2.5,135],['rr2','Rivian R2',11.5,3.3,87],['lair','Lucid Air',19.2,4.3,92],['lgr','Lucid Gravity',19.2,3.4,120]],
+    'Honda / Toyota / Nissan': [['hpr','Honda Prologue',11.5,3.0,85],['tbz','Toyota bZ',11,3.5,74],['nar','Nissan Ariya',7.2,3.0,87],['nle','Nissan Leaf',7.2,3.9,75]],
+    'European': [['vid4','Volkswagen ID.4',11,3.2,82],['vbuz','Volkswagen ID. Buzz',11,2.6,91],['bi4','BMW i4',11,3.6,84],['bi5','BMW i5',11,3.3,84],['bix','BMW iX',11,2.9,109],['meqe','Mercedes-Benz EQE / EQE SUV',9.6,3.0,91],['meqs','Mercedes-Benz EQS / EQS SUV',9.6,3.0,108],['aq4','Audi Q4 e-tron',11,3.1,82],['aq6','Audi Q6 e-tron',11,3.0,100],['ptay','Porsche Taycan / Macan Electric',11,2.9,97],['pol2','Polestar 2',11,3.3,82],['pol3','Polestar 3',11,2.6,111],['vex30','Volvo EX30',11,3.5,69],['vex90','Volvo EX90',11,2.7,111],['jwag','Jeep Wagoneer S',11,2.9,100]],
+    'Other': [['phev','Plug-in hybrid (any brand)',7.2,3.0,18],['other','Other / not listed',11.5,3.2,80],['undecided','Haven’t decided yet',11.5,3.3,80]]
+  };
+  const VMAP = {};
+  (function fillVehicles(){
+    const sel = $('vehicle');
+    Object.entries(VEH).forEach(([g, list])=>{
+      const og = document.createElement('optgroup'); og.label = g;
+      list.forEach(v=>{ VMAP[v[0]] = {key:v[0], name:v[1], kw:v[2], eff:v[3], bat:v[4]}; const o=document.createElement('option'); o.value=v[0]; o.textContent=v[1]; og.appendChild(o); });
+      sel.appendChild(og);
+    });
+    sel.value = 'undecided';
+  })();
+  const STD_CHG = [16,24,32,40,48,64,80];
+  const STD_BRK = [20,30,40,50,60,70,80,90,100,110,125];
+  const breakerFor = a => STD_BRK.find(b => b >= a*1.25) || 125;
+  const matchAmps = kw => { const a = kw/0.24; return STD_CHG.find(s => s >= a-1) || 80; };
+
+  function vehicle(){ return VMAP[val('vehicle')] || VMAP.undecided; }
+  function vehName(){ const v = vehicle(); return v.key==='other' && String(val('otherVeh')).trim() ? String(val('otherVeh')).trim() : v.name; }
+
+  // ---------- charger selection ----------
+  function chargerPlan(){
+    const v = vehicle(), type = val('charger');
+    const match = matchAmps(v.kw);
+    let a, brk, label, plug = false;
+    if(type==='1450'){
+      plug = true;
+      const c = val('cord'); a = c==='40' ? 40 : c==='32' ? 32 : 40; a = Math.min(a, match);
+      brk = 50; label = 'NEMA 14-50R EV-grade receptacle';
+    } else if(type==='recommend'){
+      a = Math.min(match, 48); brk = breakerFor(a); label = 'Hardwired Level 2 charger (ElectricAce recommendation)';
+    } else {
+      const s = val('chgAmps'); a = s==='auto' ? match : +s; brk = breakerFor(a);
+      label = type==='dealer' ? 'Hardwired charger from dealer / manufacturer' : 'Customer-supplied hardwired charger';
+    }
+    const kwOut = Math.min(v.kw, a*0.24);
+    return {a, brk, label, plug, type, kwOut, match, rangePerHr: kwOut*0.9*v.eff};
+  }
+  const evMult = () => val('evCount')==='2full' ? 2 : 1;
+
+  // ---------- load calculation (NEC 220.82 optional method) ----------
+  const WELL = {'0.75':1660,'1':1920,'1.5':2400,'2':2880,'unk':1920};
+  function loadItems(){
+    const sq = Math.max(300, +val('sqft')||2000);
+    const g = [];
+    const add = (n, va) => g.push({name:n, va});
+    add(`General lighting & receptacles (${sq.toLocaleString()} sq ft × 3 VA)`, sq*3);
+    add('Small-appliance circuits (2 × 1,500 VA)', 3000);
+    add('Laundry circuit', 1500);
+    if(chk('dish')) add('Dishwasher', 1200);
+    if(chk('disp')) add('Garbage disposal', 900);
+    if(chk('micro')) add('Built-in microwave', 1500);
+    const rg = val('range');
+    if(rg==='elec') add('Electric range', 12000);
+    if(rg==='induction') add('Induction range / cooktop', 11000);
+    if(rg==='split') add('Electric cooktop + wall oven', 12000);
+    if(val('dryer')==='elec') add('Electric dryer', 5000);
+    const wh = val('wh');
+    if(wh==='tank') add('Electric water heater', 4500);
+    if(wh==='hpwh') add('Heat pump water heater (incl. backup element)', 4500);
+    if(wh==='tankless') add('Electric tankless water heater', 24000);
+    const w = val('well'); if(w!=='0') add(`Well pump (${w==='unk'?'size unknown, assumed 1 HP':w+' HP'})`, WELL[w]);
+    if(chk('sump')) add('Sump pump', 1200);
+    if(chk('spa')) add('Hot tub / spa', 9000);
+    if(chk('pool')) add('Pool pump / equipment', 2400);
+    if(chk('shop')) add('Workshop / welder', 4000);
+    if(chk('exEv')) add('Existing EV charger (assumed 32 A)', 7680);
+    const xk = +val('extraKw'); if(xk>0) add('Other large loads', xk*1000);
+    return g;
+  }
+  function hvac(){
+    const heat = val('heat'), splits = +val('splits'), ac = +val('ac');
+    const splitVA = splits*1200;
+    const cands = [];
+    const coolVA = ac*1400 + splitVA;
+    if(coolVA) cands.push({name: (ac?`Central AC (~${ac===7?'2 systems':ac+' ton'})`:'')+(ac&&splits?' + ':'')+(splits?`mini-splits (${splits})`:'')+' @ 100%', va: coolVA, np: coolVA});
+    if(heat==='heatpump'){
+      const t = +val('hpTons'), aux = +val('hpAux')*1000;
+      const va = t*1400 + splitVA + aux*0.65;
+      cands.push({name:`Heat pump (${t===7?'6+':t} ton) @ 100%${aux?` + ${aux/1000} kW backup strips @ 65%`:''}${splits?` + mini-splits`:''}`, va, np: t*1400+splitVA+aux});
+    }
+    if(heat==='elfurnace'){ const k=+val('elKw')*1000; cands.push({name:`Electric furnace / boiler (${k/1000} kW) @ 65%`, va:k*0.65, np:k}); }
+    if(heat==='baseboard'){ const k=+val('elKw')*1000; const f = k<=5000 ? 0.65 : 0.40; cands.push({name:`Electric baseboard (${k/1000} kW) @ ${f*100}%`, va:k*f, np:k}); }
+    if(!cands.length) return {name:'No electric heating or cooling', va:0, np:0};
+    return cands.reduce((m,c)=> c.va>m.va ? c : m);
+  }
+  function calc(evVA){
+    const items = loadItems();
+    const gen = items.reduce((s,i)=>s+i.va,0) + evVA;
+    const genDemand = gen<=10000 ? gen : 10000 + (gen-10000)*0.4;
+    const h = hvac();
+    return {items, gen, genDemand, hvac:h, total: genDemand + h.va};
+  }
+
+  // ---------- conditional UI ----------
+  function updateConditional(){
+    const heat = val('heat');
+    $('hpSub').classList.toggle('show', heat==='heatpump');
+    $('elSub').classList.toggle('show', heat==='elfurnace' || heat==='baseboard');
+    const t = val('charger');
+    $('hwSub').classList.toggle('show', t==='dealer' || t==='own');
+    $('plugSub').classList.toggle('show', t==='1450');
+    $('otherVehWrap').style.display = val('vehicle')==='other' ? '' : 'none';
+    $('trenchSub').classList.toggle('show', chk('r_trench') || /Pedestal|Detached|Parking/.test(val('loc')));
+    const known = val('rateKnown')==='yes';
+    const ur = utilRate(); ['supplyRate','deliveryRate'].forEach(n=>{ const el=$(n); el.disabled = !known; if(!known) el.value = (n==='supplyRate' ? ur.supply : ur.delivery).toFixed(1); });
+    $('rateInputs').style.opacity = known ? 1 : .6;
+    $('dist').disabled = chk('distUnk');
+    vehicleCard(); chargeInfo(); costCalc();
+  }
+  function vehicleCard(){
+    const v = vehicle(), show = !['undecided','other'].includes(v.key);
+    $('vcard').classList.toggle('show', show);
+    if(show){
+      $('vcKw').textContent = `${v.kw} kW (${Math.round(v.kw/0.24)} A)`;
+      $('vcBat').textContent = `${v.bat} kWh`;
+      $('vcEff').textContent = `${v.eff.toFixed(1)} mi/kWh`;
+    }
+  }
+  function chargeInfo(){
+    const p = chargerPlan(), v = vehicle();
+    let t = `Your setup: ${p.plug ? 'plug-in charger at '+p.a+' A on a 50 A circuit' : p.a+' A charger on a '+p.brk+' A circuit'} → about ${p.kwOut.toFixed(1)} kW, adding roughly ${Math.round(p.rangePerHr)} miles of range per hour.`;
+    if(v.key!=='undecided' && v.key!=='other' && p.a*0.24 > v.kw+0.3) t += ` Note: the ${v.name} can only accept about ${v.kw} kW, so a larger charger won't charge it faster.`;
+    if(v.key!=='undecided' && v.key!=='other' && v.kw > p.a*0.24+0.3) t += ` The ${v.name} can accept up to ${v.kw} kW${p.plug ? ', so a hardwired charger would charge it faster' : ''}.`;
+    $('chargeInfo').textContent = t;
+  }
+
+  // ---------- cost ----------
+  // ---- typical residential rates by utility (¢/kWh, excludes fixed monthly charges). UPDATE PERIODICALLY. ----
+  const RATES_ASOF = 'November 2026';
+  const RATES = {
+    'Central Hudson':      {supply:12.0, delivery:16.0},
+    'NYSEG':               {supply:11.0, delivery:10.5},
+    'National Grid':       {supply:9.0,  delivery:10.0},
+    'Orange & Rockland':   {supply:10.0, delivery:12.0},
+    'Con Edison':          {supply:11.5, delivery:18.5},
+    'Other / municipal':   {supply:12.0, delivery:16.0}
+  };
+  const utilRate = () => RATES[val('utility')] || RATES['Central Hudson'];
+  function rate(){ return ((+val('supplyRate')||0) + (+val('deliveryRate')||0)) / 100; }
+  function costCalc(){
+    const miles = +val('miles'), v = vehicle(), r = rate();
+    const kwh = miles / v.eff / 0.9;
+    const cost = kwh * r;
+    const gas = miles / Math.max(1, +val('mpg')||25) * (+val('gasPrice')||0);
+    $('milesOut').textContent = miles.toLocaleString();
+    $('distOut').textContent = val('dist');
+    $('cMonth').textContent = money(cost, 0);
+    $('cKwh').textContent = Math.round(kwh).toLocaleString() + ' kWh';
+    $('cMile').textContent = (cost/miles*100).toFixed(1) + '¢';
+    const s = gas - cost;
+    $('cSave').textContent = (s>=0 ? 'Save ' : '+') + money(Math.abs(s), 0);
+    $('rateSum').textContent = `Total rate: ${(r*100).toFixed(1)}¢ per kWh`;
+    $('rateNote').textContent = val('rateKnown')==='yes' ? '' : (val('utility')==='Other / municipal'
+      ? 'Using a typical Hudson Valley rate. Municipal utilities are often much cheaper, so enter your own rate if you can.'
+      : `Using a typical ${val('utility')} residential rate (${RATES_ASOF}). Supply prices change monthly, so enter the rates from your bill for the most accurate estimate.`);
+    return {miles, kwh, cost, gas, save:s, rate:r, perMile: cost/miles, yearly: cost*12, yearlySave: s*12};
+  }
+
+  form.addEventListener('change', e=>{ updateConditional(); save(); });
+  form.addEventListener('input', e=>{ if(['miles','dist','supplyRate','deliveryRate','mpg','gasPrice'].includes(e.target.name)) costCalc(); save(); });
+  document.querySelectorAll('.tipbtn').forEach(b=>b.addEventListener('click', ()=>{ $(b.dataset.tip).classList.toggle('show'); }));
+
+  // ---------- persistence (best effort) ----------
+  function save(){
+    try{
+      const d = {};
+      [...form.elements].forEach(el=>{
+        if(!el.name || el.type==='file') return;
+        if(el.type==='radio'){ if(el.checked) d[el.name]=el.value; }
+        else if(el.type==='checkbox'){ d[el.name]=el.checked; }
+        else d[el.name]=el.value;
+      });
+      localStorage.setItem(STORE, JSON.stringify(d));
+    }catch(e){}
+  }
+  function load(){
+    try{
+      const d = JSON.parse(localStorage.getItem(STORE)||'null'); if(!d) return;
+      [...form.elements].forEach(el=>{
+        if(!el.name || el.type==='file' || !(el.name in d)) return;
+        if(el.type==='radio') el.checked = (el.value===d[el.name]);
+        else if(el.type==='checkbox') el.checked = !!d[el.name];
+        else el.value = d[el.name];
+      });
+    }catch(e){}
+  }
+
+  // ---------- photos ----------
+  const PHOTOS = []; // {id, cat, name, url, blob, w, h}
+  let pid = 0;
+  function compress(file){
+    return new Promise((res)=>{
+      const u = URL.createObjectURL(file); const img = new Image();
+      img.onload = ()=>{
+        const max = 1600, sc = Math.min(1, max/Math.max(img.width, img.height));
+        const c = document.createElement('canvas'); c.width = Math.round(img.width*sc); c.height = Math.round(img.height*sc);
+        const g = c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height); g.drawImage(img,0,0,c.width,c.height);
+        URL.revokeObjectURL(u);
+        const url = c.toDataURL('image/jpeg', 0.78);
+        c.toBlob(b=>res({url, blob:b, w:c.width, h:c.height}), 'image/jpeg', 0.78);
+      };
+      img.onerror = ()=>{ URL.revokeObjectURL(u); res(null); };
+      img.src = u;
+    });
+  }
+  async function addPhotos(files, cat){
+    const st = $('photoStatus'); let bad = 0;
+    st.textContent = 'Processing photos…';
+    for(const f of files){
+      if(PHOTOS.length >= 16){ st.textContent = 'Up to 16 photos, please. Text any others to 845.299.9635.'; break; }
+      const r = await compress(f);
+      if(!r){ bad++; continue; }
+      PHOTOS.push({id:++pid, cat, name:`${cat} ${PHOTOS.filter(p=>p.cat===cat).length+1}`, ...r});
+    }
+    renderPhotos();
+    st.textContent = bad ? `${bad} photo${bad>1?'s':''} couldn't be read on this device (some iPhone HEIC files). You can text ${bad>1?'them':'it'} to 845.299.9635.` : '';
+  }
+  function renderPhotos(){
+    document.querySelectorAll('[data-grid]').forEach(g=>{
+      g.innerHTML='';
+      PHOTOS.filter(p=>p.cat===g.dataset.grid).forEach(p=>{
+        const d = document.createElement('div'); d.className='ph';
+        d.innerHTML = `<img src="${p.url}" alt=""><div class="cap">${esc(p.name)}</div><button type="button" class="rm" aria-label="Remove photo">×</button>`;
+        d.querySelector('.rm').onclick = ()=>{ const i = PHOTOS.indexOf(p); if(i>-1) PHOTOS.splice(i,1); renderPhotos(); };
+        g.appendChild(d);
+      });
+    });
+  }
+  document.querySelectorAll('input[type=file][data-cat]').forEach(inp=>inp.addEventListener('change', e=>{
+    const f = [...e.target.files]; e.target.value=''; if(f.length) addPhotos(f, inp.dataset.cat);
+  }));
+
+
+  // ---------- address lookup & public-record prefill (NYS GIS) ----------
+  const GEOCODER = 'https://gisservices.its.ny.gov/arcgis/rest/services/Locators/Street_and_Address_Composite/GeocodeServer/findAddressCandidates';
+  const PARCEL_URLS = ['https://nysgeohub.ny.gov/arcgis/rest/services/Parcels/NYS_Tax_Parcels_Public/FeatureServer/1/query',
+                       'https://gisservices.its.ny.gov/arcgis/rest/services/NYS_Tax_Parcels_Public/FeatureServer/1/query'];
+  const PARCEL_FIELDS = 'PARCEL_ADDR,CITYTOWN_NAME,COUNTY_NAME,LOC_ZIP,PRINT_KEY,PROP_CLASS,YR_BLT,SQFT_LIVING,HEAT_TYPE_DESC,FUEL_TYPE_DESC,WATER_DESC,SEWER_DESC,BLDG_STYLE_DESC';
+  let parcel = null, addrCands = [], addrAct = -1, addrTimer = null, addrCtrl = null;
+  const addrIn = $('addrSearch'), addrList = $('addrList'), addrStatus = $('addrStatus');
+  const ADDR_HINT = addrStatus.textContent;
+  const qs = o => Object.entries(o).map(([k,v])=>k+'='+encodeURIComponent(v)).join('&');
+  async function getJSON(url, signal){
+    const r = await fetch(url, {signal}); if(!r.ok) throw new Error('HTTP '+r.status);
+    const d = await r.json(); if(d.error) throw new Error(d.error.message||'error'); return d;
+  }
+  function splitAddr(a){ // "244 Fair St, Kingston, NY, 12401"
+    const p = String(a).split(',').map(x=>x.trim());
+    const zip = (String(a).match(/\b(\d{5})(?:-\d{4})?\s*$/)||[])[1] || '';
+    return {street:p[0]||'', town:p[1]||'', zip};
+  }
+  async function searchAddr(q){
+    if(addrCtrl) addrCtrl.abort(); addrCtrl = new AbortController();
+    const sig = addrCtrl.signal;
+    addrStatus.textContent = 'Searching…';
+    try{
+      const d = await getJSON(GEOCODER+'?'+qs({SingleLine: q+(/\bNY\b/i.test(q)?'':', NY'), maxLocations:6, outFields:'Match_addr,City,ZIP', outSR:4326, f:'json'}), sig);
+      const seen = new Set();
+      addrCands = (d.candidates||[]).filter(c=>c.score>=80 && /^\d/.test(c.address)).filter(c=>{ if(seen.has(c.address)) return false; seen.add(c.address); return true; })
+        .slice(0,5).map(c=>({label:c.address, x:c.location.x, y:c.location.y, ...splitAddr(c.address)}));
+    }catch(e){
+      if(e.name==='AbortError') return;
+      // fallback: search the parcel layer directly by address text (participating counties only)
+      try{
+        const safe = q.toUpperCase().replace(/[^A-Z0-9 ]/g,'').replace(/\s+/g,' ').trim().split(' ').slice(0,4).join(' ');
+        const d = await getJSON(PARCEL_URLS[0]+'?'+qs({where:`UPPER(PARCEL_ADDR) LIKE '${safe}%'`, outFields:PARCEL_FIELDS, returnGeometry:'false', resultRecordCount:6, f:'json'}), sig);
+        addrCands = (d.features||[]).map(f=>({label:`${f.attributes.PARCEL_ADDR}, ${f.attributes.CITYTOWN_NAME}`, street:f.attributes.PARCEL_ADDR, town:f.attributes.CITYTOWN_NAME, zip:f.attributes.LOC_ZIP||'', rec:f.attributes}));
+      }catch(e2){
+        if(e2.name==='AbortError') return;
+        addrCands = []; renderAddr();
+        addrStatus.textContent = "Address lookup isn't available right now. Just fill in the details below.";
+        return;
+      }
+    }
+    renderAddr();
+    addrStatus.textContent = addrCands.length ? 'Pick your address from the list.' : "No match yet. Keep typing, or fill in the details below.";
+  }
+  function renderAddr(){
+    addrList.innerHTML = ''; addrAct = -1;
+    addrCands.forEach((c,i)=>{
+      const li = document.createElement('li'); li.setAttribute('role','option');
+      li.innerHTML = `${esc(c.street)}<small>${esc([c.town, c.zip].filter(Boolean).join(', '))}</small>`;
+      li.addEventListener('mousedown', e=>{ e.preventDefault(); pickAddr(i); });
+      addrList.appendChild(li);
+    });
+    const show = addrCands.length>0; addrList.classList.toggle('show', show); addrIn.setAttribute('aria-expanded', show);
+  }
+  addrIn.addEventListener('input', ()=>{
+    clearTimeout(addrTimer);
+    const q = addrIn.value.trim();
+    if(q.length < 6 || !/\d/.test(q) || !/[a-z]{2}/i.test(q)){ addrCands=[]; renderAddr(); addrStatus.textContent = ADDR_HINT; return; }
+    addrTimer = setTimeout(()=>searchAddr(q), 350);
+  });
+  addrIn.addEventListener('keydown', e=>{
+    const items = [...addrList.children]; if(!items.length) return;
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){ e.preventDefault(); addrAct = (addrAct + (e.key==='ArrowDown'?1:-1) + items.length) % items.length; items.forEach((li,i)=>li.classList.toggle('act', i===addrAct)); }
+    else if(e.key==='Enter'){ e.preventDefault(); pickAddr(addrAct<0?0:addrAct); }
+    else if(e.key==='Escape'){ addrCands=[]; renderAddr(); }
+  });
+  addrIn.addEventListener('blur', ()=>setTimeout(()=>{ addrList.classList.remove('show'); }, 150));
+
+  function setField(n, v){
+    const el = form.elements[n]; if(!el || v===undefined || v===null || v==='') return false;
+    if(el instanceof RadioNodeList){ const r = [...el].find(x=>x.value===v); if(!r) return false; r.checked = true; }
+    else el.value = v;
+    const b = document.querySelector(`.pf[data-pf="${n}"]`); if(b) b.classList.add('show');
+    return true;
+  }
+  function mapRecord(a){
+    const out = {}, found = [];
+    if(a.SQFT_LIVING > 200){ out.sqft = String(Math.round(a.SQFT_LIVING)); found.push(`${Math.round(a.SQFT_LIVING).toLocaleString()} sq ft living area`); }
+    const pc = String(a.PROP_CLASS||'');
+    if(/^2[14567]/.test(pc)) out.ptype = 'Single-family home';
+    else if(/^2[238]|^41/.test(pc)) out.ptype = 'Multi-family / rental';
+    else if(/^[45678]/.test(pc)) out.ptype = 'Small business / commercial';
+    if(out.ptype) found.push(out.ptype.replace(' / commercial',''));
+    if(a.YR_BLT > 1800){
+      found.push(`built ${a.YR_BLT}`);
+      const age = new Date().getFullYear() - a.YR_BLT;
+      if(age < 10) out.panelAge = 'Under 10 years'; else if(age <= 25) out.panelAge = '10–25 years';
+    }
+    const h = String(a.HEAT_TYPE_DESC||''), f = String(a.FUEL_TYPE_DESC||'');
+    if(h){
+      if(/heat pump/i.test(h) || /geo/i.test(f)) out.heat = 'heatpump';
+      else if(/electric/i.test(h)) out.heat = 'baseboard';
+      else if(/hot|steam/i.test(h)) out.heat = /electric/i.test(f) ? 'elfurnace' : (/wood/i.test(f) ? 'other' : 'fuel');
+      else if(/no central/i.test(h)) out.heat = /electric/i.test(f) ? 'baseboard' : 'other';
+      found.push(`${h.toLowerCase()} heat${f && !/none/i.test(f) ? ' ('+f.toLowerCase()+')' : ''}`);
+    }
+    const w = String(a.WATER_DESC||'');
+    if(/private/i.test(w)){ out.well = 'unk'; found.push('private well'); }
+    else if(/comm|public/i.test(w)){ out.well = '0'; found.push('public water'); }
+    return {out, found};
+  }
+  async function pickAddr(i){
+    const c = addrCands[i]; if(!c) return;
+    addrCands = []; renderAddr();
+    addrIn.value = c.label; addrStatus.textContent = '';
+    document.querySelectorAll('.pf').forEach(b=>b.classList.remove('show'));
+    setField('address', c.street); setField('town', c.town);
+    if(/^\d{5}$/.test(c.zip)) setField('zip', c.zip);
+    const card = $('pfCard'); card.className = 'pfcard show'; card.innerHTML = 'Looking up public property records…';
+    let rec = c.rec || null;
+    if(!rec && c.x){
+      for(const u of PARCEL_URLS){
+        try{
+          const d = await getJSON(u+'?'+qs({geometry:`${c.x},${c.y}`, geometryType:'esriGeometryPoint', inSR:4326, spatialRel:'esriSpatialRelIntersects', outFields:PARCEL_FIELDS, returnGeometry:'false', f:'json'}));
+          rec = (d.features && d.features[0] && d.features[0].attributes) || null; break;
+        }catch(e){}
+      }
+    }
+    parcel = rec ? Object.assign({}, rec, {matched: c.label}) : {matched: c.label, none:true};
+    if(rec){
+      const {out, found} = mapRecord(rec);
+      let n = 0; Object.entries(out).forEach(([k,v])=>{ if(setField(k,v)) n++; });
+      card.className = 'pfcard show';
+      card.innerHTML = found.length
+        ? `<b>✓ Found ${esc(rec.PARCEL_ADDR||c.street)}${rec.COUNTY_NAME?', '+esc(rec.COUNTY_NAME)+' County':''}.</b><ul>${found.map(t=>'<li>'+esc(t)+'</li>').join('')}</ul>We've pre-filled ${n} answer${n===1?'':'s'} (marked in green). Public records can be out of date, so please check them as you go, especially heating.`
+        : `<b>✓ Address found.</b> The public record doesn't include building details for this property, so please fill in the questions below.`;
+    } else {
+      card.className = 'pfcard show miss';
+      card.innerHTML = `<b>Address found.</b> Public property records aren't available online for this county (Dutchess and Columbia don't publish them), so please fill in the details below. It only takes a minute.`;
+    }
+    applyUpgrade(); updateConditional(); save();
+  }
+  // panel upgraded? If original and we know the year built, panel age = house age
+  const ageBucket = yr => { const a = new Date().getFullYear() - yr; return a < 10 ? 'Under 10 years' : a <= 25 ? '10–25 years' : a <= 40 ? '25–40 years' : 'Over 40 years'; };
+  function applyUpgrade(){
+    const u = val('panelUpg'), yr = parcel && parcel.YR_BLT > 1800 ? parcel.YR_BLT : null, h = $('upgHint');
+    if(u==='No' && yr){ setField('panelAge', ageBucket(yr)); h.textContent = `Public records show the home was built in ${yr}, so we've set the panel age to match. Change it if you know better.`; }
+    else if(u==='No'){ h.textContent = 'Set the panel age below to roughly the age of the house.'; }
+    else if(u==='Yes'){ h.textContent = "Good to know. If you know roughly when, set the panel's age below. A label or date inside the panel door sometimes shows it."; }
+    else h.textContent = 'Tip: a much cleaner, newer-looking panel than the rest of the house usually means it was replaced.';
+  }
+  form.addEventListener('change', e=>{ if(e.target.name==='panelUpg') { applyUpgrade(); save(); } });
+
+  // a hand edit removes the "from public records" badge for that field
+  form.addEventListener('change', e=>{ if(e.isTrusted && e.target.name){ const b = document.querySelector(`.pf[data-pf="${e.target.name}"]`); if(b) b.classList.remove('show'); } });
+  form.addEventListener('input', e=>{ if(e.isTrusted && ['sqft','zip'].includes(e.target.name)){ const b = document.querySelector(`.pf[data-pf="${e.target.name}"]`); if(b) b.classList.remove('show'); } });
+
+  // ---------- navigation ----------
+  function show(i){
+    steps.forEach((s,k)=>s.classList.toggle('active',k===i));
+    cur = i;
+    $('barFill').style.width = (i/(steps.length-1)*100)+'%';
+    $('stepCount').textContent = `Step ${i+1} of ${steps.length} · ${steps[i].dataset.title}`;
+    backBtn.style.visibility = i===0 ? 'hidden' : 'visible';
+    nextBtn.style.display = i===steps.length-1 ? 'none' : '';
+    nextBtn.textContent = i===0 ? 'Get started →' : (i===steps.length-2 ? 'See my results →' : 'Next →');
+    err.style.display='none';
+    if(i===steps.length-1) compute();
+    if(!first){ if(EMBED) toParent({type:'ea-ev-top'}); else window.scrollTo({top:0,behavior:'smooth'}); } first=false;
+  }
+  function validate(i){
+    let ok = true;
+    steps[i].querySelectorAll('[required]').forEach(el=>{
+      const bad = !el.value.trim() || (el.type==='number' && (+el.value<300)) || (el.name==='zip' && !/^\d{5}$/.test(el.value.trim()));
+      el.classList.toggle('invalid', bad);
+      if(bad) ok=false;
+    });
+    err.style.display = ok?'none':'block';
+    return ok;
+  }
+  nextBtn.onclick = ()=>{ if(validate(cur)) show(cur+1); };
+  backBtn.onclick = ()=> show(cur-1);
+  form.addEventListener('submit', e=>e.preventDefault());
+
+  // ---------- results ----------
+  const SUBMIT_EMAIL = 'websizing@electricace.com';
+  const WEB3FORMS_KEY = '6f6e872b-b34d-487d-ad10-d4fd262dc2c5';
+  let lastCalc = null, baseSummary = [], lastSubject = '', lastRec = '', sending = false, lastKind = 'report', unlocked = false;
+  const sent = {report:false, schedule:false};
+  $('emailShow').textContent = SUBMIT_EMAIL;
+
+  function routeText(){
+    const m = {r_unfin:'Unfinished basement',r_fin:'Finished basement',r_crawl:'Crawlspace',r_attic:'Attic',r_garage:'Panel in garage',r_ext:'Exterior surface conduit',r_trench:'Underground trench',r_unk:'Not sure'};
+    return Object.keys(m).filter(chk).map(k=>m[k]).join(', ') || 'Not specified';
+  }
+  function svcTxt(){ const s = val('service'); return s==='unknown' ? 'Not sure (200 A assumed)' : s==='400' ? '320/400 A' : s+' A'; }
+
+  function compute(){
+    const svc = val('service'), svcA = svc==='unknown' ? 200 : (svc==='400' ? 320 : +svc);
+    const capVA = svcA*240;
+    const p = chargerPlan(), v = vehicle(), mult = evMult();
+    const evVA = p.a*240*mult;
+    const base = calc(0), withEv = calc(evVA);
+    const pct = withEv.total/capVA;
+    let maxFit = 0;
+    for(const a of [...STD_CHG].reverse()){ if(calc(a*240*mult).total <= capVA){ maxFit = a; break; } }
+    const status = pct<=0.8 ? 'ok' : pct<=1 ? 'tight' : 'over';
+    const cost = costCalc();
+
+    // hero
+    $('resultLead').textContent = `For a ${vehName()} with ${p.plug ? 'a plug-in charger on a NEMA 14-50R EV receptacle' : 'a hardwired Level 2 charger'}${mult===2?' (two chargers)':''}, on a ${svcTxt()} service.`;
+    $('recCkt').innerHTML = `${p.brk}<small> A circuit</small>`;
+    $('recSub').textContent = p.plug ? `NEMA 14-50R EV-grade receptacle · up to ${p.a} A charging · ≈${p.kwOut.toFixed(1)} kW · ~${Math.round(p.rangePerHr)} mi of range / hour`
+      : `${p.a} A hardwired charger${mult===2?' (×2)':''} · ≈${p.kwOut.toFixed(1)} kW · ~${Math.round(p.rangePerHr)} mi of range / hour`;
+    const vt = {ok:['ok','✓ Fits within your service'], tight:['tight','Fits, but close to your service limit'], over:['over','Exceeds your service: load management or upgrade needed']}[status];
+    $('verdict').innerHTML = `<span class="verdict ${vt[0]}">${vt[1]}</span>`;
+    $('sExist').textContent = `${amps(base.total)} (${kva(base.total)})`;
+    $('sWith').textContent = `${amps(withEv.total)} (${Math.round(pct*100)}%)`;
+    $('sCap').textContent = svcTxt().replace(' (200 A assumed)','') + (svc==='unknown' ? ' (assumed 200 A)' : '');
+    $('sCost').textContent = `${money(cost.cost,0)}/mo`;
+    const scale = Math.max(capVA, withEv.total)*1.08;
+    $('mA').style.width = (base.total/scale*100)+'%';
+    $('mB').style.width = ((withEv.total-base.total)/scale*100)+'%';
+    $('mCap').style.left = (capVA/scale*100)+'%';
+
+    // notes
+    const notes = [];
+    if(svc==='unknown') notes.push(['warn','We assumed a 200 A service because you weren\'t sure. If your service is 100 A, the result could change a lot, so a panel photo really helps.']);
+    if(base.total > capVA) notes.push(['warn',`By the NEC calculation, your home's existing load (about ${Math.round(base.total/240)} A) is already above your ${svcA} A service rating before adding the EV. That's common in all-electric homes. A load management device or a service upgrade will likely be part of the plan.`]);
+    if(status==='over'){
+      if(maxFit >= 16) notes.push(['warn',`At the full ${p.a} A, your calculated load exceeds your service. A charger set to ${maxFit} A (≈${(Math.min(v.kw,maxFit*0.24)).toFixed(1)} kW) would fit without other changes, or we can add an EV energy management system (NEC 625.42) that automatically slows charging when the house is busy. Both avoid a service upgrade.`]);
+      else notes.push(['warn','Your calculated load leaves no room for a Level 2 charger. Options: an EV energy management system that only charges when capacity is available, or a service upgrade (often to 200 A). We\'ll compare both during the consultation.']);
+    } else if(status==='tight'){
+      notes.push(['warn',`You're within your service rating, but close (${Math.round(pct*100)}%). A charger with built-in load management, or a slightly lower charger setting, gives extra margin.`]);
+    } else {
+      notes.push(['info',`Your service has room for this charger. The calculated load with the EV is about ${Math.round(pct*100)}% of your service rating.`]);
+    }
+    if(p.plug) notes.push(['info','The NEC requires GFCI protection for EV receptacles. We install an industrial EV-grade 14-50R on a GFCI breaker. Standard outlets can overheat from hours of continuous charging.']);
+    if(p.plug && /Exterior|Pedestal|Parking/.test(val('loc'))) notes.push(['info','Outdoor receptacles need a weather-resistant "in-use" cover so the charger can stay plugged in. Hardwired chargers are often the cleaner choice outside.']);
+    if(p.a >= 64 && !p.plug) notes.push(['info',`${p.a===80?'An':'A'} ${p.a} A charger needs a ${p.brk} A circuit with larger wire. It's only worth it if your vehicle can charge at that rate.`]);
+    const brand = val('panelBrand');
+    if(/Federal Pacific|Zinsco|Challenger|Pushmatic/.test(brand)) notes.push(['warn',`${brand} panels have known reliability concerns. We'll inspect it closely, and replacement may be recommended before adding a large continuous load like an EV charger.`]);
+    if(val('panelUpg')==='No' && parcel && parcel.YR_BLT && parcel.YR_BLT < 1985) notes.push(['info',`An original ${parcel.YR_BLT} panel is worth a close look before adding a continuous EV load. Many are fine, but some brands and bus ratings from that era limit what can be added.`]);
+    else if(val('panelAge')==='Over 40 years') notes.push(['info','Panels over 40 years old may need a closer look or an upgrade to safely carry a continuous EV load.']);
+    if(val('spaces')==='0') notes.push(['info','Your panel is full. We can often make room by consolidating breakers or adding a small subpanel. We\'ll confirm on site.']);
+    if(+val('dist') > 100 && !chk('distUnk')) notes.push(['info','For runs over about 100 feet, we may upsize the wire to limit voltage drop. That adds material cost but keeps charging at full speed.']);
+    if(chk('r_trench') || /Pedestal|Detached|Parking/.test(val('loc'))) notes.push(['info','Underground work requires a utility markout (call 811) before we dig. We handle that as part of the job.']);
+    if(chk('r_fin')) notes.push(['info','Routing through a finished basement may need small access holes in the ceiling. We keep these to a minimum, and drywall patching can be included in the quote.']);
+    if(/Solar/.test(val('solar'))) notes.push(['info','With solar on site, we\'ll check the panel bus rating and backfeed so the EV circuit and solar both meet code.']);
+    if(/HOA|Rent/.test(val('own'))) notes.push(['info',`${/Rent/.test(val('own'))?'Landlord':'HOA'} approval is usually needed before installation. We can provide a scope letter for their review.`]);
+    if(val('wifi')==='None') notes.push(['info','No Wi-Fi at the charger spot is fine for basic charging. Smart features (scheduling, off-peak charging, utility rewards programs) need a connection.']);
+    notes.push(['info','Most utilities in our area offer off-peak or EV charging programs that can lower your cost. Ask us which applies to your account.']);
+    const ul = $('notes'); ul.innerHTML='';
+    notes.forEach(([t,txt])=>{ const li=document.createElement('li'); if(t==='info') li.className='info'; li.textContent=txt; ul.appendChild(li); });
+
+    // breakdown table
+    const tb = $('loadTable'); tb.innerHTML='';
+    const row = (n, np, dm, cls) => { const tr=document.createElement('tr'); if(cls) tr.style.cssText=cls; tr.innerHTML=`<td>${n}</td><td class="r">${np===''?'':Math.round(np).toLocaleString()}</td><td class="r">${dm===''?'':Math.round(dm).toLocaleString()}</td>`; tb.appendChild(tr); };
+    withEv.items.forEach(i=>row(esc(i.name), i.va, ''));
+    row(`<b>New EV charger${mult===2?'s (2)':''}</b> <span class="tag shed">${p.a} A × 240 V</span>`, evVA, '');
+    const g10 = Math.min(withEv.gen,10000);
+    row('General loads: first 10 kVA @ 100%', '', g10, 'background:#f8fafc');
+    row('General loads: remainder @ 40%', '', Math.max(0,withEv.gen-10000)*0.4, 'background:#f8fafc');
+    row('Heating / cooling (largest): ' + esc(withEv.hvac.name), withEv.hvac.np, withEv.hvac.va, 'background:#f8fafc');
+    row(`<b>Total calculated load with EV</b>`, '', withEv.total, 'font-weight:700');
+    row(`<b>= ${Math.round(withEv.total/240)} A</b> on a ${svcA} A service (${Math.round(pct*100)}%)`, '', '', 'font-weight:700');
+
+    const sg = [
+      ['Vehicle', vehName()], ['Arrival', val('evTiming')],
+      ['Charging setup', p.label], ['Circuit', `${p.brk} A, 240 V${mult===2?' (×2)':''}`],
+      ['Charge rate', `${p.kwOut.toFixed(1)} kW · ~${Math.round(p.rangePerHr)} mi/hr`], ['Max charger without load mgmt.', maxFit ? maxFit+' A' : 'None'],
+      ['Monthly miles', cost.miles.toLocaleString()], ['Electric rate', `${(cost.rate*100).toFixed(1)}¢/kWh${val('rateKnown')==='yes'?'':' (typical)'}`],
+      ['Est. energy / month', Math.round(cost.kwh).toLocaleString()+' kWh'], ['Est. cost / month', money(cost.cost,0)+` (${money(cost.yearly)}/yr)`],
+      ['Vs. gas vehicle', (cost.save>=0?'Save ':'Costs ')+money(Math.abs(cost.save),0)+'/mo'], ['Utility', val('utility')],
+      ['Charger location', val('loc')], ['Panel location', val('panelLoc')],
+      ['Wire route', routeText()], ['Distance', chk('distUnk') ? 'Measure on site' : val('dist')+' ft'],
+      ['Meter #', val('meterNo') || (PHOTOS.some(p=>p.cat==='Meter') ? 'See photo' : '—')], ['Photos', PHOTOS.length ? PHOTOS.length+' added' : 'None']
+    ];
+    $('sumGrid').innerHTML = sg.map(r=>`<div><span>${esc(r[0])}</span><b>${esc(r[1])}</b></div>`).join('');
+
+    // summary text
+    const lines = [
+      'EV CHARGER QUESTIONNAIRE — ElectricAce',
+      `Name: ${val('name')}`, `Phone: ${val('phone')}`, val('email')?`Email: ${val('email')}`:null,
+      `Service address: ${[val('address'), val('town'), val('zip') ? 'NY '+val('zip') : ''].filter(Boolean).join(', ') || '—'}`,
+      `Property: ${val('ptype')}, ~${(+val('sqft')).toLocaleString()} sq ft · ${val('own')}`,
+      `Service: ${svcTxt()} | Panel: ${val('panelBrand')}, ${val('panelAge')}, upgraded since built: ${val('panelUpg')}, ${val('panelLoc')} | Empty spaces: ${val('spaces')}`,
+      `Solar/battery: ${val('solar')}`,
+      parcel && !parcel.none ? `Public record: ${parcel.PARCEL_ADDR||''}, ${parcel.CITYTOWN_NAME||''} (${parcel.COUNTY_NAME||''} Co.) | Print key ${parcel.PRINT_KEY||'—'} | Class ${parcel.PROP_CLASS||'—'} | Built ${parcel.YR_BLT||'—'} | ${parcel.SQFT_LIVING?Math.round(parcel.SQFT_LIVING)+' sq ft':'sq ft —'} | Heat ${parcel.HEAT_TYPE_DESC||'—'}/${parcel.FUEL_TYPE_DESC||'—'} | Water ${parcel.WATER_DESC||'—'} | Sewer ${parcel.SEWER_DESC||'—'}` : (parcel ? `Address lookup: ${parcel.matched} (no public parcel record)` : null),
+      '',
+      `VEHICLE: ${vehName()} (${val('evTiming')}) | EVs: ${$('evCount').selectedOptions[0].text}`,
+      `CHARGER: ${p.label} | ${p.a} A on ${p.brk} A circuit${mult===2?' (x2)':''} | ~${p.kwOut.toFixed(1)} kW${(p.type==='dealer'||p.type==='own')?' | Has charger: '+val('chgHave'):''}`,
+      `LOAD CALC (NEC 220.82): existing ${Math.round(base.total).toLocaleString()} VA (${Math.round(base.total/240)} A) | with EV ${Math.round(withEv.total).toLocaleString()} VA (${Math.round(withEv.total/240)} A) = ${Math.round(pct*100)}% of ${svcA} A`,
+      `Result: ${vt[1]} | Max charger w/o load mgmt: ${maxFit?maxFit+' A':'none'}`,
+      '',
+      `COST: ${cost.miles} mi/mo · ${Math.round(cost.kwh)} kWh · ${money(cost.cost,0)}/mo at ${(cost.rate*100).toFixed(1)}¢/kWh (${val('rateKnown')==='yes'?`supply ${val('supplyRate')}¢ + delivery ${val('deliveryRate')}¢`:'typical estimate'}) · Utility: ${val('utility')}`,
+      '',
+      `INSTALL: Location: ${val('loc')} | Route: ${routeText()} | Distance: ${chk('distUnk')?'measure on site':val('dist')+' ft'}`,
+      (chk('r_trench') || /Pedestal|Detached|Parking/.test(val('loc'))) ? `Trench: ${val('trenchFt')||'?'} ft through ${val('surface')}` : null,
+      `Wall: ${val('wall')} | Wi-Fi at spot: ${val('wifi')}`,
+      `Meter #: ${val('meterNo')||'—'} | Photos: ${PHOTOS.length ? PHOTOS.map(p=>p.name).join(', ') : 'none'}`,
+      '', 'LOADS:',
+      ...withEv.items.map(i=>`- ${i.name}: ${Math.round(i.va)} VA`),
+      `- New EV charger: ${evVA} VA`,
+      `- HVAC (largest): ${withEv.hvac.name}: ${Math.round(withEv.hvac.va)} VA`,
+      val('comments')?`\nNotes: ${val('comments')}`:null
+    ].filter(x=>x!==null);
+
+    lastCalc = {base, withEv, pct, svcA, capVA, maxFit, status, verdict:vt[1], p, v, mult, cost, notes:notes.map(n=>n[1]), sg};
+    baseSummary = lines;
+    lastRec = `${p.brk}A circuit · ${vehName()}`;
+    refreshSummary();
+  }
+
+  function scheduleText(){
+    const days = ['Mon','Tue','Wed','Thu','Fri','Sat'].filter(d=>chk('d_'+d));
+    const times = ['Morning','Midday','Afternoon'].filter(t=>chk('t_'+t));
+    const date = val('schedDate');
+    const dateTxt = date ? new Date(date+'T12:00').toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}) : 'first available';
+    return `Consultation request (pending office confirmation): ${dateTxt} | Days: ${days.join('/')||'any'} | Time: ${times.join('/')||'any'} | Contact by: ${val('contactPref')}`;
+  }
+  function refreshSummary(kind){
+    kind = kind || lastKind;
+    const parts = [...baseSummary];
+    if(kind==='schedule'){ const at = parts.findIndex(l=>l.startsWith('Solar/battery')); parts.splice(at+1, 0, scheduleText()); }
+    $('summaryBox').value = [`REQUEST TYPE: ${kind==='schedule'?'Consultation request':'Full report request'}`, ...parts].join('\n');
+    const where = [val('town'), val('zip')].filter(Boolean).join(' ');
+    const subject = `⚡ 𝗘𝗩 𝗖𝗛𝗔𝗥𝗚𝗘𝗥 · ${kind==='schedule'?'Consultation Request':'Report Request'} – ${val('name')||'New client'}${where?' ('+where+')':''} – ${lastRec}`;
+    const intro = kind==='schedule' ? "I'd like to schedule an EV charger consultation. My load calculation and scheduling request are below." : "I'd like my full EV charger load calculation report. My results are below.";
+    const emailBody = 'Hi ElectricAce,\n\n' + intro + '\n\n' + $('summaryBox').value + (PHOTOS.length ? '\n\n(I took '+PHOTOS.length+' photos and will attach them to this email.)' : '') + '\n\nThank you!';
+    const mailHref = `mailto:${SUBMIT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+    $('sendBtn').href = mailHref; $('mailLink').href = mailHref;
+    lastSubject = subject;
+    return mailHref;
+  }
+  $('schedule').addEventListener('change', ()=>refreshSummary());
+
+  // ---------- spam protection & validation ----------
+  const SPAM_WORDS = /\b(viagra|cialis|casino|crypto|bitcoin|forex|backlinks?|seo services|guest post|loan offer|escort|porn|betting|web design services)\b/i;
+  function spamCheck(kind){
+    const name = String(val('name')).trim(), phone = String(val('phone')), email = String(val('email')).trim();
+    const notes = String(val('comments')) + ' ' + String(val('address')) + ' ' + String(val('town'));
+    const links = (notes.match(/https?:\/\/|www\./gi) || []).length;
+    if(String(val('botcheck')).trim()) return {bot:true};
+    if(Date.now() - startedAt < 25000) return {bot:true};
+    if(/https?:\/\/|www\.|<|>/i.test(name) || name.length > 60) return {bot:true};
+    if(links > 1 || SPAM_WORDS.test(notes + ' ' + name)) return {bot:true};
+    if(/[Ѐ-ӿ一-鿿]{6,}/.test(notes + name)) return {bot:true};
+    if(name.split(/\s+/).filter(Boolean).length < 2) return {msg:'Please enter your first and last name.', field:'name'};
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return {msg:'Please enter a valid email address so we can follow up with your report.', field:'email'};
+    const digits = phone.replace(/\D/g,'').replace(/^1/,'');
+    if(kind==='schedule' && digits.length !== 10) return {msg:'Please enter a 10-digit phone number so our office can confirm your appointment.', field:'phone'};
+    if(kind==='report' && phone.trim() && digits.length !== 10) return {msg:"That phone number doesn't look complete. Fix it or leave it blank.", field:'phone'};
+    if(kind==='schedule' && String(val('address')).trim().length < 5) return {msg:'Please enter the service address so we can review the site.', field:'address'};
+    if(kind==='schedule' && !String(val('town')).trim()) return {msg:'Please enter the town for the service address.', field:'town'};
+    return {};
+  }
+  function markField(n){
+    const el = form.elements[n]; if(!el) return;
+    el.classList.add('invalid'); try{ el.focus({preventScroll:false}); }catch(e){}
+    el.addEventListener('input', ()=>el.classList.remove('invalid'), {once:true});
+  }
+  function unlock(){ if(unlocked) return; unlocked = true; $('breakdown').classList.remove('locked'); $('pdfRow').style.display = 'flex'; }
+  function showPanel(which, kind, photoState){
+    $('sentOk').style.display = which==='ok' ? 'block' : 'none';
+    $('sentNote').style.display = which==='fallback' ? 'block' : 'none';
+    if(which!=='ok') return;
+    const first = esc(String(val('name')).trim().split(/\s+/)[0] || '');
+    const hi = first ? `Thanks, ${first}` : 'Thanks';
+    if(kind==='schedule'){
+      $('okTitle').textContent = '✅ Consultation request sent!';
+      $('okBody').innerHTML = `${hi}! Your EV charger plan and appointment request are on their way to the ElectricAce team. <a href="#" class="pdf-link">Download your report (PDF)</a> for your records.`;
+      $('okNext').style.display = '';
+    } else {
+      $('okTitle').textContent = '✅ Your report is unlocked!';
+      $('okBody').innerHTML = `${hi}! Your PDF report is downloading, and your full load calculation is now showing above. <a href="#" class="pdf-link">Download it again</a>. Our team received a copy and may reach out with any questions.<br><br><b>Ready for a firm quote?</b> Add your address and a preferred time above to request a free consultation.`;
+      $('okNext').style.display = 'none';
+    }
+    const op = $('okPhotos');
+    if(photoState==='sent'){ op.style.display=''; op.innerHTML = `📷 Your ${PHOTOS.length} photo${PHOTOS.length>1?'s were':' was'} included.`; }
+    else if(photoState==='partial' || photoState==='dropped'){ op.style.display=''; op.innerHTML = `📷 <b>We couldn't attach ${photoState==='partial'?'all of ':''}your photos automatically.</b> Please text them to <a href="sms:+18452999635">845.299.9635</a> or reply to our email with them attached. They're also included in your PDF report.`; }
+    else op.style.display='none';
+  }
+  function setBtn(btn, state, kind){
+    btn.classList.remove('loading','done'); if(state) btn.classList.add(state);
+    const labels = {
+      report:   {idle:' Get my full report (free)', loading:' Unlocking your report…', done:' Report unlocked'},
+      schedule: {idle:' Send my EV plan to ElectricAce & schedule a consultation!', loading:' Sending your request…', done:' Consultation requested. Thank you!'}
+    };
+    btn.lastChild.textContent = labels[kind][state||'idle'] + (kind==='schedule' ? '\n      ' : '');
+  }
+  function pickedList(prefix, items){ return items.filter(x=>chk(prefix+x)).join(', ') || 'Any'; }
+
+  async function post(body, isForm){
+    const ctrl = new AbortController(); const timer = setTimeout(()=>ctrl.abort(), isForm ? 45000 : 15000);
+    const res = await fetch('https://api.web3forms.com/submit', {
+      method:'POST', ...(isForm ? {} : {headers:{'Content-Type':'application/json', Accept:'application/json'}}),
+      body, signal: ctrl.signal
+    });
+    clearTimeout(timer);
+    const data = await res.json().catch(()=>({}));
+    if(!res.ok || data.success === false) throw new Error(data.message || ('HTTP '+res.status));
+    return data;
+  }
+  async function submitRequest(kind, btn){
+    if(sending || sent[kind]) return;
+    lastKind = kind;
+    clampDate(); compute();
+    const mailHref = refreshSummary(kind);
+    const errBox = $('sendErr');
+    const r = spamCheck(kind);
+    if(r.msg){ errBox.textContent = r.msg; errBox.style.display='block'; showPanel(null); markField(r.field); return; }
+    errBox.style.display='none';
+    if(r.bot){ sent[kind] = true; setBtn(btn,'done',kind); showPanel('ok',kind); unlock(); return; }
+    sending = true; setBtn(btn,'loading',kind);
+    const C = lastCalc;
+    const sched = kind==='schedule' ? {
+      'Requested date': val('schedDate') || 'First available',
+      'Preferred days': pickedList('d_', ['Mon','Tue','Wed','Thu','Fri','Sat']),
+      'Preferred time': pickedList('t_', ['Morning','Midday','Afternoon']),
+      'Best way to reach': val('contactPref')
+    } : {};
+    const fields = Object.assign({
+      access_key: WEB3FORMS_KEY,
+      subject: lastSubject,
+      from_name: '⚡ EV Charger Questionnaire – ElectricAce',
+      'Request type': kind==='schedule' ? 'Consultation request' : 'Full report request',
+      name: val('name'), email: val('email'), replyto: val('email'), phone: val('phone') || '—',
+      'Service address': [val('address'), val('town'), val('zip') ? 'NY '+val('zip') : ''].filter(Boolean).join(', ') || '—',
+      'Vehicle': vehName(),
+      'Recommended circuit': `${C.p.brk} A (${C.p.a} A charger)`,
+      'Load check': `${C.verdict} (${Math.round(C.pct*100)}% of ${C.svcA} A)`,
+      'Meter number': val('meterNo') || '—',
+      'Photos': PHOTOS.length ? PHOTOS.length+' taken' : 'None'
+    }, sched, { message: $('summaryBox').value, botcheck: '' });
+    let photoState = PHOTOS.length ? 'sent' : null;
+    try{
+      if(PHOTOS.length){
+        // try with photo attachments (requires a Web3Forms plan that accepts files); keep total under ~4.8 MB
+        try{
+          const fd = new FormData(); Object.entries(fields).forEach(([k,v])=>fd.append(k, v));
+          let total = 0, n = 0;
+          PHOTOS.forEach((p,i)=>{ if(p.blob && total + p.blob.size < 4.8e6){ total += p.blob.size; n++; fd.append('attachment'+(i+1), p.blob, p.name.replace(/\s+/g,'-')+'.jpg'); } });
+          if(n < PHOTOS.length) photoState = 'partial';
+          await post(fd, true);
+        }catch(e1){
+          photoState = 'dropped';
+          await post(JSON.stringify(Object.assign({}, fields, {'Photos': PHOTOS.length+' taken (not attached, ask client to text/email)'})), false);
+        }
+      } else {
+        await post(JSON.stringify(fields), false);
+      }
+      sent[kind] = true; setBtn(btn,'done',kind);
+      showPanel('ok', kind, photoState); unlock();
+      if(kind==='report') downloadPdf();
+      if(kind==='schedule'){ try{ localStorage.removeItem(STORE); }catch(err){} }
+    }catch(err){
+      setBtn(btn, null, kind);
+      showPanel('fallback', kind); unlock();
+      if(kind==='report') downloadPdf();
+      try{ window.location.href = mailHref; }catch(e2){}
+    }finally{ sending = false; }
+  }
+  $('reportBtn').addEventListener('click', e=>{ e.preventDefault(); submitRequest('report', e.currentTarget); });
+  $('sendBtn').addEventListener('click', e=>{ e.preventDefault(); submitRequest('schedule', e.currentTarget); });
+  window.EAEv = {text(){ try{ compute(); }catch(e){} try{ refreshSummary('schedule'); }catch(e){} return $('summaryBox').value; }, val};
+  $('sentOk').addEventListener('click', e=>{ if(e.target.closest('.pdf-link')) downloadPdf(e); });
+  document.querySelectorAll('.jump').forEach(b=>b.addEventListener('click', ()=>{
+    if(EMBED) toParent({type:'ea-ev-scroll', offset: $('schedule').getBoundingClientRect().top + window.scrollY}); else $('schedule').scrollIntoView({behavior:'smooth', block:'start'});
+    setTimeout(()=>{ try{ $('name').focus({preventScroll:true}); }catch(e){} }, 500);
+  }));
+
+  // ---------- PDF report ----------
+  const JSPDF_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+  function loadJsPDF(){
+    if(window.jspdf && window.jspdf.jsPDF) return Promise.resolve(window.jspdf.jsPDF);
+    return new Promise((res, rej)=>{
+      const sc = document.createElement('script'); sc.src = JSPDF_URL; sc.async = true;
+      sc.onload = ()=> window.jspdf ? res(window.jspdf.jsPDF) : rej(new Error('jsPDF missing'));
+      sc.onerror = ()=> rej(new Error('jsPDF failed to load'));
+      document.head.appendChild(sc);
+    });
+  }
+  function imgData(cls){
+    try{
+      const im = document.querySelector('.'+cls); if(!im || !im.naturalWidth) return null;
+      const c = document.createElement('canvas'); c.width = im.naturalWidth; c.height = im.naturalHeight;
+      const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0,0,c.width,c.height); g.drawImage(im,0,0);
+      return {data:c.toDataURL('image/png'), w:im.naturalWidth, h:im.naturalHeight};
+    }catch(e){ return null; }
+  }
+  async function buildPdf(){
+    const jsPDF = await loadJsPDF();
+    if(!lastCalc) compute();
+    const C = lastCalc;
+    const doc = new jsPDF({unit:'pt', format:'letter'});
+    const clean = t => Array.isArray(t) ? t.map(clean) : String(t).replace(/≈/g,'approx. ').replace(/✓ /g,'').replace(/→/g,'->').replace(/¢/g,' cents').replace(/[^\x00-\xFF–—‘’“”•…]/g,'');
+    const _text = doc.text.bind(doc), _split = doc.splitTextToSize.bind(doc);
+    doc.text = (t, ...a) => _text(clean(t), ...a);
+    doc.splitTextToSize = (t, ...a) => _split(clean(t), ...a);
+    const W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight(), M = 44;
+    const NAVY=[15,31,51], GOLD=[238,181,0], INK=[27,36,48], MUTED=[93,107,124], LINE=[221,227,234];
+    let y = M;
+    const now = new Date();
+    const ref = 'EV-' + now.toISOString().slice(2,10).replace(/-/g,'') + '-' + String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
+
+    function header(){
+      const ea = imgData('logo-ea');
+      if(ea) doc.addImage(ea.data,'PNG',M,M-6,56*ea.w/ea.h,56);
+      else { doc.setFont('helvetica','bold'); doc.setFontSize(20); doc.setTextColor(...INK); doc.text('ElectricAce',M,M+28); }
+      doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(...NAVY); doc.text('EV Charging Installation', W-M, M+16, {align:'right'});
+      doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(...MUTED); doc.text('Call or text 845.299.9635', W-M, M+31, {align:'right'});
+      doc.setDrawColor(...GOLD); doc.setLineWidth(3); doc.line(M,M+62,W-M,M+62);
+      y = M + 86;
+    }
+    function footer(){
+      const n = doc.internal.getNumberOfPages();
+      for(let i=1;i<=n;i++){
+        doc.setPage(i);
+        doc.setDrawColor(...LINE); doc.setLineWidth(0.8); doc.line(M,H-46,W-M,H-46);
+        doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(...MUTED);
+        doc.text('ElectricAce  ·  845.299.9635  ·  websizing@electricace.com  ·  electricace.com', M, H-32);
+        doc.text('Residential & commercial EV charger installation  ·  Hudson Valley, NY', M, H-21);
+        doc.text(`Ref ${ref}`, W-M, H-32, {align:'right'});
+        doc.text(`Page ${i} of ${n}`, W-M, H-21, {align:'right'});
+      }
+    }
+    function need(h){ if(y + h > H - 60){ doc.addPage(); y = M; } }
+    function heading(t){ need(34); doc.setFont('helvetica','bold'); doc.setFontSize(12.5); doc.setTextColor(...NAVY); doc.text(t.toUpperCase(), M, y); y += 6; doc.setDrawColor(...LINE); doc.setLineWidth(0.8); doc.line(M,y,W-M,y); y += 14; }
+    function para(t, size=10, color=INK, gap=4){ doc.setFont('helvetica','normal'); doc.setFontSize(size); doc.setTextColor(...color); doc.splitTextToSize(t, W-2*M).forEach(l=>{ need(size+4); doc.text(l, M, y); y += size+3; }); y += gap; }
+    function kv(rows){
+      const colW = (W-2*M)/2;
+      for(let i=0;i<rows.length;i+=2){
+        need(30);
+        [rows[i], rows[i+1]].forEach((r,k)=>{
+          if(!r) return; const x = M + k*colW;
+          doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...MUTED); doc.text(String(r[0]).toUpperCase(), x, y);
+          doc.setFont('helvetica','bold'); doc.setFontSize(10.5); doc.setTextColor(...INK);
+          doc.text(doc.splitTextToSize(String(r[1]||'—'), colW-12)[0], x, y+13);
+        });
+        y += 30;
+      }
+    }
+
+    header();
+    doc.setFont('helvetica','bold'); doc.setFontSize(20); doc.setTextColor(...INK);
+    doc.text('Preliminary EV Charger Load Calculation', M, y); y += 18;
+    doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(...MUTED);
+    doc.text(`Prepared ${now.toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'})} for ${val('name')}  ·  Reference ${ref}`, M, y); y += 22;
+
+    // hero box
+    const boxH = 128; need(boxH+10);
+    doc.setFillColor(...NAVY); doc.roundedRect(M, y, W-2*M, boxH, 8, 8, 'F');
+    doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(169,187,208);
+    doc.text('RECOMMENDED CHARGER CIRCUIT', M+18, y+22);
+    doc.setFont('helvetica','bold'); doc.setFontSize(34); doc.setTextColor(...GOLD);
+    doc.text(`${C.p.brk} A`, M+18, y+58);
+    doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(201,213,227);
+    doc.text(doc.splitTextToSize(C.p.plug ? `NEMA 14-50R EV-grade receptacle, up to ${C.p.a} A charging` : `${C.p.a} A hardwired charger${C.mult===2?' (x2)':''}, 240 V`, 220), M+18, y+76);
+    doc.text(doc.splitTextToSize(`${C.p.kwOut.toFixed(1)} kW, about ${Math.round(C.p.rangePerHr)} miles of range per hour`, 220), M+18, y+88);
+    const vcol = C.status==='ok' ? [31,157,107] : C.status==='tight' ? GOLD : [194,65,12];
+    doc.setFillColor(...vcol); doc.roundedRect(M+18, y+98, 220, 18, 9, 9, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...(C.status==='tight'?INK:[255,255,255]));
+    doc.text(({ok:'Fits within your service',tight:'Fits, but close to your service limit',over:'Exceeds service: load mgmt. or upgrade'})[C.status], M+28, y+110);
+    const sx = M + (W-2*M)*0.55, sw = (W-2*M)*0.45 - 18;
+    [['Existing home load', `${Math.round(C.base.total/240)} A`],
+     ['Load with EV charger', `${Math.round(C.withEv.total/240)} A (${Math.round(C.pct*100)}%)`],
+     ['Service capacity', svcTxt()],
+     ['Est. charging cost', `${money(C.cost.cost,0)} / month`],
+     ['Vehicle', vehName()]].forEach((r,i)=>{
+      const ry = y + 22 + i*20;
+      doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(201,213,227); doc.text(r[0], sx, ry);
+      doc.setFont('helvetica','bold'); doc.setTextColor(255,255,255);
+      const lw = doc.getTextWidth(r[0]) + 10;
+      if(doc.getTextWidth(String(r[1])) > sw - lw) doc.setFontSize(8);
+      doc.text(doc.splitTextToSize(String(r[1]), sw-lw)[0], sx+sw, ry, {align:'right'});
+    });
+    y += boxH + 24;
+
+    heading('Client & property');
+    kv([
+      ['Name', val('name')], ['Phone', val('phone')||'—'],
+      ['Email', val('email')||'—'], ['Service address', [val('address'), val('town'), val('zip') ? 'NY '+val('zip') : ''].filter(Boolean).join(', ')],
+      ['Property', `${val('ptype')}, ${(+val('sqft')).toLocaleString()} sq ft`], ['Ownership', val('own')],
+      ['Electrical service', svcTxt()], ['Panel', `${val('panelBrand')} · ${val('panelAge')}`], ['Upgraded since built?', val('panelUpg')],
+      ['Panel location', val('panelLoc')], ['Empty breaker spaces', val('spaces')==='unknown'?'Not sure':val('spaces')],
+      ['Meter number', val('meterNo')||'—'], ['Utility', val('utility')],
+      ...(parcel && !parcel.none ? [['Year built (public record)', parcel.YR_BLT||'—'], ['Tax map # (print key)', parcel.PRINT_KEY||'—']] : [])
+    ]);
+
+    heading('Vehicle, charger & cost');
+    kv(C.sg.slice(0,12));
+
+    heading('Installation');
+    kv([...C.sg.slice(12,16), ['Wall', val('wall')], ['Wi-Fi at charger', val('wifi')],
+      ...((chk('r_trench') || /Pedestal|Detached|Parking/.test(val('loc'))) ? [['Trench', `${val('trenchFt')||'?'} ft`], ['Surface', val('surface')]] : [])]);
+
+    heading('Load calculation (NEC 220.82 optional method)');
+    const cx = [M, W-M-110, W-M];
+    function tableHead(){
+      doc.setFillColor(244,246,249); doc.rect(M, y-11, W-2*M, 18, 'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(...MUTED);
+      doc.text('ITEM', cx[0]+6, y+1); doc.text('NAMEPLATE VA', cx[1], y+1, {align:'right'}); doc.text('DEMAND VA', cx[2]-6, y+1, {align:'right'});
+      y += 18;
+    }
+    tableHead();
+    const evVA = C.p.a*240*C.mult;
+    const rows = [
+      ...C.withEv.items.map(i=>[i.name, i.va, '']),
+      [`New EV charger${C.mult===2?'s (2)':''} (${C.p.a} A x 240 V)`, evVA, '', 'b'],
+      ['General loads: first 10 kVA at 100%', '', Math.min(C.withEv.gen,10000), 's'],
+      ['General loads: remainder at 40%', '', Math.max(0,C.withEv.gen-10000)*0.4, 's'],
+      ['Heating/cooling (largest): '+C.withEv.hvac.name, C.withEv.hvac.np, C.withEv.hvac.va, 's'],
+      [`Total calculated load with EV = ${Math.round(C.withEv.total/240)} A (${Math.round(C.pct*100)}% of ${C.svcA} A)`, '', C.withEv.total, 'b']
+    ];
+    rows.forEach(([n,np,dm,st])=>{
+      doc.setFont('helvetica', st==='b'?'bold':'normal'); doc.setFontSize(9.5);
+      const nl = doc.splitTextToSize(n, cx[1]-cx[0]-90);
+      const rh = 6 + nl.length*12;
+      if(y + rh > H-60){ doc.addPage(); y = M; tableHead(); doc.setFont('helvetica', st==='b'?'bold':'normal'); doc.setFontSize(9.5); }
+      doc.setTextColor(...INK);
+      doc.text(nl, cx[0]+6, y);
+      if(np!=='') doc.text(Math.round(np).toLocaleString(), cx[1], y, {align:'right'});
+      if(dm!=='') doc.text(Math.round(dm).toLocaleString(), cx[2]-6, y, {align:'right'});
+      y += rh - 6;
+      doc.setDrawColor(...LINE); doc.setLineWidth(0.5); doc.line(M, y-3, W-M, y-3); y += 9;
+    });
+    y += 8;
+
+    if(C.notes.length){
+      heading('Notes for your project');
+      C.notes.forEach(n=>{
+        doc.setFont('helvetica','normal'); doc.setFontSize(9.5);
+        const lines = doc.splitTextToSize(n, W-2*M-20);
+        need(lines.length*12+8);
+        doc.setFillColor(...GOLD); doc.rect(M, y-8, 3, lines.length*12, 'F');
+        doc.setTextColor(...INK); doc.text(lines, M+12, y); y += lines.length*12 + 8;
+      });
+      y += 4;
+    }
+    if(lastKind==='schedule'){
+      heading('Consultation request');
+      const dv = val('schedDate');
+      kv([
+        ['Requested date', dv ? new Date(dv+'T12:00').toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'}) : 'First available'],
+        ['Best way to reach', val('contactPref')],
+        ['Preferred days', pickedList('d_', ['Mon','Tue','Wed','Thu','Fri','Sat'])], ['Preferred time', pickedList('t_', ['Morning','Midday','Afternoon'])]
+      ]);
+      para("What happens next: Your appointment isn't final yet. A member of our office team will contact you to confirm your requested time slot.", 9.5, INK, 6);
+    }
+    if(val('comments')){ heading('Your notes'); para(val('comments'), 9.5); }
+    need(60);
+    para($('discl').textContent, 8, MUTED, 0);
+
+    if(PHOTOS.length){
+      doc.addPage(); y = M;
+      heading(`Photos (${PHOTOS.length})`);
+      const colW = (W-2*M-14)/2; let col = 0, rowH = 0;
+      const ORD = ['Panel','Meter','Location','Wire route'];
+      [...PHOTOS].sort((a,b)=>ORD.indexOf(a.cat)-ORD.indexOf(b.cat)).forEach(p=>{
+        const h = Math.min(colW*p.h/p.w, 230), w = h*p.w/p.h;
+        if(col===0) need(h+24);
+        const x = M + col*(colW+14);
+        try{ doc.addImage(p.url, 'JPEG', x, y, w, h); }catch(e){}
+        doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(...MUTED); doc.text(p.name, x, y+h+11);
+        rowH = Math.max(rowH, h+22);
+        if(col===1){ y += rowH; rowH = 0; col = 0; } else col = 1;
+      });
+    }
+
+    footer();
+    const last = String(val('name')).trim().split(/\s+/).pop().replace(/[^A-Za-z0-9-]/g,'') || 'Client';
+    return {doc, filename:`ElectricAce-EV-Charger-Plan-${last}.pdf`};
+  }
+  async function downloadPdf(e){
+    if(e) e.preventDefault();
+    const btn = $('pdfBtn'); const old = btn.textContent;
+    btn.textContent = 'Preparing PDF…'; btn.disabled = true;
+    try{
+      const {doc, filename} = await buildPdf();
+      let handled = false;
+      if(window.claude && typeof window.claude.use === 'function'){
+        try{ const dl = await window.claude.use('downloads'); if(dl){ handled = true; try{ await dl.save({filename, data: doc.output('blob')}); }catch(err){} } }catch(err){}
+      }
+      if(!handled) doc.save(filename);
+    }catch(err){
+      btn.textContent = 'PDF unavailable — try again';
+      setTimeout(()=>{ btn.textContent = old; btn.disabled = false; }, 2500);
+      return;
+    }
+    btn.textContent = old; btn.disabled = false;
+  }
+  $('pdfBtn').addEventListener('click', downloadPdf);
+  window.__eaEvTest = { buildPdf, compute, calc, chargerPlan, PHOTOS };
+
+  // Earliest bookable date: 6 business days out
+  function minBookDate(){
+    const d = new Date(); d.setHours(12,0,0,0); let added = 0;
+    while(added < 6){ d.setDate(d.getDate()+1); const w=d.getDay(); if(w!==0 && w!==6) added++; }
+    return d;
+  }
+  const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const minISO = iso(minBookDate());
+  const dateEl = $('schedDate');
+  dateEl.min = minISO;
+  $('dateHint').textContent = `(${minBookDate().toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'})} or later)`;
+  function clampDate(){ if(dateEl.value && dateEl.value < minISO){ dateEl.value = minISO; dateEl.classList.add('invalid'); setTimeout(()=>dateEl.classList.remove('invalid'),1500); } }
+  dateEl.addEventListener('change', ()=>{ clampDate(); refreshSummary(); });
+  dateEl.addEventListener('blur', clampDate);
+  load(); clampDate(); applyUpgrade(); updateConditional(); show(0);
+})();
+</script>
+<script src="visit.js"></script>
+<script>
+{ try{ EAVisit.bar('ev');
+  EAVisit.link({address:'addrSearch'}, false);
+  EAVisit.link({customer:'name', email:'email', phone:'phone', address:'address'}, true); }catch(e){} }
+</script>
+<script src="send.js"></script>
+<script>
+{ try{
+  const E = window.EAEv, a = document.getElementById('schedule');
+  if(E && a && window.EASend) EASend.mount(a, () => {
+    const v = E.val, vi = EAVisit.info(), addr = [v('address') || v('addrSearch'), v('town'), v('zip') ? 'NY ' + v('zip') : ''].filter(Boolean).join(', ') || vi.address || '';
+    const txt = E.text();
+    return {path: 'EV Charging Installation', title: `${v('name') || vi.customer || 'Client'} - EV Charging Installation Site Visit Details`, text: txt,
+      html: '<h2>EV charging installation — site visit</h2><pre style="font:14px/1.45 Inter,Segoe UI,Arial,sans-serif;white-space:pre-wrap">' + txt.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])) + '</pre>',
+      requestTitle: `EV charger installation site visit${vi.date ? ' (' + vi.date + (vi.prepby ? ', ' + vi.prepby : '') + ')' : ''}`,
+      materials: [], visit: {customer: v('name') || vi.customer || '', phone: v('phone') || vi.phone || '', email: v('email') || vi.email || '', address: addr, date: vi.date || '', prepby: vi.prepby || ''}};
+  }, {after: true});
+}catch(e){} }
+</script>
+</body>
+</html>

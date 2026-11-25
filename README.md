@@ -6,6 +6,9 @@ Self-contained questionnaires hosted on GitHub Pages and embedded on the company
 |---|---|---|---|
 | `ev/` | Homeowner EV charger questionnaire | `https://nherron2323.github.io/ev-questionnaire/ev/` | `embed/ev.html` |
 | `generator/` | Generator sizing questionnaire | `https://nherron2323.github.io/ev-questionnaire/generator/` | `embed/generator.html` |
+| `site-visit/` | ElectricAce Site Visit worksheet (crew tool: residential, generator, EV, heat pump) | `https://nherron2323.github.io/ev-questionnaire/site-visit/` | `embed/site-visit.html` (link button) |
+
+The `site-visit/` folder is the one exception to "one file per form": it's a multi-page tool (`index.html` plus a page per job type and shared `wiz.css` / `*.js` files). It's meant to open in its own tab on a phone rather than inside an iframe, so its embed code is a link button.
 
 ## How it works
 
