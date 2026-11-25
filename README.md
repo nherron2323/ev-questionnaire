@@ -1,24 +1,22 @@
-# ElectricAce EV Charger Questionnaire
+# Site intake forms
 
-Homeowner EV charger questionnaire for electricace.com: property lookup, NEC 220.82 load calc, charger recommendation, charging-cost estimate, photo upload and consultation scheduling. Submissions go to ElectricAce through Web3Forms.
+Self-contained questionnaires hosted on GitHub Pages and embedded on the company website in an iframe. Each form lives in its own folder.
+
+| Folder | Form | Live URL |
+|---|---|---|
+| `ev/` | Homeowner EV charger questionnaire | `https://nherron2323.github.io/hankisadog/ev/` |
 
 ## How it works
 
-- `index.html` is the whole questionnaire (one self-contained file).
-- GitHub Pages hosts it at `https://<username>.github.io/ev-questionnaire/`.
-- The Marblism site shows it in an iframe (`embed-snippet.html`). When the page is inside an iframe, it hides its own logo bar and footer and reports its height so the frame resizes to fit.
+- Each folder holds one `index.html` (the whole form in one file).
+- GitHub Pages serves each folder at `https://nherron2323.github.io/hankisadog/<folder>/`.
+- The website shows a form with the iframe code in `embed-snippet.html`. Inside an iframe, the form hides its own logo bar and footer and reports its height so the frame fits it.
+- Every page carries a `noindex` tag so search engines leave these URLs out. The root `index.html` is a blank page.
 
-**Making changes:** edit `index.html` on GitHub (or have Claude push a change) and commit. GitHub Pages republishes in about a minute, and the Marblism page picks it up automatically. No change is needed in Marblism.
+**Making changes:** edit a form's `index.html` and commit. GitHub Pages republishes in about a minute and the website shows the change. Nothing needs to change on the website.
 
-## One-time setup
-
-1. Create a public repo named `ev-questionnaire` and upload these files.
-2. Repo **Settings → Pages → Source: Deploy from a branch → `main` / root → Save**.
-3. Wait about a minute, then open `https://<username>.github.io/ev-questionnaire/` to confirm it loads.
-4. In `embed-snippet.html`, replace `YOUR-GITHUB-USERNAME`, then paste the snippet into a custom-code / HTML block on the Marblism EV charging page.
-5. Submit one test request and confirm it arrives at the ElectricAce inbox.
+**Adding a form:** create a new folder with its `index.html` (keep the `noindex` tag) and embed it with a copy of `embed-snippet.html` pointing at the new folder.
 
 ## Notes
 
-- The Web3Forms access key in `index.html` is designed to be public (it only allows sending to the inbox registered with it). You can also restrict it to your domains in the Web3Forms dashboard.
-- Optional: point a subdomain such as `ev.electricace.com` at GitHub Pages (Settings → Pages → Custom domain) and use that URL in the iframe instead.
+- The Web3Forms access key in `ev/index.html` is meant to be public: it can only send to the inbox registered with it. It can also be restricted to your domains in the Web3Forms dashboard.
