@@ -225,7 +225,8 @@
       <label class="f" for="addrSearch">Property address</label>
       <input type="text" id="addrSearch" name="addrSearch" autocomplete="off" placeholder="Start typing, e.g. 12 Main St, Rhinebeck" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="addrList">
       <ul class="addrlist" id="addrList" role="listbox"></ul>
-      <div class="hint" id="addrStatus" style="margin-top:6px">Looks up New York State public tax records. Nothing you type here is sent to ElectricAce until you submit.</div>
+      <div class="hint" id="addrStatus" style="margin-top:6px">Finds any US address, and fills in details from public property records where they're available (New York State tax records). Nothing you type here is sent to ElectricAce until you submit.</div>
+      <input type="hidden" id="state" name="state" value="NY">
     </div>
     <div class="pfcard" id="pfCard"></div>
     <div class="grid" style="margin-top:18px">
@@ -972,7 +973,7 @@ if(EA_EMBED){
     const lines = [
       'GENERATOR SIZING QUESTIONNAIRE — ElectricAce',
       `Name: ${val('name')}`, `Phone: ${val('phone')}`, val('email')?`Email: ${val('email')}`:null,
-      `Service address: ${[val('address'), val('town'), val('zip') ? 'NY '+val('zip') : ''].filter(Boolean).join(', ') || '—'}`,
+      `Service address: ${[val('address'), val('town'), val('zip') ? (val('state')||'NY')+' '+val('zip') : ''].filter(Boolean).join(', ') || '—'}`,
       `Property: ${val('ptype')}, ~${(+val('sqft')).toLocaleString()} sq ft · ${val('own')}`,
       `Outages: ${val('outages')}`,
       `Existing generator: ${existingTxt}`,
@@ -1113,7 +1114,7 @@ if(EA_EMBED){
       from_name: 'ElectricAce Generator Sizing Form',
       'Request type': kind==='schedule' ? 'Consultation request' : 'Full report request',
       name: val('name'), email: val('email'), replyto: val('email'), phone: val('phone') || '—',
-      'Service address': [val('address'), val('town'), val('zip') ? 'NY '+val('zip') : ''].filter(Boolean).join(', ') || '—',
+      'Service address': [val('address'), val('town'), val('zip') ? (val('state')||'NY')+' '+val('zip') : ''].filter(Boolean).join(', ') || '—',
       'Recommended size': lastRec,
       'Ownership': val('own'),
       'Existing generator': lastExisting
@@ -1282,7 +1283,7 @@ if(EA_EMBED){
     heading('Client & property');
     kv([
       ['Name', val('name')], ['Phone', val('phone')],
-      ['Email', val('email')||'—'], ['Service address', [val('address'), val('town'), val('zip') ? 'NY '+val('zip') : ''].filter(Boolean).join(', ')],
+      ['Email', val('email')||'—'], ['Service address', [val('address'), val('town'), val('zip') ? (val('state')||'NY')+' '+val('zip') : ''].filter(Boolean).join(', ')],
       ['Property type', val('ptype')], ['Ownership', val('own')], ['Existing generator', lastExisting], ['Finished area', (+val('sqft')).toLocaleString()+' sq ft'],
       ['Electrical service', C.serviceTxt], ['Fuel', C.fuelTxt],
       ['Coverage goal', ({essential:'Essentials only', managed:'Whole home + smart load management', full:'Whole home, no compromises'})[val('goal')]], ['Outage history', val('outages')]
@@ -1460,12 +1461,54 @@ if(EA_EMBED){
   function splitAddr(a){ // "244 Fair St, Kingston, NY, 12401"
     const p = String(a).split(',').map(x=>x.trim());
     const zip = (String(a).match(/\b(\d{5})(?:-\d{4})?\s*$/)||[])[1] || '';
-    return {street:p[0]||'', town:p[1]||'', zip};
+    return {street:p[0]||'', town:p[1]||'', zip, state:'NY'};
+  }
+  // US states, to tell when someone typed an address outside New York
+  const STATES = {AL:'alabama',AK:'alaska',AZ:'arizona',AR:'arkansas',CA:'california',CO:'colorado',CT:'connecticut',DE:'delaware',DC:'district of columbia',FL:'florida',GA:'georgia',HI:'hawaii',ID:'idaho',IL:'illinois',IN:'indiana',IA:'iowa',KS:'kansas',KY:'kentucky',LA:'louisiana',ME:'maine',MD:'maryland',MA:'massachusetts',MI:'michigan',MN:'minnesota',MS:'mississippi',MO:'missouri',MT:'montana',NE:'nebraska',NV:'nevada',NH:'new hampshire',NJ:'new jersey',NM:'new mexico',NY:'new york',NC:'north carolina',ND:'north dakota',OH:'ohio',OK:'oklahoma',OR:'oregon',PA:'pennsylvania',RI:'rhode island',SC:'south carolina',SD:'south dakota',TN:'tennessee',TX:'texas',UT:'utah',VT:'vermont',VA:'virginia',WA:'washington',WV:'west virginia',WI:'wisconsin',WY:'wyoming',PR:'puerto rico'};
+  function typedState(q){
+    const tail = String(q).split(',').slice(1).join(' ').toLowerCase();
+    if(!tail) return '';
+    for(const [ab,name] of Object.entries(STATES)){
+      if(new RegExp('\\b'+ab.toLowerCase()+'\\b').test(tail) || tail.includes(name)) return ab;
+    }
+    return '';
+  }
+  const titleCase = t => String(t).toLowerCase().replace(/\b([a-z])/g, m=>m.toUpperCase());
+  // US Census Bureau geocoder: free, no key, all US addresses. It has no CORS, so it is called with JSONP.
+  function censusGeocode(q, signal){
+    return new Promise((resolve, reject)=>{
+      const cb = '__eaCensus' + Date.now() + Math.floor(Math.random()*1e4);
+      const sc = document.createElement('script');
+      const done = () => { clearTimeout(t); delete window[cb]; sc.remove(); };
+      const t = setTimeout(()=>{ done(); reject(new Error('timeout')); }, 9000);
+      if(signal) signal.addEventListener('abort', ()=>{ done(); reject(Object.assign(new Error('aborted'), {name:'AbortError'})); });
+      window[cb] = d => { done(); resolve(d); };
+      sc.onerror = () => { done(); reject(new Error('census unavailable')); };
+      sc.src = 'https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?' + qs({address:q, benchmark:'Public_AR_Current', format:'jsonp', callback:cb});
+      document.head.appendChild(sc);
+    });
+  }
+  async function censusCands(q, sig){
+    const d = await censusGeocode(q, sig);
+    return ((d && d.result && d.result.addressMatches) || []).slice(0,5).map(m=>{
+      const c = m.addressComponents || {}, p = String(m.matchedAddress||'').split(',').map(x=>x.trim());
+      const street = titleCase(p[0]||''), town = titleCase(c.city || p[1] || ''), st = (c.state || p[2] || '').toUpperCase(), zip = c.zip || p[3] || '';
+      return {label: `${street}, ${town}, ${st}, ${zip}`, street, town, zip, state: st, x: m.coordinates && m.coordinates.x, y: m.coordinates && m.coordinates.y};
+    });
   }
   async function searchAddr(q){
     if(addrCtrl) addrCtrl.abort(); addrCtrl = new AbortController();
     const sig = addrCtrl.signal;
     addrStatus.textContent = 'Searching…';
+    const st = typedState(q);
+    if(st && st !== 'NY'){
+      // outside New York: the US Census geocoder only (no public records lookup)
+      try{ addrCands = await censusCands(q, sig); }
+      catch(e){ if(e.name==='AbortError') return; addrCands = []; renderAddr(); addrStatus.textContent = "Address lookup isn't available right now. Just fill in the details below."; return; }
+      renderAddr();
+      addrStatus.textContent = addrCands.length ? 'Pick your address from the list.' : 'No match yet. Type the full address with town and state, or fill in the details below.';
+      return;
+    }
     try{
       const d = await getJSON(GEOCODER+'?'+qs({SingleLine: q+(/\bNY\b/i.test(q)?'':', NY'), maxLocations:6, outFields:'Match_addr,City,ZIP', outSR:4326, f:'json'}), sig);
       const seen = new Set();
@@ -1480,10 +1523,13 @@ if(EA_EMBED){
         addrCands = (d.features||[]).map(f=>({label:`${f.attributes.PARCEL_ADDR}, ${f.attributes.CITYTOWN_NAME}`, street:f.attributes.PARCEL_ADDR, town:f.attributes.CITYTOWN_NAME, zip:f.attributes.LOC_ZIP||'', rec:f.attributes}));
       }catch(e2){
         if(e2.name==='AbortError') return;
-        addrCands = []; renderAddr();
-        addrStatus.textContent = "Address lookup isn't available right now. Just fill in the details below.";
-        return;
+        addrCands = [];
       }
+    }
+    // nothing from New York sources (or they're down): try the nationwide Census geocoder
+    if(!addrCands.length){
+      try{ addrCands = await censusCands(q, sig); }
+      catch(e3){ if(e3.name==='AbortError') return; }
     }
     renderAddr();
     addrStatus.textContent = addrCands.length ? 'Pick your address from the list.' : "No match yet. Keep typing, or fill in the details below.";
@@ -1492,7 +1538,7 @@ if(EA_EMBED){
     addrList.innerHTML = ''; addrAct = -1;
     addrCands.forEach((c,i)=>{
       const li = document.createElement('li'); li.setAttribute('role','option');
-      li.innerHTML = `${esc(c.street)}<small>${esc([c.town, c.zip].filter(Boolean).join(', '))}</small>`;
+      li.innerHTML = `${esc(c.street)}<small>${esc([c.town, [c.state||'NY', c.zip].filter(Boolean).join(' ')].filter(Boolean).join(', '))}</small>`;
       li.addEventListener('mousedown', e=>{ e.preventDefault(); pickAddr(i); });
       addrList.appendChild(li);
     });
@@ -1522,9 +1568,10 @@ if(EA_EMBED){
     const parts = raw.split(',').map(x=>x.trim()).filter(Boolean);
     const zip = (raw.match(/\b(\d{5})(?:-\d{4})?\b(?!.*\d{5})/)||[])[1] || '';
     const street = parts[0] || '';
-    const town = (parts[1] && !/^(NY|New York)?\s*\d{5}/i.test(parts[1]) && !/^(NY|New York)$/i.test(parts[1])) ? parts[1].replace(/\s+(NY|New York)\b.*$/i,'').trim() : '';
+    const town = (parts[1] && !/^([A-Z]{2}|New York)?\s*\d{5}/i.test(parts[1]) && !(typedState(', '+parts[1]) && parts[1].trim().length<=2) && !Object.values(STATES).includes(parts[1].trim().toLowerCase())) ? parts[1].replace(/\s+([A-Z]{2})(\s+\d{5}.*)?$/,'').trim() : '';
     if(/^\d+\s+\S/.test(street)) form.elements.address.value = street;
     if(town) form.elements.town.value = town;
+    const tst = typedState(raw); if(tst) form.elements.state.value = tst;
     if(zip && !/^\d{5}$/.test(String(val('zip')))) { form.elements.zip.value = zip; }
     save();
   }
@@ -1568,10 +1615,11 @@ if(EA_EMBED){
     addrIn.value = c.label; addrStatus.textContent = '';
     document.querySelectorAll('.pf').forEach(b=>b.classList.remove('show'));
     if(!consultAddrEdited){ setField('address', c.street); setField('town', c.town); }
+    form.elements.state.value = c.state || 'NY';
     if(/^\d{5}$/.test(c.zip)) setField('zip', c.zip);
     const card = $('pfCard'); card.className = 'pfcard show'; card.innerHTML = 'Looking up public property records…';
     let rec = c.rec || null;
-    if(!rec && c.x){
+    if(!rec && c.x && (c.state||'NY') === 'NY'){
       for(const u of PARCEL_URLS){
         try{
           const d = await getJSON(u+'?'+qs({geometry:`${c.x},${c.y}`, geometryType:'esriGeometryPoint', inSR:4326, spatialRel:'esriSpatialRelIntersects', outFields:PARCEL_FIELDS, returnGeometry:'false', f:'json'}));
@@ -1589,7 +1637,9 @@ if(EA_EMBED){
         : `<b>✓ Address found.</b> The public record doesn't include building details for this property, so please fill in the questions below.`;
     } else {
       card.className = 'pfcard show miss';
-      card.innerHTML = `<b>Address found.</b> Public property records aren't available online for this county (Dutchess and Columbia don't publish them), so please fill in the details below. It only takes a minute.`;
+      card.innerHTML = (c.state||'NY') !== 'NY'
+        ? `<b>✓ Address found.</b> We don't have public property records for ${esc(STATES[c.state] ? titleCase(STATES[c.state]) : c.state)} addresses, so please fill in the details below. It only takes a minute.`
+        : `<b>Address found.</b> Public property records aren't available online for this county (Dutchess and Columbia don't publish them), so please fill in the details below. It only takes a minute.`;
     }
     updateConditional(); save();
   }
