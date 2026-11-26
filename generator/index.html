@@ -1015,7 +1015,7 @@ if(EA_EMBED){
     const hi = first ? `Thanks, ${first}` : 'Thanks';
     if(kind==='schedule'){
       document.getElementById('okTitle').textContent = '✅ Consultation request sent!';
-      document.getElementById('okBody').innerHTML = `${hi}! Your load calculation and appointment request are on their way to the ElectricAce team. <a href="#" class="pdf-link">Download your report (PDF)</a> for your records.`;
+      document.getElementById('okBody').innerHTML = `${hi}! Your load calculation and appointment request are on their way to the ElectricAce team. Your PDF report is downloading for your records. <a href="#" class="pdf-link">Download it again</a>.`;
       document.getElementById('okNext').style.display = '';
     } else {
       document.getElementById('okTitle').textContent = '✅ Your report is unlocked!';
@@ -1086,7 +1086,7 @@ if(EA_EMBED){
       }
       sent[kind] = true; setBtn(btn,'done',kind);
       showPanel('ok', kind); unlock();
-      if(kind==='report') downloadPdf();
+      downloadPdf();
       if(kind==='schedule'){ try{ localStorage.removeItem(STORE); }catch(err){} }
     }catch(err){
       let why = err && err.name==='AbortError' ? 'timed out after 15 s' : (err && err.message) || 'unknown error';
@@ -1095,7 +1095,7 @@ if(EA_EMBED){
       try{ console.warn('[ElectricAce form] Web3Forms send failed:', why); }catch(e3){}
       setBtn(btn, null, kind);
       showPanel('fallback', kind); unlock();
-      if(kind==='report') downloadPdf();
+      downloadPdf();
       try{ window.location.href = mailHref; }catch(e2){}
     }finally{ sending = false; }
   }
