@@ -279,6 +279,25 @@
         <label class="opt"><input type="radio" name="fuel" value="unknown"><span><b>Not sure</b></span></label>
       </div>
     </fieldset>
+    <fieldset>
+      <legend>Do you already own a generator?</legend>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="haveGen" value="no" checked><span><b>No</b></span></label>
+        <label class="opt"><input type="radio" name="haveGen" value="yes"><span><b>Yes</b></span></label>
+      </div>
+    </fieldset>
+    <div class="sub" id="genSub">
+      <fieldset style="margin-bottom:14px">
+        <legend>What kind?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="genType" value="portable" checked><span><b>Portable</b><small>Wheeled, started by hand</small></span></label>
+          <label class="opt"><input type="radio" name="genType" value="standby"><span><b>Standby</b><small>Permanently installed, starts automatically</small></span></label>
+        </div>
+      </fieldset>
+      <label class="f" for="genWatts">Size in watts, if you know it</label>
+      <input type="number" id="genWatts" name="genWatts" min="500" max="150000" step="100" inputmode="numeric" placeholder="e.g., 7500">
+      <div class="hint">Use the running (rated) watts, not the starting or peak watts. It's on the label or in the manual. Leave blank if you're not sure.</div>
+    </div>
   </section>
 
   <!-- STEP 3: Coverage goal -->
@@ -625,6 +644,7 @@ if(EA_EMBED){
     const heat = val('heat');
     document.getElementById('hpSub').classList.toggle('show', heat==='heatpump');
     document.getElementById('elSub').classList.toggle('show', heat==='electric');
+    document.getElementById('genSub').classList.toggle('show', val('haveGen')==='yes');
     const ac = +val('ac');
     document.getElementById('acSub').classList.toggle('show', ac>0);
     document.getElementById('acOtherWrap').style.display = ac>1 ? '' : 'none';
@@ -920,8 +940,14 @@ if(EA_EMBED){
     if(goal==='managed') ats += ' + load managers';
     document.getElementById('sAts').textContent = service==='unknown' && goal!=='essential' ? 'TBD on site' : ats.replace(' service-rated','') + (service!=='unknown' && goal!=='essential' ? ` (${service==='400'?'400':service}A)`:'');
 
+    // existing generator
+    const exW = +val('genWatts') || 0, exKw = exW > 0 ? (exW < 100 ? exW : exW/1000) : 0;
+    const existingTxt = val('haveGen')!=='yes' ? 'None' : `${val('genType')==='standby'?'Standby':'Portable'}${exKw ? ', ' + (+exKw.toFixed(1)).toLocaleString() + ' kW' : ', size unknown'}`;
+
     // notes
     const notes = [];
+    if(val('haveGen')==='yes' && val('genType')==='portable' && exKw && (pick ? pick[0] : 60) >= exKw*1.5)
+      notes.push(['info',`Why is this so much bigger than your ${(+exKw.toFixed(1))} kW portable? A portable generator is started and connected by hand, and you pick which circuits to run. Because of that, the National Electrical Code lets a manually connected generator be sized only for the loads you choose to power (NEC 702.4(A)(1)). A standby generator starts and switches over automatically, often when no one is home, so the code requires it to carry every load it connects with no one choosing (NEC 702.4(A)(2)), or to use load managers that drop loads automatically. That's why a standby generator for the same home is sized larger than a portable.`]);
     if(goal==='full') notes.push(['info',`Code basis: with an automatic transfer switch, NEC 702.4(A)(2)(a) requires the generator to carry the full load it automatically connects, calculated here with the 2023 NEC 220.82 Optional Calculation (${(nec.total/1000).toFixed(1)} kVA).`]);
     if(goal==='managed') notes.push(['info',`Code basis: with an energy management system per NEC 750.30, 702.4(A)(2)(b) requires the generator to carry the maximum load the system will connect. The 220.82 calculation includes all unmanaged loads plus the largest managed load${mgdCounted?' ('+mgdCounted.name.toLowerCase()+')':''}.`]);
     if(goal==='essential') notes.push(['info',`Code basis: only the circuits moved to the essential-loads panel are calculated (NEC 702.4(A)(2)(a), 2023 NEC 220.82 method). We'll confirm the exact circuit list on site.`]);
@@ -949,6 +975,7 @@ if(EA_EMBED){
       `Service address: ${[val('address'), val('town'), val('zip') ? 'NY '+val('zip') : ''].filter(Boolean).join(', ') || '—'}`,
       `Property: ${val('ptype')}, ~${(+val('sqft')).toLocaleString()} sq ft · ${val('own')}`,
       `Outages: ${val('outages')}`,
+      `Existing generator: ${existingTxt}`,
       `Service: ${service==='unknown'?'Not sure':service==='400'?'320/400A':service+'A'} | Fuel: ${({ng:'Natural gas',lp:'Propane (existing tank)',lpnew:'Propane (needs tank)',unknown:'Not sure'})[fuel]}`,
       `Coverage goal: ${goalTxt}`,
       '',
@@ -973,12 +1000,13 @@ if(EA_EMBED){
     };
     baseSummary = lines;
     lastRec = pick ? pick[0]+' kW' : '60+ kW';
+    lastExisting = existingTxt;
     refreshSummary();
   }
   const SUBMIT_EMAIL = 'websizing@electricace.com';
   const WEB3FORMS_KEY = '1c84c9a4-7d4a-4b53-951d-da0dab6c6be7';
   let lastCalc = null;
-  let baseSummary = [], lastSubject = '', lastRec = '', sending = false, lastKind = 'report', unlocked = false;
+  let baseSummary = [], lastSubject = '', lastRec = '', lastExisting = 'None', sending = false, lastKind = 'report', unlocked = false;
   const sent = {report:false, schedule:false};
   document.getElementById('emailShow').textContent = SUBMIT_EMAIL;
   const esc = t => String(t).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1087,7 +1115,8 @@ if(EA_EMBED){
       name: val('name'), email: val('email'), replyto: val('email'), phone: val('phone') || '—',
       'Service address': [val('address'), val('town'), val('zip') ? 'NY '+val('zip') : ''].filter(Boolean).join(', ') || '—',
       'Recommended size': lastRec,
-      'Ownership': val('own')
+      'Ownership': val('own'),
+      'Existing generator': lastExisting
     }, sched, { message: document.getElementById('summaryBox').value, botcheck: '' });
     // Every submission carries the load calc as a PDF attachment (needs Web3Forms Pro on this key).
     let pdf = null;
@@ -1254,7 +1283,7 @@ if(EA_EMBED){
     kv([
       ['Name', val('name')], ['Phone', val('phone')],
       ['Email', val('email')||'—'], ['Service address', [val('address'), val('town'), val('zip') ? 'NY '+val('zip') : ''].filter(Boolean).join(', ')],
-      ['Property type', val('ptype')], ['Ownership', val('own')], ['Finished area', (+val('sqft')).toLocaleString()+' sq ft'],
+      ['Property type', val('ptype')], ['Ownership', val('own')], ['Existing generator', lastExisting], ['Finished area', (+val('sqft')).toLocaleString()+' sq ft'],
       ['Electrical service', C.serviceTxt], ['Fuel', C.fuelTxt],
       ['Coverage goal', ({essential:'Essentials only', managed:'Whole home + smart load management', full:'Whole home, no compromises'})[val('goal')]], ['Outage history', val('outages')]
     ]);
