@@ -93,6 +93,18 @@
   .phone{font-size:22px;font-weight:800;color:var(--navy)}
   .phone a{color:inherit;text-decoration:none}
   .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .addrwrap{position:relative}
+  .addrlist{display:none;position:absolute;left:0;right:0;top:72px;z-index:20;margin:0;padding:6px;list-style:none;background:#fff;border:1.5px solid var(--line);border-radius:12px;box-shadow:0 12px 30px rgba(15,31,51,.15);max-height:280px;overflow:auto}
+  .addrlist.show{display:block}
+  .addrlist li{padding:10px 12px;border-radius:8px;cursor:pointer;font-size:14.5px}
+  .addrlist li small{display:block;color:var(--muted);font-size:12px}
+  .addrlist li:hover,.addrlist li.act{background:#fff8ea}
+  .pf{display:none;font-size:11px;font-weight:700;background:#e9f8f1;color:#145c40;border-radius:99px;padding:2px 8px;margin-left:6px;vertical-align:middle;white-space:nowrap}
+  .pf.show{display:inline-block}
+  .pfcard{display:none;margin-top:14px;background:#e9f8f1;border:1px solid #b6e6cf;color:#145c40;border-radius:12px;padding:12px 14px;font-size:14px}
+  .pfcard.show{display:block}
+  .pfcard.miss{background:#f8fafc;border-color:var(--line);color:var(--ink)}
+  .pfcard ul{margin:6px 0 4px;padding-left:18px}
   .disclaimer{font-size:12.5px;color:var(--muted);margin-top:18px}
   .checked-note{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;color:var(--ink);background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:18px}
   .checked-note b{color:var(--navy)}
@@ -208,20 +220,35 @@
   <!-- STEP 1: Contact & property -->
   <section class="step" data-title="Your property">
     <h2>About your property</h2>
-    <p class="lead">Just the basics to get started. No contact info needed until you see your results.</p>
-    <div class="grid">
-      <div><label class="f" for="zip">Property ZIP code *</label><input type="text" id="zip" name="zip" required inputmode="numeric" maxlength="5" pattern="[0-9]{5}" autocomplete="postal-code" placeholder="e.g., 12572"></div>
+    <p class="lead">Start with the address and we'll fill in what we can from public property records. You'll confirm everything as you go. No contact info needed until you see your results.</p>
+    <div class="addrwrap">
+      <label class="f" for="addrSearch">Property address</label>
+      <input type="text" id="addrSearch" name="addrSearch" autocomplete="off" placeholder="Start typing, e.g. 12 Main St, Rhinebeck" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="addrList">
+      <ul class="addrlist" id="addrList" role="listbox"></ul>
+      <div class="hint" id="addrStatus" style="margin-top:6px">Looks up New York State public tax records. Nothing you type here is sent to ElectricAce until you submit.</div>
+    </div>
+    <div class="pfcard" id="pfCard"></div>
+    <div class="grid" style="margin-top:18px">
+      <div><label class="f" for="zip">Property ZIP code * <span class="pf" data-pf="zip">from address</span></label><input type="text" id="zip" name="zip" required inputmode="numeric" maxlength="5" pattern="[0-9]{5}" autocomplete="postal-code" placeholder="e.g., 12572"></div>
+      <div><label class="f" for="sqft">Approx. finished square footage * <span class="pf" data-pf="sqft">from public records</span></label><input type="number" id="sqft" name="sqft" min="300" max="30000" step="50" required placeholder="e.g., 2400"></div>
     </div>
     <fieldset style="margin-top:20px">
-      <legend>Property type</legend>
+      <legend>Property type <span class="pf" data-pf="ptype">from public records</span></legend>
       <div class="opts">
         <label class="opt"><input type="radio" name="ptype" value="Single-family home" checked><span><b>Single-family home</b></span></label>
         <label class="opt"><input type="radio" name="ptype" value="Second / vacation home"><span><b>Second / vacation home</b></span></label>
         <label class="opt"><input type="radio" name="ptype" value="Small business / commercial"><span><b>Small business</b><small>Office, shop, farm, etc.</small></span></label>
       </div>
     </fieldset>
+    <fieldset>
+      <legend>Do you own the property?</legend>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="own" value="Own" checked><span><b>Yes, I own it</b></span></label>
+        <label class="opt"><input type="radio" name="own" value="Own — HOA approval needed"><span><b>Own, but HOA approval needed</b></span></label>
+        <label class="opt"><input type="radio" name="own" value="Rent — landlord approval needed"><span><b>I rent</b><small>Landlord approval needed</small></span></label>
+      </div>
+    </fieldset>
     <div class="grid">
-      <div><label class="f" for="sqft">Approx. finished square footage *</label><input type="number" id="sqft" name="sqft" min="300" max="30000" step="50" required placeholder="e.g., 2400"></div>
       <div><label class="f" for="outages">How often do you lose power?</label>
         <select id="outages" name="outages">
           <option>A few times a year</option><option>Monthly or more</option><option>Rarely, but outages last days</option><option>Rarely — want peace of mind</option>
@@ -244,7 +271,7 @@
       </div>
     </fieldset>
     <fieldset>
-      <legend>What fuel is available at the property?</legend>
+      <legend>What fuel is available at the property? <span class="pf" data-pf="fuel">from public records, please confirm</span></legend>
       <div class="opts">
         <label class="opt"><input type="radio" name="fuel" value="ng" checked><span><b>Natural gas</b><small>Utility gas line & meter</small></span></label>
         <label class="opt"><input type="radio" name="fuel" value="lp"><span><b>Propane (existing tank)</b></span></label>
@@ -282,7 +309,7 @@
     <h2>Heating & cooling</h2>
     <p class="lead">Motors and compressors drive generator size — especially at startup.</p>
     <fieldset>
-      <legend>Primary heating system</legend>
+      <legend>Primary heating system <span class="pf" data-pf="heat">from public records, please confirm</span></legend>
       <div class="opts">
         <label class="opt"><input type="radio" name="heat" value="furnace" checked><span><b>Gas / oil / propane furnace</b><small>Forced hot air</small></span></label>
         <label class="opt"><input type="radio" name="heat" value="boiler"><span><b>Boiler</b><small>Baseboard, radiators, radiant</small></span></label>
@@ -340,7 +367,7 @@
     <h2>Water & plumbing</h2>
     <p class="lead">Pumps are often the #1 reason clients want a generator.</p>
     <fieldset>
-      <legend>Well pump</legend>
+      <legend>Well pump <span class="pf" data-pf="well">from public records</span></legend>
       <div class="opts">
         <label class="opt"><input type="radio" name="well" value="0" checked><span><b>No well</b><small>Municipal water</small></span></label>
         <label class="opt"><input type="radio" name="well" value="0.5"><span><b>½ HP</b></span></label>
@@ -898,6 +925,7 @@ if(EA_EMBED){
     if(goal==='full') notes.push(['info',`Code basis: with an automatic transfer switch, NEC 702.4(A)(2)(a) requires the generator to carry the full load it automatically connects, calculated here with the 2023 NEC 220.82 Optional Calculation (${(nec.total/1000).toFixed(1)} kVA).`]);
     if(goal==='managed') notes.push(['info',`Code basis: with an energy management system per NEC 750.30, 702.4(A)(2)(b) requires the generator to carry the maximum load the system will connect. The 220.82 calculation includes all unmanaged loads plus the largest managed load${mgdCounted?' ('+mgdCounted.name.toLowerCase()+')':''}.`]);
     if(goal==='essential') notes.push(['info',`Code basis: only the circuits moved to the essential-loads panel are calculated (NEC 702.4(A)(2)(a), 2023 NEC 220.82 method). We'll confirm the exact circuit list on site.`]);
+    if(/HOA|Rent/.test(val('own'))) notes.push(['info',`${/Rent/.test(val('own'))?'Landlord':'HOA'} approval is usually needed before a standby generator is installed, including where it sits on the property. We can provide a scope letter and site plan for their review.`]);
     if(val('ptype').startsWith('Small business')) notes.push(['info','NEC 220.82 applies to dwelling units. For a business, final sizing will use measured demand data (NEC 220.87) or the standard calculation, confirmed on site.']);
     if(wh_tankless()) notes.push(['warn','An electric tankless water heater can draw 18–27 kW by itself. We usually recommend keeping it off backup power or adding a load manager — otherwise it can double the generator size.']);
     if(+val('ev')) notes.push(['warn','EV chargers are best placed on a load manager so the car charges only when the generator has spare capacity.']);
@@ -919,7 +947,7 @@ if(EA_EMBED){
       'GENERATOR SIZING QUESTIONNAIRE — ElectricAce',
       `Name: ${val('name')}`, `Phone: ${val('phone')}`, val('email')?`Email: ${val('email')}`:null,
       `Service address: ${[val('address'), val('town'), val('zip') ? 'NY '+val('zip') : ''].filter(Boolean).join(', ') || '—'}`,
-      `Property: ${val('ptype')}, ~${(+val('sqft')).toLocaleString()} sq ft`,
+      `Property: ${val('ptype')}, ~${(+val('sqft')).toLocaleString()} sq ft · ${val('own')}`,
       `Outages: ${val('outages')}`,
       `Service: ${service==='unknown'?'Not sure':service==='400'?'320/400A':service+'A'} | Fuel: ${({ng:'Natural gas',lp:'Propane (existing tank)',lpnew:'Propane (needs tank)',unknown:'Not sure'})[fuel]}`,
       `Coverage goal: ${goalTxt}`,
@@ -1058,7 +1086,8 @@ if(EA_EMBED){
       'Request type': kind==='schedule' ? 'Consultation request' : 'Full report request',
       name: val('name'), email: val('email'), replyto: val('email'), phone: val('phone') || '—',
       'Service address': [val('address'), val('town'), val('zip') ? 'NY '+val('zip') : ''].filter(Boolean).join(', ') || '—',
-      'Recommended size': lastRec
+      'Recommended size': lastRec,
+      'Ownership': val('own')
     }, sched, { message: document.getElementById('summaryBox').value, botcheck: '' });
     // Every submission carries the load calc as a PDF attachment (needs Web3Forms Pro on this key).
     let pdf = null;
@@ -1225,7 +1254,7 @@ if(EA_EMBED){
     kv([
       ['Name', val('name')], ['Phone', val('phone')],
       ['Email', val('email')||'—'], ['Service address', [val('address'), val('town'), val('zip') ? 'NY '+val('zip') : ''].filter(Boolean).join(', ')],
-      ['Property type', val('ptype')], ['Finished area', (+val('sqft')).toLocaleString()+' sq ft'],
+      ['Property type', val('ptype')], ['Ownership', val('own')], ['Finished area', (+val('sqft')).toLocaleString()+' sq ft'],
       ['Electrical service', C.serviceTxt], ['Fuel', C.fuelTxt],
       ['Coverage goal', ({essential:'Essentials only', managed:'Whole home + smart load management', full:'Whole home, no compromises'})[val('goal')]], ['Outage history', val('outages')]
     ]);
@@ -1384,6 +1413,160 @@ if(EA_EMBED){
     if(open) document.getElementById('emailOpenLink').href = questionMailto();
   });
   document.getElementById('emailOpenLink').addEventListener('click', e=>{ e.currentTarget.href = questionMailto(); });
+
+  // ---------- address lookup & public-record prefill (NYS GIS) ----------
+  const GEOCODER = 'https://gisservices.its.ny.gov/arcgis/rest/services/Locators/Street_and_Address_Composite/GeocodeServer/findAddressCandidates';
+  const PARCEL_URLS = ['https://nysgeohub.ny.gov/arcgis/rest/services/Parcels/NYS_Tax_Parcels_Public/FeatureServer/1/query',
+                       'https://gisservices.its.ny.gov/arcgis/rest/services/NYS_Tax_Parcels_Public/FeatureServer/1/query'];
+  const PARCEL_FIELDS = 'PARCEL_ADDR,CITYTOWN_NAME,COUNTY_NAME,LOC_ZIP,PRINT_KEY,PROP_CLASS,YR_BLT,SQFT_LIVING,HEAT_TYPE_DESC,FUEL_TYPE_DESC,WATER_DESC,SEWER_DESC,BLDG_STYLE_DESC';
+  let parcel = null, addrCands = [], addrAct = -1, addrTimer = null, addrCtrl = null;
+  const $ = id => document.getElementById(id);
+  const addrIn = $('addrSearch'), addrList = $('addrList'), addrStatus = $('addrStatus');
+  const ADDR_HINT = addrStatus.textContent;
+  const qs = o => Object.entries(o).map(([k,v])=>k+'='+encodeURIComponent(v)).join('&');
+  async function getJSON(url, signal){
+    const r = await fetch(url, {signal}); if(!r.ok) throw new Error('HTTP '+r.status);
+    const d = await r.json(); if(d.error) throw new Error(d.error.message||'error'); return d;
+  }
+  function splitAddr(a){ // "244 Fair St, Kingston, NY, 12401"
+    const p = String(a).split(',').map(x=>x.trim());
+    const zip = (String(a).match(/\b(\d{5})(?:-\d{4})?\s*$/)||[])[1] || '';
+    return {street:p[0]||'', town:p[1]||'', zip};
+  }
+  async function searchAddr(q){
+    if(addrCtrl) addrCtrl.abort(); addrCtrl = new AbortController();
+    const sig = addrCtrl.signal;
+    addrStatus.textContent = 'Searching…';
+    try{
+      const d = await getJSON(GEOCODER+'?'+qs({SingleLine: q+(/\bNY\b/i.test(q)?'':', NY'), maxLocations:6, outFields:'Match_addr,City,ZIP', outSR:4326, f:'json'}), sig);
+      const seen = new Set();
+      addrCands = (d.candidates||[]).filter(c=>c.score>=80 && /^\d/.test(c.address)).filter(c=>{ if(seen.has(c.address)) return false; seen.add(c.address); return true; })
+        .slice(0,5).map(c=>({label:c.address, x:c.location.x, y:c.location.y, ...splitAddr(c.address)}));
+    }catch(e){
+      if(e.name==='AbortError') return;
+      // fallback: search the parcel layer directly by address text (participating counties only)
+      try{
+        const safe = q.toUpperCase().replace(/[^A-Z0-9 ]/g,'').replace(/\s+/g,' ').trim().split(' ').slice(0,4).join(' ');
+        const d = await getJSON(PARCEL_URLS[0]+'?'+qs({where:`UPPER(PARCEL_ADDR) LIKE '${safe}%'`, outFields:PARCEL_FIELDS, returnGeometry:'false', resultRecordCount:6, f:'json'}), sig);
+        addrCands = (d.features||[]).map(f=>({label:`${f.attributes.PARCEL_ADDR}, ${f.attributes.CITYTOWN_NAME}`, street:f.attributes.PARCEL_ADDR, town:f.attributes.CITYTOWN_NAME, zip:f.attributes.LOC_ZIP||'', rec:f.attributes}));
+      }catch(e2){
+        if(e2.name==='AbortError') return;
+        addrCands = []; renderAddr();
+        addrStatus.textContent = "Address lookup isn't available right now. Just fill in the details below.";
+        return;
+      }
+    }
+    renderAddr();
+    addrStatus.textContent = addrCands.length ? 'Pick your address from the list.' : "No match yet. Keep typing, or fill in the details below.";
+  }
+  function renderAddr(){
+    addrList.innerHTML = ''; addrAct = -1;
+    addrCands.forEach((c,i)=>{
+      const li = document.createElement('li'); li.setAttribute('role','option');
+      li.innerHTML = `${esc(c.street)}<small>${esc([c.town, c.zip].filter(Boolean).join(', '))}</small>`;
+      li.addEventListener('mousedown', e=>{ e.preventDefault(); pickAddr(i); });
+      addrList.appendChild(li);
+    });
+    const show = addrCands.length>0; addrList.classList.toggle('show', show); addrIn.setAttribute('aria-expanded', show);
+  }
+  addrIn.addEventListener('input', ()=>{
+    clearTimeout(addrTimer);
+    const q = addrIn.value.trim();
+    if(q.length < 6 || !/\d/.test(q) || !/[a-z]{2}/i.test(q)){ addrCands=[]; renderAddr(); addrStatus.textContent = ADDR_HINT; return; }
+    addrTimer = setTimeout(()=>searchAddr(q), 350);
+  });
+  addrIn.addEventListener('keydown', e=>{
+    const items = [...addrList.children]; if(!items.length) return;
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){ e.preventDefault(); addrAct = (addrAct + (e.key==='ArrowDown'?1:-1) + items.length) % items.length; items.forEach((li,i)=>li.classList.toggle('act', i===addrAct)); }
+    else if(e.key==='Enter'){ e.preventDefault(); pickAddr(addrAct<0?0:addrAct); }
+    else if(e.key==='Escape'){ addrCands=[]; renderAddr(); }
+  });
+  addrIn.addEventListener('blur', ()=>setTimeout(()=>{ addrList.classList.remove('show'); }, 150));
+
+  // Carry the typed address to the consultation section, even if they don't pick a suggestion.
+  // Stops following once they edit the address or town on the results page themselves.
+  let consultAddrEdited = false;
+  ['address','town'].forEach(n=>form.elements[n].addEventListener('input', e=>{ if(e.isTrusted) consultAddrEdited = true; }));
+  function carryTypedAddr(){
+    if(consultAddrEdited) return;
+    const raw = addrIn.value.trim(); if(!raw) return;
+    const parts = raw.split(',').map(x=>x.trim()).filter(Boolean);
+    const zip = (raw.match(/\b(\d{5})(?:-\d{4})?\b(?!.*\d{5})/)||[])[1] || '';
+    const street = parts[0] || '';
+    const town = (parts[1] && !/^(NY|New York)?\s*\d{5}/i.test(parts[1]) && !/^(NY|New York)$/i.test(parts[1])) ? parts[1].replace(/\s+(NY|New York)\b.*$/i,'').trim() : '';
+    if(/^\d+\s+\S/.test(street)) form.elements.address.value = street;
+    if(town) form.elements.town.value = town;
+    if(zip && !/^\d{5}$/.test(String(val('zip')))) { form.elements.zip.value = zip; }
+    save();
+  }
+  addrIn.addEventListener('change', carryTypedAddr);
+  addrIn.addEventListener('input', ()=>{ clearTimeout(addrIn._carry); addrIn._carry = setTimeout(carryTypedAddr, 600); });
+
+  function setField(n, v){
+    const el = form.elements[n]; if(!el || v===undefined || v===null || v==='') return false;
+    if(el instanceof RadioNodeList){ const r = [...el].find(x=>x.value===v); if(!r) return false; r.checked = true; }
+    else el.value = v;
+    const b = document.querySelector(`.pf[data-pf="${n}"]`); if(b) b.classList.add('show');
+    return true;
+  }
+  function mapRecord(a){
+    const out = {}, found = [];
+    if(a.SQFT_LIVING > 200){ out.sqft = String(Math.round(a.SQFT_LIVING)); found.push(`${Math.round(a.SQFT_LIVING).toLocaleString()} sq ft living area`); }
+    const pc = String(a.PROP_CLASS||'');
+    if(/^260/.test(pc)) out.ptype = 'Second / vacation home';
+    else if(/^2[14567]/.test(pc)) out.ptype = 'Single-family home';
+    else if(/^[45678]/.test(pc)) out.ptype = 'Small business / commercial';
+    if(out.ptype) found.push(out.ptype.replace(' / commercial',''));
+    if(a.YR_BLT > 1800) found.push(`built ${a.YR_BLT}`);
+    const h = String(a.HEAT_TYPE_DESC||''), f = String(a.FUEL_TYPE_DESC||'');
+    if(h){
+      if(/heat pump/i.test(h) || /geo/i.test(f)) out.heat = 'heatpump';
+      else if(/electric/i.test(h)) out.heat = 'electric';
+      else if(/hot air/i.test(h)) out.heat = /electric/i.test(f) ? 'electric' : (/wood/i.test(f) ? 'other' : 'furnace');
+      else if(/hot|steam/i.test(h)) out.heat = /electric/i.test(f) ? 'electric' : (/wood/i.test(f) ? 'other' : 'boiler');
+      else if(/no central/i.test(h)) out.heat = /electric/i.test(f) ? 'electric' : 'other';
+      found.push(`${h.toLowerCase()} heat${f && !/none/i.test(f) ? ' ('+f.toLowerCase()+')' : ''}`);
+    }
+    if(/^gas$/i.test(f.trim())) out.fuel = 'ng';
+    const w = String(a.WATER_DESC||'');
+    if(/private/i.test(w)){ out.well = 'unk'; found.push('private well'); }
+    else if(/comm|public/i.test(w)){ out.well = '0'; found.push('public water'); }
+    return {out, found};
+  }
+  async function pickAddr(i){
+    const c = addrCands[i]; if(!c) return;
+    addrCands = []; renderAddr();
+    addrIn.value = c.label; addrStatus.textContent = '';
+    document.querySelectorAll('.pf').forEach(b=>b.classList.remove('show'));
+    if(!consultAddrEdited){ setField('address', c.street); setField('town', c.town); }
+    if(/^\d{5}$/.test(c.zip)) setField('zip', c.zip);
+    const card = $('pfCard'); card.className = 'pfcard show'; card.innerHTML = 'Looking up public property records…';
+    let rec = c.rec || null;
+    if(!rec && c.x){
+      for(const u of PARCEL_URLS){
+        try{
+          const d = await getJSON(u+'?'+qs({geometry:`${c.x},${c.y}`, geometryType:'esriGeometryPoint', inSR:4326, spatialRel:'esriSpatialRelIntersects', outFields:PARCEL_FIELDS, returnGeometry:'false', f:'json'}));
+          rec = (d.features && d.features[0] && d.features[0].attributes) || null; break;
+        }catch(e){}
+      }
+    }
+    parcel = rec ? Object.assign({}, rec, {matched: c.label}) : {matched: c.label, none:true};
+    if(rec){
+      const {out, found} = mapRecord(rec);
+      let n = 0; Object.entries(out).forEach(([k,v])=>{ if(setField(k,v)) n++; });
+      card.className = 'pfcard show';
+      card.innerHTML = found.length
+        ? `<b>✓ Found ${esc(rec.PARCEL_ADDR||c.street)}${rec.COUNTY_NAME?', '+esc(rec.COUNTY_NAME)+' County':''}.</b><ul>${found.map(t=>'<li>'+esc(t)+'</li>').join('')}</ul>We've pre-filled ${n} answer${n===1?'':'s'} (marked in green). Public records can be out of date, so please check them as you go, especially heating and fuel.`
+        : `<b>✓ Address found.</b> The public record doesn't include building details for this property, so please fill in the questions below.`;
+    } else {
+      card.className = 'pfcard show miss';
+      card.innerHTML = `<b>Address found.</b> Public property records aren't available online for this county (Dutchess and Columbia don't publish them), so please fill in the details below. It only takes a minute.`;
+    }
+    updateConditional(); save();
+  }
+  // a hand edit removes the "from public records" badge for that field
+  form.addEventListener('change', e=>{ if(e.isTrusted && e.target.name){ const b = document.querySelector(`.pf[data-pf="${e.target.name}"]`); if(b) b.classList.remove('show'); } });
+  form.addEventListener('input', e=>{ if(e.isTrusted && ['sqft','zip'].includes(e.target.name)){ const b = document.querySelector(`.pf[data-pf="${e.target.name}"]`); if(b) b.classList.remove('show'); } });
 
   load(); clampDate(); updateConditional(); show(0);
 })();
