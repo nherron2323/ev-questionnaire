@@ -94,6 +94,8 @@
   .phone a{color:inherit;text-decoration:none}
   .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
   .disclaimer{font-size:12.5px;color:var(--muted);margin-top:18px}
+  .checked-note{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;color:var(--ink);background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:18px}
+  .checked-note b{color:var(--navy)}
   .copied{color:var(--ok);font-weight:600;font-size:14px;display:none}
   textarea.summary{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;min-height:150px;display:none}
   .opts.days{grid-template-columns:repeat(auto-fit,minmax(78px,1fr))}
@@ -547,6 +549,7 @@
       </div>
       <textarea class="summary" id="summaryBox" readonly></textarea>
     </div>
+    <p class="checked-note"><span aria-hidden="true">✓</span><span>This load calculator is regularly updated and checked against corporate and manufacturer load calculators to keep results consistent with industry tools. Final sizing is confirmed during your on-site consultation.</span></p>
     <p class="disclaimer">This is a preliminary estimate using the 2023 NEC Article 220, Part IV (220.82 Optional Calculation) and NEC 702.4, with typical nameplate ratings. The motor-starting check allows the generator 125% of its rated output for up to 5 seconds while a motor starts. Final generator and transfer switch sizing requires an on-site load calculation and inspection of your equipment by a licensed electrician, in accordance with the NEC and manufacturer requirements. Natural gas output is typically lower than propane output for the same generator.</p>
   </section>
 
@@ -1303,7 +1306,8 @@ if(EA_EMBED){
     }
     if(val('comments')){ heading('Your notes'); para(val('comments'), 9.5); }
 
-    need(60);
+    need(80);
+    para('This load calculator is regularly updated and checked against corporate and manufacturer load calculators to keep results consistent with industry tools. Final sizing is confirmed during your on-site consultation.', 9, INK, 6);
     para('This is a preliminary estimate using the 2023 NEC Article 220, Part IV (220.82 Optional Calculation) and NEC 702.4, with typical nameplate ratings and the information provided. Final generator and transfer switch sizing requires an on-site load calculation and inspection of your equipment by a licensed electrician, in accordance with the NEC and manufacturer requirements. Natural gas output is typically lower than propane output for the same generator.', 8, MUTED, 0);
 
     footer();
