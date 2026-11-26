@@ -62,6 +62,8 @@
   .btn-p:hover{background:var(--amber-d)}
   .btn-s{background:#eef2f6;color:var(--ink)}
   .btn-s:hover{background:#e2e8ef}
+  .restart{display:block;margin:14px auto 0;background:none;color:var(--muted);font-weight:600;font-size:14px;padding:6px 10px;text-decoration:underline}
+  .restart:hover{color:var(--ink)}
   .err{color:var(--warn);font-size:13.5px;margin-top:10px;display:none}
   .welcome-list{display:grid;gap:10px;margin:18px 0 6px;padding:0;list-style:none}
   .welcome-list li{display:flex;gap:12px;align-items:flex-start;background:#f8fafc;border-radius:10px;padding:12px 14px}
@@ -92,6 +94,8 @@
   .phone a{color:inherit;text-decoration:none}
   .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
   .disclaimer{font-size:12.5px;color:var(--muted);margin-top:18px}
+  .checked-note{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;color:var(--ink);background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:18px}
+  .checked-note b{color:var(--navy)}
   .copied{color:var(--ok);font-weight:600;font-size:14px;display:none}
   textarea.summary{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;min-height:150px;display:none}
   .opts.days{grid-template-columns:repeat(auto-fit,minmax(78px,1fr))}
@@ -757,17 +761,17 @@
           </div>
           <div class="cb">
             <button type="button" class="contact-btn" id="emailUsBtn" aria-expanded="false"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm1 2.2V17h16V7.2l-8 5.3-8-5.3zM5.4 7l6.6 4.4L18.6 7H5.4z" fill="currentColor"/></svg> Email us</button>
-            <div class="resp">Includes your EV plan</div>
+            <div class="resp">Includes your results</div>
           </div>
         </div>
         <div class="email-panel" id="emailPanel">
-          <div style="font-weight:800;margin-bottom:8px">📧 Email us your question, with your EV plan</div>
-          <div class="ep-step"><span class="num">1</span><div><button type="button" class="btn-s" id="emailPdfBtn">⬇ Save my EV plan (PDF)</button><div class="hint">Saves to your Downloads (or Files on a phone).</div></div></div>
-          <div class="ep-step"><span class="num">2</span><div><a class="btn-p ep-open" id="emailOpenLink" href="#" target="_blank" rel="noopener">Open email to ElectricAce</a><div class="hint">Your results are already in the message. Just attach the PDF you saved and add your question.</div></div></div>
+          <div style="font-weight:800;margin-bottom:8px">📧 Email us your question</div>
+          <div class="ep-step"><div><a class="btn-p ep-open" id="emailOpenLink" href="#" target="_blank" rel="noopener">Open email to ElectricAce</a><div class="hint">Your results are already in the message. Just add your question.</div></div></div>
         </div>
       </div>
       <textarea class="summary" id="summaryBox" readonly></textarea>
     </div>
+    <p class="checked-note"><span aria-hidden="true">✓</span><span id="checkedNote">This load calculator is regularly updated and checked against corporate and manufacturer load calculators to keep results consistent with industry tools. Final sizing is confirmed during your on-site consultation.</span></p>
     <p class="disclaimer" id="discl">This is a preliminary estimate based on typical equipment ratings and the information provided, using the NEC 220.82 optional method for dwelling units. Final circuit sizing, load calculation, and any load-management or service-upgrade requirements are confirmed on site by a licensed electrician in accordance with the NEC, local code, and the utility. Charging cost estimates assume about 10% charging losses and do not include fixed monthly utility charges; actual costs vary with rates, weather, and driving.</p>
   </section>
 
@@ -776,6 +780,7 @@
     <button type="button" class="btn-s" id="backBtn" style="visibility:hidden">← Back</button>
     <button type="button" class="btn-p" id="nextBtn">Get started →</button>
   </div>
+  <button type="button" class="restart" id="restartBtn" style="display:none">↺ Start over</button>
 </form>
 </div>
 </main>
@@ -1221,12 +1226,14 @@
   form.addEventListener('input', e=>{ if(e.isTrusted && ['sqft','zip'].includes(e.target.name)){ const b = document.querySelector(`.pf[data-pf="${e.target.name}"]`); if(b) b.classList.remove('show'); } });
 
   // ---------- navigation ----------
+  const restartBtn = $('restartBtn');
   function show(i){
     steps.forEach((s,k)=>s.classList.toggle('active',k===i));
     cur = i;
     $('barFill').style.width = (i/(steps.length-1)*100)+'%';
     $('stepCount').textContent = `Step ${i+1} of ${steps.length} · ${steps[i].dataset.title}`;
     backBtn.style.visibility = i===0 ? 'hidden' : 'visible';
+    restartBtn.style.display = i===0 ? 'none' : '';
     nextBtn.style.display = i===steps.length-1 ? 'none' : '';
     nextBtn.textContent = i===0 ? 'Get started →' : (i===steps.length-2 ? 'See my results →' : 'Next →');
     err.style.display='none';
@@ -1245,6 +1252,12 @@
   }
   nextBtn.onclick = ()=>{ if(validate(cur)) show(cur+1); };
   backBtn.onclick = ()=> show(cur-1);
+  restartBtn.onclick = ()=>{
+    if(!confirm('Start over? This clears all of your answers.')) return;
+    try{ localStorage.removeItem(STORE); }catch(e){}
+    if(EMBED) toParent({type:'ea-ev-top'}); else window.scrollTo({top:0});
+    location.reload();
+  };
   form.addEventListener('submit', e=>e.preventDefault());
 
   // ---------- results ----------
@@ -1396,7 +1409,7 @@
     const emailBody = 'Hi ElectricAce,\n\n' + intro + '\n\n' + $('summaryBox').value + (PHOTOS.length ? '\n\n(I took '+PHOTOS.length+' photos and will attach them to this email.)' : '') + '\n\nThank you!';
     const mailHref = `mailto:${SUBMIT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
     $('sendBtn').href = mailHref; $('mailLink').href = mailHref;
-    const qBody = 'Hi ElectricAce,\n\nI have a question about my EV charger plan:\n\n(type your question here)\n\n(My PDF report is attached.)\n\n' + $('summaryBox').value;
+    const qBody = 'Hi ElectricAce,\n\nI have a question about my EV charger plan:\n\n(type your question here)\n\n' + $('summaryBox').value;
     $('emailOpenLink').href = `mailto:${SUBMIT_EMAIL}?subject=${encodeURIComponent('⚡ 𝗘𝗩 𝗖𝗛𝗔𝗥𝗚𝗘𝗥 · Question – '+(val('name')||'Website visitor'))}&body=${encodeURIComponent(qBody)}`;
     lastSubject = subject;
     return mailHref;
@@ -1414,7 +1427,6 @@
     p.classList.toggle('show', open); $('emailUsBtn').setAttribute('aria-expanded', open);
     if(open){ compute(); refreshSummary(); }
   });
-  $('emailPdfBtn').addEventListener('click', e=>downloadPdf(e));
 
   // ---------- spam protection & validation ----------
   const SPAM_WORDS = /\b(viagra|cialis|casino|crypto|bitcoin|forex|backlinks?|seo services|guest post|loan offer|escort|porn|betting|web design services)\b/i;
@@ -1461,7 +1473,7 @@
     const hi = first ? `Thanks, ${first}` : 'Thanks';
     if(kind==='schedule'){
       $('okTitle').textContent = '✅ Consultation request sent!';
-      $('okBody').innerHTML = `${hi}! Your EV charger plan and appointment request are on their way to the ElectricAce team. <a href="#" class="pdf-link">Download your report (PDF)</a> for your records.`;
+      $('okBody').innerHTML = `${hi}! Your EV charger plan and appointment request are on their way to the ElectricAce team. Your PDF report is downloading for your records. <a href="#" class="pdf-link">Download it again</a>.`;
       $('okNext').style.display = '';
     } else {
       $('okTitle').textContent = '✅ Your report is unlocked!';
@@ -1544,15 +1556,15 @@
         }catch(e1){
           diag.push('With attachments: '+(e1.name==='AbortError'?'timed out':(e1.message||e1)));
           if(PHOTOS.length) photoState = 'dropped';
-          await post(JSON.stringify(Object.assign({}, fields, {'PDF report':'Not attached (upload refused)', 'Photos': PHOTOS.length ? PHOTOS.length+' taken (not attached, ask client to text/email)' : 'None'})), false);
+          await post(JSON.stringify(Object.assign({}, fields, {subject: '[PDF NOT ATTACHED] ' + lastSubject, 'PDF report':'Not attached (upload refused)', 'Photos': PHOTOS.length ? PHOTOS.length+' taken (not attached, ask client to text/email)' : 'None'})), false);
         }
       } else {
-        await post(JSON.stringify(fields), false);
+        await post(JSON.stringify(Object.assign({}, fields, {subject: '[PDF NOT ATTACHED] ' + lastSubject})), false);
       }
       sent[kind] = true; setBtn(btn,'done',kind);
       showPanel('ok', kind, photoState); unlock();
       if(diag.length){ $('okDiag').textContent = 'Technical details: ' + diag.join(' | '); try{ console.warn('[ElectricAce EV form]', diag.join(' | ')); }catch(e4){} }
-      if(kind==='report') downloadPdf();
+      downloadPdf();
       if(kind==='schedule'){ try{ localStorage.removeItem(STORE); }catch(err){} }
     }catch(err){
       let why = err && err.name==='AbortError' ? 'timed out' : (err && err.message) || 'unknown error';
@@ -1562,7 +1574,7 @@
       try{ console.warn('[ElectricAce EV form] send failed:', diag.join(' | ')); }catch(e3){}
       setBtn(btn, null, kind);
       showPanel('fallback', kind); unlock();
-      if(kind==='report') downloadPdf();
+      downloadPdf();
       try{ window.location.href = mailHref; }catch(e2){}
     }finally{ sending = false; }
   }
@@ -1753,7 +1765,8 @@
       para("What happens next: Your appointment isn't final yet. A member of our office team will contact you to confirm your requested time slot.", 9.5, INK, 6);
     }
     if(val('comments')){ heading('Your notes'); para(val('comments'), 9.5); }
-    need(60);
+    need(80);
+    para($('checkedNote').textContent, 9, INK, 6);
     para($('discl').textContent, 8, MUTED, 0);
 
     if(!withPhotos && PHOTOS.length){ heading(`Photos (${PHOTOS.length})`); para(`${PHOTOS.length} photo${PHOTOS.length>1?'s were':' was'} sent as separate attachments: ${PHOTOS.map(p=>p.name).join(', ')}.`, 9.5); }
